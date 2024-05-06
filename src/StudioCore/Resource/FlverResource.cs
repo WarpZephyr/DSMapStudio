@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using DotNext.IO.MemoryMappedFiles;
+using Microsoft.AspNetCore.Http.Features;
 using SoulsFormats;
 using StudioCore.MsbEditor;
 using StudioCore.Scene;
@@ -1581,11 +1582,15 @@ public class FlverResource : IResource, IDisposable
         Span<Vector3> pvhandle = new(dest.PickingVertices.ToPointer(), vertexCount);
 
         var is32bit = version > 0x20005 && vertexCount > 65535;
+        bool is16bit = false;
+        bool isEdgeCompressed = false;
         var indicesTotal = 0;
         foreach (var fsidx in facesetIndices)
         {
             indicesTotal += facesets[fsidx].indexCount;
             is32bit = is32bit || facesets[fsidx].indexSize > 16;
+            is16bit = is16bit || facesets[fsidx].indexSize == 16;
+            isEdgeCompressed = isEdgeCompressed || (facesets[fsidx].flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0;
         }
 
         var vbuffersize = (uint)vertexCount * vSize;
@@ -1633,14 +1638,19 @@ public class FlverResource : IResource, IDisposable
 
         Span<ushort> fs16 = null;
         Span<int> fs32 = null;
+        Span<byte> edgeBuffer = null;
         if (is32bit)
         {
             fs32 = new Span<int>(meshIndices.ToPointer(), indicesTotal);
         }
-        else
+        else if (is16bit)
         {
             fs16 = new Span<ushort>(meshIndices.ToPointer(), indicesTotal);
         }
+
+        // TODO EDGE
+        List<ushort> decompressedEdgeIndexes = new List<ushort>();
+        int previousCount = 0;
 
         var idxoffset = 0;
         foreach (var fsidx in facesetIndices)
@@ -1682,7 +1692,10 @@ public class FlverResource : IResource, IDisposable
             br.StepIn(faceset.indicesOffset);
             if ((faceset.flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0)
             {
-                FLVER2.EdgeMemberInfoGroup.DecompressIndexes(br, fs16);
+                // TODO EDGE
+                FLVER2.EdgeMemberInfoGroup.DecompressIndexes(br, decompressedEdgeIndexes);
+                newFaceSet.IndexCount = decompressedEdgeIndexes.Count - previousCount;
+                previousCount = decompressedEdgeIndexes.Count;
             }
             else
             {
@@ -1714,11 +1727,30 @@ public class FlverResource : IResource, IDisposable
                     }
                 }
             }
-
             br.StepOut();
 
             dest.MeshFacesets.Add(newFaceSet);
-            idxoffset += faceset.indexCount;
+            idxoffset += newFaceSet.IndexCount; // TODO EDGE
+        }
+
+        // TODO EDGE
+        if (isEdgeCompressed)
+        {
+            if (is32bit || is16bit)
+            {
+                throw new Exception("Having facesets both with and without edge compression is not supported.");
+            }
+
+            int edgeListIndex = 0;
+            fs16 = new Span<ushort>(meshIndices.ToPointer(), decompressedEdgeIndexes.Count);
+            foreach (var faceset in dest.MeshFacesets)
+            {
+                for (var i = 0; i < faceset.IndexCount; i++)
+                {
+                    fs16[faceset.IndexOffset + i] = decompressedEdgeIndexes[edgeListIndex];
+                    edgeListIndex++;
+                }
+            }
         }
 
         dest.GeomBuffer.UnmapIBuffer();
@@ -1880,7 +1912,7 @@ public class FlverResource : IResource, IDisposable
         int vertexIndicesSize = br.AssertByte([0, 8, 16, 32]);
         var unicode = br.ReadBoolean();
         br.ReadBoolean(); // unknown
-        br.AssertByte(0);
+        br.ReadByte(); // unknown
         br.ReadInt32(); // unknown
         var faceSetCount = br.ReadInt32();
         var bufferLayoutCount = br.ReadInt32();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DotNext.Collections.Generic;
+using System;
 using System.Collections.Generic;
 using System.Numerics;
 
@@ -104,8 +105,9 @@ namespace SoulsFormats
                 return faceIndexes;
             }
 
-            internal static ushort GetFaceIndexesFast(BinaryReaderEx br, int lastIndex, Span<ushort> indexes, long membersStartOffset)
+            internal static void GetFaceIndexesFast(BinaryReaderEx br, List<ushort> indexes, long membersStartOffset)
             {
+                /*
                 br.Position += 4;
                 int edgeIndexesOffset = br.ReadInt32();
                 br.Position += 12;
@@ -113,15 +115,34 @@ namespace SoulsFormats
                 br.Position += 36;
                 var numIndexes = br.ReadUInt16();
                 br.Position += 4;
+                */
 
+                var edgeIndexesLength = br.ReadInt32();
+                var edgeIndexesOffset = br.ReadInt32();
+                br.AssertInt32(0);
+                br.AssertInt32(0);
+                var unk10 = br.ReadByte();
+                var unk11 = br.ReadByte();
+                var unk12 = br.ReadByte();
+                var unk13 = br.ReadByte();
+                var baseIndex = br.ReadInt16();
+                var unk16 = br.ReadInt16();
+                var edgeVertexBufferLength = br.ReadInt32();
+                var edgeVertexBufferOffset = br.ReadInt32();
+                br.AssertInt32(0);
+                br.AssertInt32(0);
+                br.AssertInt32(0);
+                br.AssertInt32(0);
+                var spuConfigInfo = new EdgeGeomSpuConfigInfo(br);
+
+                var end = br.Position;
                 br.Position = membersStartOffset + edgeIndexesOffset;
-                ushort[] memberIndexes = DecompressIndexes(br, numIndexes);
-                for (int i = 0; i < numIndexes; i++)
+                ushort[] memberIndexes = DecompressIndexes(br, spuConfigInfo.NumIndexes);
+                for (int i = 0; i < spuConfigInfo.NumIndexes; i++)
                 {
-                    indexes[lastIndex] = (ushort)(memberIndexes[i] + baseIndex);
-                    lastIndex++;
+                    indexes.Add((ushort)(memberIndexes[i] + baseIndex));
                 }
-                return numIndexes;
+                br.Position = end;
             }
 
             public static ushort[] DecompressIndexes(BinaryReaderEx br, uint numIndexes)

@@ -54,16 +54,26 @@ namespace SoulsFormats
                 }
             }
 
-            public static void DecompressIndexes(BinaryReaderEx br, Span<ushort> indexes)
+            public static void DecompressIndexes(BinaryReaderEx br, List<ushort> indexes)
             {
                 long start = br.Position;
+
+                /*
                 short memberCount = br.ReadInt16();
                 br.Position += 14;
+                */
 
-                ushort lastIndex = 0;
+                short memberCount = br.ReadInt16();
+                var unk02 = br.ReadInt16();
+                var unk04 = br.ReadInt16();
+                var unk06 = br.ReadByte();
+                bool unk07 = br.ReadBoolean();
+                br.AssertInt32(0);
+                int memberIndexBufferLength = br.ReadInt32();
+
                 for (int i = 0; i < memberCount; i++)
                 {
-                    lastIndex += EdgeMemberInfo.GetFaceIndexesFast(br, lastIndex, indexes, start);
+                    EdgeMemberInfo.GetFaceIndexesFast(br, indexes, start);
                 }
             }
 
