@@ -11,6 +11,6 @@ public enum GameType
     Bloodborne = 6,
     Sekiro = 7,
     EldenRing = 8,
-    ArmoredCoreVD = 9,
-    ArmoredCoreVI = 10
+    ArmoredCoreVI = 9,
+    ArmoredCoreVD = 10
 }

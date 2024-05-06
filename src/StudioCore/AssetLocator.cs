@@ -1,5 +1,4 @@
 ﻿using SoulsFormats;
-using SoulsFormats.KF4;
 using SoulsFormats.Other.PlayStation3;
 using StudioCore.Editor;
 using System;
