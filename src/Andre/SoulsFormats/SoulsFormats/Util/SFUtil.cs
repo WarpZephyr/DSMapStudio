@@ -614,6 +614,14 @@ namespace SoulsFormats
             return ms.ToArray();
         }
 
+        internal static byte[] To4Bit(byte value)
+        {
+            byte[] values = new byte[2];
+            values[0] = (byte)((byte)(value & 0b1111_0000) >> 4);
+            values[1] = (byte)(value & 0b0000_1111);
+            return values;
+        }
+
         /// <summary>
         /// Returns the backing buffer, or if the buffer had to be expanded, gets an array of the correct size.
         /// Old DCX tools would specify decompressedSize incorrectly, so a MemoryStream may expand beyond it's specified capacity.

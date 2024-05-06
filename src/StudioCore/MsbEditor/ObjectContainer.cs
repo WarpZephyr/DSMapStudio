@@ -519,6 +519,36 @@ public class Map : ObjectContainer
         m.Models.Add(model);
     }
 
+    //TODO ACVD
+    private void AddModelACVD(IMsb m, MSBVD.Model model, string name)
+    {
+        if (LoadedModels[name] != null)
+        {
+            m.Models.Add(LoadedModels[name]);
+            return;
+        }
+
+        model.Name = name;
+        if (model is MSBVD.Model.MapPiece)
+        {
+            model.ResourcePath = $@"N:\ACV2\data\model\map\{name}\model_sib\{name}.sib";
+        }
+        else if (model is MSBVD.Model.Object)
+        {
+            model.ResourcePath = $@"N:\ACV2\data\model\obj\{name}\model_sib\{name}.sib";
+        }
+        else if (model is MSBVD.Model.Enemy)
+        {
+            model.ResourcePath = $@"N:\ACV2\data\model\ene\{name}\model_sib\{name}.sib";
+        }
+        else if (model is MSBVD.Model.Dummy)
+        {
+            model.ResourcePath = $@"N:\ACV2\data\model\dummy\dummy_ac\{name}.ap2";
+        }
+
+        m.Models.Add(model);
+    }
+
     private void AddModelAC6(IMsb m, MSB_AC6.Model model, string name)
     {
         if (LoadedModels[name] != null)
@@ -767,6 +797,38 @@ public class Map : ObjectContainer
         }
     }
 
+    //TODO ACVD
+    private void AddModelsACVD(IMsb msb)
+    {
+        foreach (KeyValuePair<string, IMsbModel> mk in LoadedModels.OrderBy(q => q.Key))
+        {
+            var m = mk.Key;
+            if (m.ToLower().StartsWith("m"))
+            {
+                AddModelACVD(msb, new MSBVD.Model.MapPiece { Name = m }, m);
+                continue;
+            }
+
+            if (m.ToLower().StartsWith("o"))
+            {
+                AddModelACVD(msb, new MSBVD.Model.Object { Name = m }, m);
+                continue;
+            }
+
+            if (m.ToLower().StartsWith("e"))
+            {
+                AddModelACVD(msb, new MSBVD.Model.Enemy { Name = m }, m);
+                continue;
+            }
+
+            if (m.ToLower().StartsWith("a"))
+            {
+                AddModelACVD(msb, new MSBVD.Model.Dummy { Name = m }, m);
+                continue;
+            }
+        }
+    }
+
     private void AddModelsAC6(IMsb msb)
     {
         foreach (KeyValuePair<string, IMsbModel> mk in LoadedModels.OrderBy(q => q.Key))
@@ -847,6 +909,10 @@ public class Map : ObjectContainer
         else if (game == GameType.EldenRing)
         {
             AddModelsER(msb);
+        }
+        else if (game == GameType.ArmoredCoreVD)
+        {
+            AddModelsACVD(msb);
         }
         else if (game == GameType.ArmoredCoreVI)
         {

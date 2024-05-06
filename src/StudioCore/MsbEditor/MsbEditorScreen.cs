@@ -1411,6 +1411,10 @@ public class MsbEditorScreen : EditorScreen, SceneTreeEventHandler
                         if (s.WrappedObject is MSBE.Part.Enemy)
                             isValidObjectType = true;
                         break;
+                    case GameType.ArmoredCoreVD:
+                        if (s.WrappedObject is MSBVD.Part.Enemy)
+                            isValidObjectType = true;
+                        break;
                     case GameType.ArmoredCoreVI:
                         if (s.WrappedObject is MSB_AC6.Part.Enemy)
                             isValidObjectType = true;
@@ -1452,6 +1456,10 @@ public class MsbEditorScreen : EditorScreen, SceneTreeEventHandler
                         if (s.WrappedObject is MSBE.Part.Asset)
                             isValidObjectType = true;
                         break;
+                    case GameType.ArmoredCoreVD:
+                        if (s.WrappedObject is MSBVD.Part.Object)
+                            isValidObjectType = true;
+                        break;
                     case GameType.ArmoredCoreVI:
                         if (s.WrappedObject is MSB_AC6.Part.Asset)
                             isValidObjectType = true;
@@ -1491,6 +1499,10 @@ public class MsbEditorScreen : EditorScreen, SceneTreeEventHandler
                         break;
                     case GameType.EldenRing:
                         if (s.WrappedObject is MSBE.Part.MapPiece)
+                            isValidObjectType = true;
+                        break;
+                    case GameType.ArmoredCoreVD:
+                        if (s.WrappedObject is MSBVD.Part.MapPiece)
                             isValidObjectType = true;
                         break;
                     case GameType.ArmoredCoreVI:
@@ -1849,6 +1861,9 @@ public class MsbEditorScreen : EditorScreen, SceneTreeEventHandler
             case GameType.EldenRing:
                 msbclass = typeof(MSBE);
                 break;
+            case GameType.ArmoredCoreVD:
+                msbclass = typeof(MSBVD);
+                break;
             case GameType.ArmoredCoreVI:
                 msbclass = typeof(MSB_AC6);
                 break;
@@ -1961,6 +1976,9 @@ public class MsbEditorScreen : EditorScreen, SceneTreeEventHandler
                 break;
             case GameType.EldenRing:
                 msbclass = typeof(MSBE);
+                break;
+            case GameType.ArmoredCoreVD:
+                msbclass = typeof(MSBVD);
                 break;
             case GameType.ArmoredCoreVI:
                 msbclass = typeof(MSB_AC6);

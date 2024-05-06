@@ -34,7 +34,7 @@ namespace SoulsFormats
                 LodLevel2 = 0x0200_0000,
 
                 /// <summary>
-                /// Not confirmed, but suspected to indicate when indices are edge-compressed.
+                /// Indices are edge-compressed.
                 /// </summary>
                 EdgeCompressed = 0x4000_0000,
 
@@ -72,6 +72,11 @@ namespace SoulsFormats
             /// </summary>
             [HideProperty]
             public int[] Indices { get; set; }
+
+            /// <summary>
+            /// Edge compression information useful for edge compressed vertex buffers.
+            /// </summary>
+            internal EdgeMemberInfoGroup EdgeMembers { get; private set; }
 
             /// <summary>
             /// Creates a new FaceSet with default values and no indices.
@@ -120,14 +125,19 @@ namespace SoulsFormats
                 if (indexSize == 8 ^ Flags.HasFlag(FSFlags.EdgeCompressed))
                     throw new InvalidDataException("FSFlags.EdgeCompressed probably doesn't mean edge compression after all. Please investigate this.");
 
-                /*if (indexSize == 8)
+                if (indexSize == 8)
                 {
+                    if ((Flags & ~FSFlags.EdgeCompressed) == Flags)
+                        throw new NotSupportedException($"Index size of {indexSize} is only supported when {nameof(FSFlags.EdgeCompressed)} is set.");
+
                     br.StepIn(dataOffset + indicesOffset);
                     {
-                        Indices = EdgeIndexCompression.ReadEdgeIndexGroup(br, indexCount);
+                        Indices = new int[indexCount];
+                        EdgeMembers = new EdgeMemberInfoGroup(br, Indices);
                     }
+                    br.StepOut();
                 }
-                else*/ if (indexSize == 32)
+                else if (indexSize == 32)
                 {
                     IndicesCount = indexCount;
                     Indices = br.GetInt32s(dataOffset + indicesOffset, indexCount);

@@ -717,6 +717,7 @@ public class Universe
                 case GameType.DarkSoulsPTDE:
                 case GameType.DarkSoulsRemastered:
                 case GameType.DarkSoulsIISOTFS:
+                case GameType.ArmoredCoreVD: //TODO ACVD Not sure if this is correct
                     _dispGroupCount = 4;
                     break;
                 case GameType.Bloodborne:
@@ -752,6 +753,10 @@ public class Universe
             {
                 msb = MSBE.Read(ad.AssetPath);
             }
+            else if (_assetLocator.Type == GameType.ArmoredCoreVD)
+            {
+                msb = MSBVD.Read(ad.AssetPath);
+            }
             else if (_assetLocator.Type == GameType.ArmoredCoreVI)
             {
                 msb = MSB_AC6.Read(ad.AssetPath);
@@ -779,13 +784,13 @@ public class Universe
             foreach (IMsbModel model in msb.Models.GetEntries())
             {
                 AssetDescription asset;
-                if (model.Name.StartsWith("m"))
+                if (model.Name.StartsWith('m'))
                 {
                     asset = _assetLocator.GetMapModel(amapid,
                         _assetLocator.MapModelNameToAssetName(amapid, model.Name));
                     mappiecesToLoad.Add(asset);
                 }
-                else if (model.Name.StartsWith("c"))
+                else if (model.Name.StartsWith('c'))
                 {
                     asset = _assetLocator.GetChrModel(model.Name);
                     chrsToLoad.Add(asset);
@@ -795,7 +800,7 @@ public class Universe
                         chrsToLoad.Add(tasset);
                     }
                 }
-                else if (model.Name.StartsWith("o"))
+                else if (model.Name.StartsWith('o'))
                 {
                     asset = _assetLocator.GetObjModel(model.Name);
                     objsToLoad.Add(asset);
@@ -810,13 +815,13 @@ public class Universe
                     asset = _assetLocator.GetObjModel(model.Name);
                     objsToLoad.Add(asset);
                 }
-                else if (model.Name.StartsWith("h"))
+                else if (model.Name.StartsWith('h'))
                 {
                     asset = _assetLocator.GetMapCollisionModel(amapid,
                         _assetLocator.MapModelNameToAssetName(amapid, model.Name), false);
                     colsToLoad.Add(asset);
                 }
-                else if (model.Name.StartsWith("n") && _assetLocator.Type != GameType.DarkSoulsIISOTFS &&
+                else if (model.Name.StartsWith('n') && _assetLocator.Type != GameType.DarkSoulsIISOTFS &&
                          _assetLocator.Type != GameType.Bloodborne)
                 {
                     asset = _assetLocator.GetMapNVMModel(amapid,
@@ -1442,6 +1447,17 @@ public class Universe
                 MSBE n = new();
                 n.Layers = prev.Layers;
                 n.Routes = prev.Routes;
+                msb = n;
+            }
+            //TODO ACVD
+            else if (_assetLocator.Type == GameType.ArmoredCoreVD)
+            {
+                MSBVD prev = MSBVD.Read(ad.AssetPath);
+                MSBVD n = new();
+                n.Layers = prev.Layers;
+                n.Routes = prev.Routes;
+                n.Tree1 = prev.Tree1;
+                n.Tree2 = prev.Tree2;
                 msb = n;
             }
             else if (_assetLocator.Type == GameType.ArmoredCoreVI)

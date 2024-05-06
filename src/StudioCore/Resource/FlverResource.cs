@@ -891,6 +891,12 @@ public class FlverResource : IResource, IDisposable
 
                     if (l.semantic == FLVER.LayoutSemantic.Position)
                     {
+                        // Edge Vertex Compression is not yet supported
+                        if (l.type == LayoutType.EdgeCompressed)
+                        {
+                            continue;
+                        }
+
                         FillVertex(&(*v).Position, br, l.type);
                         posfilled = true;
                     }
@@ -1579,7 +1585,7 @@ public class FlverResource : IResource, IDisposable
         foreach (var fsidx in facesetIndices)
         {
             indicesTotal += facesets[fsidx].indexCount;
-            is32bit = is32bit || facesets[fsidx].indexSize != 16;
+            is32bit = is32bit || facesets[fsidx].indexSize > 16;
         }
 
         var vbuffersize = (uint)vertexCount * vSize;
@@ -1674,30 +1680,37 @@ public class FlverResource : IResource, IDisposable
             }
 
             br.StepIn(faceset.indicesOffset);
-            for (var i = 0; i < faceset.indexCount; i++)
+            if ((faceset.flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0)
             {
-                if (faceset.indexSize == 16)
+                FLVER2.EdgeMemberInfoGroup.DecompressIndexes(br, fs16);
+            }
+            else
+            {
+                for (var i = 0; i < faceset.indexCount; i++)
                 {
-                    var idx = br.ReadUInt16();
-                    if (is32bit)
+                    if (faceset.indexSize == 16)
                     {
-                        fs32[newFaceSet.IndexOffset + i] = idx == 0xFFFF ? -1 : idx;
+                        var idx = br.ReadUInt16();
+                        if (is32bit)
+                        {
+                            fs32[newFaceSet.IndexOffset + i] = idx == 0xFFFF ? -1 : idx;
+                        }
+                        else
+                        {
+                            fs16[newFaceSet.IndexOffset + i] = idx;
+                        }
                     }
                     else
                     {
-                        fs16[newFaceSet.IndexOffset + i] = idx;
-                    }
-                }
-                else
-                {
-                    var idx = br.ReadInt32();
-                    if (idx > vertexCount)
-                    {
-                        fs32[newFaceSet.IndexOffset + i] = -1;
-                    }
-                    else
-                    {
-                        fs32[newFaceSet.IndexOffset + i] = idx;
+                        var idx = br.ReadInt32();
+                        if (idx > vertexCount)
+                        {
+                            fs32[newFaceSet.IndexOffset + i] = -1;
+                        }
+                        else
+                        {
+                            fs32[newFaceSet.IndexOffset + i] = idx;
+                        }
                     }
                 }
             }
@@ -1864,7 +1877,7 @@ public class FlverResource : IResource, IDisposable
 
         br.ReadInt32(); // Face count not including motion blur meshes or degenerate faces
         br.ReadInt32(); // Total face count
-        int vertexIndicesSize = br.AssertByte([0, 16, 32]);
+        int vertexIndicesSize = br.AssertByte([0, 8, 16, 32]);
         var unicode = br.ReadBoolean();
         br.ReadBoolean(); // unknown
         br.AssertByte(0);

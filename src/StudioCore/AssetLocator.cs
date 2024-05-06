@@ -1,4 +1,6 @@
 ﻿using SoulsFormats;
+using SoulsFormats.KF4;
+using SoulsFormats.Other.PlayStation3;
 using StudioCore.Editor;
 using System;
 using System.Collections.Generic;
@@ -163,43 +165,53 @@ public class AssetLocator
     public GameType GetGameTypeForExePath(string exePath)
     {
         var type = GameType.Undefined;
-        if (exePath.ToLower().Contains("darksouls.exe"))
+        if (exePath.Contains("darksouls.exe", StringComparison.CurrentCultureIgnoreCase))
         {
             type = GameType.DarkSoulsPTDE;
         }
-        else if (exePath.ToLower().Contains("darksoulsremastered.exe"))
+        else if (exePath.Contains("darksoulsremastered.exe", StringComparison.CurrentCultureIgnoreCase))
         {
             type = GameType.DarkSoulsRemastered;
         }
-        else if (exePath.ToLower().Contains("darksoulsii.exe"))
+        else if (exePath.Contains("darksoulsii.exe", StringComparison.CurrentCultureIgnoreCase))
         {
             type = GameType.DarkSoulsIISOTFS;
         }
-        else if (exePath.ToLower().Contains("darksoulsiii.exe"))
+        else if (exePath.Contains("darksoulsiii.exe", StringComparison.CurrentCultureIgnoreCase))
         {
             type = GameType.DarkSoulsIII;
         }
-        else if (exePath.ToLower().Contains("eboot.bin"))
+        else if (exePath.Contains("eboot.bin", StringComparison.CurrentCultureIgnoreCase))
         {
-            var path = Path.GetDirectoryName(exePath);
-            if (Directory.Exists($@"{path}\dvdroot_ps4"))
+            var usrDir = Path.GetDirectoryName(exePath);
+            var gameDir = Path.GetDirectoryName(usrDir);
+            var sfoPath = $@"{gameDir}\PARAM.SFO";
+            if (Directory.Exists($@"{usrDir}\dvdroot_ps4"))
             {
                 type = GameType.Bloodborne;
+            }
+            else if (File.Exists(sfoPath))
+            {
+                PARAMSFO sfo = PARAMSFO.Read(sfoPath);
+                if (sfo.Parameters["TITLE"].Data.StartsWith("Armored Core Verdict Day"))
+                {
+                    type = GameType.ArmoredCoreVD;
+                }
             }
             else
             {
                 type = GameType.DemonsSouls;
             }
         }
-        else if (exePath.ToLower().Contains("sekiro.exe"))
+        else if (exePath.Contains("sekiro.exe", StringComparison.CurrentCultureIgnoreCase))
         {
             type = GameType.Sekiro;
         }
-        else if (exePath.ToLower().Contains("eldenring.exe"))
+        else if (exePath.Contains("eldenring.exe", StringComparison.CurrentCultureIgnoreCase))
         {
             type = GameType.EldenRing;
         }
-        else if (exePath.ToLower().Contains("armoredcore6.exe"))
+        else if (exePath.Contains("armoredcore6.exe", StringComparison.CurrentCultureIgnoreCase))
         {
             type = GameType.ArmoredCoreVI;
         }
@@ -238,6 +250,19 @@ public class AssetLocator
         if (game == GameType.DarkSoulsIISOTFS)
         {
             if (!Directory.Exists($@"{gamepath}\map"))
+            {
+                return false;
+            }
+
+            if (!Directory.Exists($@"{gamepath}\model\obj"))
+            {
+                return false;
+            }
+        }
+
+        if (game == GameType.ArmoredCoreVD)
+        {
+            if (!Directory.Exists($@"{gamepath}\model\map"))
             {
                 return false;
             }
@@ -350,10 +375,35 @@ public class AssetLocator
 
         try
         {
-            HashSet<string> mapSet = new();
+            HashSet<string> mapSet = [];
 
+            //TODO ACVD
+            // Make a bit cleaner
+            // ACVD has maps in individual folders under \model\map, but some of them don't follow the usual MSB ID pattern.
+            if (Type == GameType.ArmoredCoreVD)
+            {
+                List<string> maps = Directory.GetFileSystemEntries(GameRootDirectory + @"\model\map\", "m*").ToList();
+                if (GameModDirectory != null)
+                {
+                    if (Directory.Exists(GameModDirectory + @"\model\map"))
+                    {
+                        maps.AddRange(Directory.GetFileSystemEntries(GameModDirectory + @"\model\map\", "m*").ToList());
+                    }
+                }
+
+                foreach (var map in maps)
+                {
+                    mapSet.Add(Path.GetFileNameWithoutExtension($@"{map}.blah"));
+                }
+
+                // Remove a few ACV format MSBs
+                if (mapSet.Contains("map_template"))
+                {
+                    mapSet.Remove("map_template");
+                }
+            }
             // DS2 has its own structure for msbs, where they are all inside individual folders
-            if (Type == GameType.DarkSoulsIISOTFS)
+            else if (Type == GameType.DarkSoulsIISOTFS)
             {
                 List<string> maps = Directory.GetFileSystemEntries(GameRootDirectory + @"\map", @"m*").ToList();
                 if (GameModDirectory != null)
@@ -395,7 +445,9 @@ public class AssetLocator
             }
 
             Regex mapRegex = new(@"^m\d{2}_\d{2}_\d{2}_\d{2}$");
+            Regex mapRegex2 = new(@"^m\d{4}$");
             List<string> mapList = mapSet.Where(x => mapRegex.IsMatch(x)).ToList();
+            mapList.AddRange(mapSet.Where(x => mapRegex2.IsMatch(x)).ToList());
             mapList.Sort();
             FullMapList = mapList;
             return FullMapList;
@@ -411,7 +463,11 @@ public class AssetLocator
     {
         AssetDescription ad = new();
         ad.AssetPath = null;
-        if (mapid.Length != 12)
+        if (Type == GameType.ArmoredCoreVD && mapid.Length != 5)
+        {
+            return ad;
+        }
+        else if (Type != GameType.ArmoredCoreVD && mapid.Length != 12)
         {
             return ad;
         }
@@ -443,6 +499,12 @@ public class AssetLocator
         {
             preferredPath = $@"\map\MapStudio\{mapid}.msb.dcx";
             backupPath = $@"\map\MapStudio\{mapid}.msb";
+        }
+        //TODO ACVD
+        else if (Type == GameType.ArmoredCoreVD)
+        {
+            preferredPath = $@"\model\map\{mapid}\{mapid}_map.msb";
+            backupPath = $@"\model\map\{mapid}\{mapid}_map.msb";
         }
         else
         {
@@ -652,6 +714,11 @@ public class AssetLocator
             {
                 folders = Directory.GetDirectories(GameRootDirectory + @"\menu\text").ToList();
             }
+            //TODO ACVD
+            else if (Type == GameType.ArmoredCoreVD)
+            {
+                folders = Directory.GetDirectories(GameRootDirectory + @"\lang").ToList();
+            }
             else
             {
                 // Exclude folders that don't have typical msgbnds
@@ -761,6 +828,8 @@ public class AssetLocator
                 return "SDT";
             case GameType.EldenRing:
                 return "ER";
+            case GameType.ArmoredCoreVD:
+                return "ACVD";
             case GameType.ArmoredCoreVI:
                 return "AC6";
             default:
@@ -978,7 +1047,8 @@ public class AssetLocator
                 ret.Add(ad);
             }
         }
-        else if (Type == GameType.DarkSoulsIISOTFS)
+        //TODO ACVD
+        else if (Type == GameType.DarkSoulsIISOTFS || Type == GameType.ArmoredCoreVD)
         {
             AssetDescription ad = new();
             var name = mapid;
@@ -1053,6 +1123,12 @@ public class AssetLocator
 
     public string MapModelNameToAssetName(string mapid, string modelname)
     {
+        //TODO ACVD
+        if (Type == GameType.ArmoredCoreVD)
+        {
+            return modelname;
+        }
+
         if (Type == GameType.DarkSoulsPTDE || Type == GameType.DarkSoulsRemastered)
         {
             return $@"{modelname}A{mapid.Substring(1, 2)}";
@@ -1078,6 +1154,12 @@ public class AssetLocator
     /// <returns>The map ID for the purpose of asset storage</returns>
     public string GetAssetMapID(string mapid)
     {
+        //TODO ACVD
+        if (Type is GameType.ArmoredCoreVD)
+        {
+            return mapid;
+        }
+
         if (Type is GameType.EldenRing or GameType.ArmoredCoreVI)
         {
             return mapid;
@@ -1105,7 +1187,7 @@ public class AssetLocator
         }
 
         // Default
-        return mapid.Substring(0, 6) + "_00_00";
+        return string.Concat(mapid.AsSpan(0, 6), "_00_00");
     }
 
     public AssetDescription GetMapModel(string mapid, string model)
@@ -1127,6 +1209,11 @@ public class AssetLocator
         {
             ret.AssetPath = GetAssetPath($@"map\{mapid[..3]}\{mapid}\{model}.mapbnd.dcx");
         }
+        //TODO ACVD
+        else if (Type == GameType.ArmoredCoreVD)
+        {
+            ret.AssetPath = GetAssetPath($@"model\map\{mapid}_m.dcx.bnd");
+        }
         else if (Type == GameType.ArmoredCoreVI)
         {
             ret.AssetPath = GetAssetPath($@"map\{mapid[..3]}\{mapid}\{model}.mapbnd.dcx");
@@ -1141,6 +1228,12 @@ public class AssetLocator
         {
             ret.AssetArchiveVirtualPath = $@"map/{mapid}/model";
             ret.AssetVirtualPath = $@"map/{mapid}/model/{model}.flv.dcx";
+        }
+        //TODO ACVD
+        else if (Type == GameType.ArmoredCoreVD)
+        {
+            ret.AssetArchiveVirtualPath = $@"map/{mapid}/model";
+            ret.AssetVirtualPath = $@"map/{mapid}/model/{model}.flv";
         }
         else
         {
@@ -1226,6 +1319,14 @@ public class AssetLocator
         else if (Type == GameType.EldenRing)
         {
             // TODO ER
+        }
+        else if (Type == GameType.ArmoredCoreVD)
+        {
+            // TODO ACVD
+            AssetDescription ad = new();
+            ad.AssetPath = GetAssetPath($@"model\map\{mapid}\{mapid}_l.tpf.dcx");
+            ad.AssetVirtualPath = $@"map/tex/{mapid}";
+            ads.Add(ad);
         }
         else if (Type == GameType.ArmoredCoreVI)
         {
@@ -1567,6 +1668,14 @@ public class AssetLocator
         return ret;
     }
 
+    //TODO ACVD
+    /*
+    public AssetDescription GetEneModel(string ene)
+    {
+        
+    }
+    */
+
     public List<string> GetObjModels()
     {
         try
@@ -1590,6 +1699,12 @@ public class AssetLocator
                 // AEGs are objs in my heart :(
                 modelDir = @"\asset\aeg";
                 modelExt = ".geombnd.dcx";
+            }
+            //TODO ACVD
+            else if (Type == GameType.ArmoredCoreVD)
+            {
+                modelDir = @"\model\obj";
+                modelExt = @"_m.bnd.dcx";
             }
             else if (Type == GameType.ArmoredCoreVI)
             {
@@ -1636,7 +1751,7 @@ public class AssetLocator
 
             return ret;
         }
-        catch (DirectoryNotFoundException e)
+        catch (DirectoryNotFoundException)
         {
             // Game likely isn't UXM unpacked
             return new List<string>();
@@ -1648,7 +1763,9 @@ public class AssetLocator
         AssetDescription ret = new();
         ret.AssetName = obj;
         ret.AssetArchiveVirtualPath = $@"obj/{obj}/model";
-        if (Type == GameType.DarkSoulsIISOTFS)
+
+        //TODO ACVD
+        if (Type is GameType.DarkSoulsIISOTFS || Type is GameType.ArmoredCoreVD)
         {
             ret.AssetVirtualPath = $@"obj/{obj}/model/{obj}.flv";
         }
@@ -1670,6 +1787,7 @@ public class AssetLocator
         ad.AssetPath = null;
         ad.AssetArchiveVirtualPath = null;
         string path = null;
+
         if (Type == GameType.DarkSoulsPTDE)
         {
             path = GetOverridenFilePath($@"obj\{obj}.objbnd");
@@ -1678,6 +1796,14 @@ public class AssetLocator
                  or GameType.DarkSoulsIII or GameType.Sekiro)
         {
             path = GetOverridenFilePath($@"obj\{obj}.objbnd.dcx");
+        }
+
+        //TODO ACVD
+        if (Type == GameType.ArmoredCoreVD)
+        {
+            ad.AssetPath = GetOverridenFilePath($@"model\obj\{obj}\{obj}.tpf.dcx");
+            ad.AssetVirtualPath = $@"obj/tex/{obj}";
+            return ad;
         }
 
         if (path != null)
@@ -1904,6 +2030,7 @@ public class AssetLocator
     {
         var pathElements = virtualPath.Split('/');
         Regex mapRegex = new(@"^m\d{2}_\d{2}_\d{2}_\d{2}$");
+        Regex mapRegex2 = new(@"^m\d{4}");
         var ret = "";
 
         // Parse the virtual path with a DFA and convert it to a game path
@@ -1932,6 +2059,13 @@ public class AssetLocator
                     bndpath = "";
                     return GetAssetPath($@"map\{mid}\{mid}_{pathElements[i]}.tpf.dcx");
                 }
+                //TODO ACVD
+                else if (Type == GameType.ArmoredCoreVD)
+                {
+                    var mid = pathElements[i];
+                    bndpath = "";
+                    return GetAssetPath($@"model\map\{mid}\{mid}_l.tpf.dcx");
+                }
                 else
                 {
                     var mid = pathElements[i];
@@ -1950,7 +2084,7 @@ public class AssetLocator
                     return GetAssetPath($@"map\{mid}\{mid}_{pathElements[i]}.tpfbhd");
                 }
             }
-            else if (mapRegex.IsMatch(pathElements[i]))
+            else if (mapRegex.IsMatch(pathElements[i]) || mapRegex2.IsMatch(pathElements[i]))
             {
                 var mapid = pathElements[i];
                 i++;
@@ -1981,6 +2115,12 @@ public class AssetLocator
                     if (Type == GameType.EldenRing)
                     {
                         return GetAssetPath($@"map\{mapid.Substring(0, 3)}\{mapid}\{pathElements[i]}.mapbnd.dcx");
+                    }
+
+                    //TODO ACVD
+                    if (Type == GameType.ArmoredCoreVD)
+                    {
+                        return GetAssetPath($@"model\map\{mapid}\{mapid}_m.dcx.bnd");
                     }
 
                     if (Type == GameType.ArmoredCoreVI)
@@ -2092,7 +2232,19 @@ public class AssetLocator
         else if (pathElements[i].Equals("obj"))
         {
             i++;
-            var objid = pathElements[i];
+            string objid;
+
+            //TODO ACVD
+            // Skip the BND only processing for textures the rest of the games are doing.
+            if (Type == GameType.ArmoredCoreVD && pathElements[i].Equals("tex"))
+            {
+                i++;
+                objid = pathElements[i];
+                bndpath = "";
+                return GetOverridenFilePath($@"model\obj\{objid}\{objid}.tpf.dcx");
+            }
+
+            objid = pathElements[i];
             i++;
             if (pathElements[i].Equals("model") || pathElements[i].Equals("tex"))
             {
@@ -2105,6 +2257,12 @@ public class AssetLocator
                 if (Type == GameType.DarkSoulsIISOTFS)
                 {
                     return GetOverridenFilePath($@"model\obj\{objid}.bnd");
+                }
+
+                //TODO ACVD
+                if (Type == GameType.ArmoredCoreVD)
+                {
+                    return GetOverridenFilePath($@"model\obj\{objid}\{objid}_m.bnd.dcx");
                 }
 
                 if (Type == GameType.EldenRing)

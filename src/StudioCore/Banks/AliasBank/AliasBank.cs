@@ -9,6 +9,7 @@ using System.Text.Json.Serialization.Metadata;
 using System.Text.Json;
 using System.Threading.Tasks;
 using DotNext.Text;
+using System.Diagnostics;
 
 namespace StudioCore.Banks.AliasBank;
 

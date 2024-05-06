@@ -938,7 +938,12 @@ public class MapStudioNew
 
                     if (ImGui.MenuItem("MSBE read/write test"))
                     {
-                        MSBReadWrite.Run(_assetLocator);
+                        MSBReadWrite.RunER(_assetLocator);
+                    }
+
+                    if (ImGui.MenuItem("MSBVD read/write test"))
+                    {
+                        MSBReadWrite.RunACVD(_assetLocator);
                     }
 
                     if (ImGui.MenuItem("MSB_AC6 Read/Write Test"))
