@@ -381,25 +381,34 @@ public class AssetLocator
             // ACVD has maps in individual folders under \model\map, but some of them don't follow the usual MSB ID pattern.
             if (Type == GameType.ArmoredCoreVD)
             {
-                List<string> maps = Directory.GetFileSystemEntries(GameRootDirectory + @"\model\map\", "m*").ToList();
+                string rootDir = GameRootDirectory + @"\model\map";
+                List<string> maps = Directory.GetFiles(rootDir, "*.msb", SearchOption.AllDirectories).ToList();
                 if (GameModDirectory != null)
                 {
-                    if (Directory.Exists(GameModDirectory + @"\model\map"))
+                    string modDir = GameModDirectory + @"\model\map";
+                    if (Directory.Exists(modDir))
                     {
-                        maps.AddRange(Directory.GetFileSystemEntries(GameModDirectory + @"\model\map\", "m*").ToList());
+                        maps.AddRange(Directory.GetFiles(modDir, "*.msb", SearchOption.AllDirectories).ToList());
                     }
                 }
 
                 foreach (var map in maps)
                 {
-                    mapSet.Add(Path.GetFileNameWithoutExtension($@"{map}.blah"));
+                    mapSet.Add(Path.GetFileNameWithoutExtension(map));
                 }
 
                 // Remove a few ACV format MSBs
-                if (mapSet.Contains("map_template"))
-                {
-                    mapSet.Remove("map_template");
-                }
+                mapSet.Remove("m3107");
+                mapSet.Remove("m3107_map"); // Could be loaded as ACV or ACVD, but is still companion to an ACV format map
+                mapSet.Remove("map_template");
+                mapSet.Remove("map_template_map");
+                mapSet.Remove("ingamegaragemenu0320_env");
+                mapSet.Remove("ingamegaragemenu0350_env");
+
+                var mapsSorted = mapSet.ToList();
+                mapsSorted.Sort();
+                FullMapList = mapsSorted;
+                return FullMapList;
             }
             // DS2 has its own structure for msbs, where they are all inside individual folders
             else if (Type == GameType.DarkSoulsIISOTFS)
@@ -444,9 +453,7 @@ public class AssetLocator
             }
 
             Regex mapRegex = new(@"^m\d{2}_\d{2}_\d{2}_\d{2}$");
-            Regex mapRegex2 = new(@"^m\d{4}$");
             List<string> mapList = mapSet.Where(x => mapRegex.IsMatch(x)).ToList();
-            mapList.AddRange(mapSet.Where(x => mapRegex2.IsMatch(x)).ToList());
             mapList.Sort();
             FullMapList = mapList;
             return FullMapList;
@@ -462,11 +469,7 @@ public class AssetLocator
     {
         AssetDescription ad = new();
         ad.AssetPath = null;
-        if (Type == GameType.ArmoredCoreVD && mapid.Length != 5)
-        {
-            return ad;
-        }
-        else if (Type != GameType.ArmoredCoreVD && mapid.Length != 12)
+        if (Type != GameType.ArmoredCoreVD && mapid.Length != 12)
         {
             return ad;
         }
@@ -502,8 +505,36 @@ public class AssetLocator
         //TODO ACVD
         else if (Type == GameType.ArmoredCoreVD)
         {
-            preferredPath = $@"\model\map\{mapid}\{mapid}_map.msb";
-            backupPath = $@"\model\map\{mapid}\{mapid}_map.msb";
+            if (mapid.StartsWith("ch"))
+            {
+                preferredPath = $@"\model\map\ch_mission\{mapid}.msb";
+                backupPath = $@"\model\map\ch_mission\{mapid}.msb";
+            }
+            else if (mapid.StartsWith("ingamegarage"))
+            {
+                preferredPath = $@"\model\map\ingamegarage\{mapid}.msb";
+                backupPath = $@"\model\map\ingamegarage\{mapid}.msb";
+            }
+            else if (mapid.StartsWith("worldtop"))
+            {
+                preferredPath = $@"\model\map\worldtop\{mapid}.msb";
+                backupPath = $@"\model\map\worldtop\{mapid}.msb";
+            }
+            else if (mapid.EndsWith("_env"))
+            {
+                preferredPath = $@"\model\map\ch_env\{mapid}.msb";
+                backupPath = $@"\model\map\ch_env\{mapid}.msb";
+            }
+            else if (mapid.Length > 5)
+            {
+                preferredPath = $@"\model\map\{mapid[..5]}\{mapid}.msb";
+                backupPath = $@"\model\map\{mapid[..5]}\{mapid}.msb";
+            }
+            else
+            {
+                preferredPath = $@"\model\map\{mapid}\{mapid}.msb";
+                backupPath = $@"\model\map\{mapid}\{mapid}.msb";
+            }
         }
         else
         {

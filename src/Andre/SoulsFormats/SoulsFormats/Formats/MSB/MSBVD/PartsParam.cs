@@ -833,6 +833,11 @@ namespace SoulsFormats
             public class UnkConfig5
             {
                 /// <summary>
+                /// Unknown. Usually 0, but seen as 2560 in m3524_mother_test03.msb e3211_0000.
+                /// </summary>
+                public int Unk08 { get; set; }
+
+                /// <summary>
                 /// Unknown. Always "-1".
                 /// </summary>
                 public string Unk { get; set; } = "-1";
@@ -854,7 +859,7 @@ namespace SoulsFormats
                     long pos = br.Position;
                     int offset = br.ReadInt32();
                     br.ReadInt32(); // Size
-                    br.AssertInt32(0);
+                    Unk08 = br.ReadInt32();
 
                     br.Position = pos + offset;
                     br.ReadASCII();
@@ -865,7 +870,7 @@ namespace SoulsFormats
                     long pos = bw.Position;
                     bw.ReserveInt32("PartUnk54Offset");
                     bw.ReserveInt32("PartUnk54Size");
-                    bw.WriteInt32(0);
+                    bw.WriteInt32(Unk08);
 
                     bw.FillInt32("PartUnk54Offset", (int)(bw.Position - pos));
                     bw.WriteASCII(Unk, true);

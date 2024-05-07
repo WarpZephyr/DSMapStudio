@@ -127,7 +127,7 @@ namespace SoulsFormats
                 br.AssertPattern(104, 0);
 
                 br.Position = start + nameOffset;
-                Name = br.ReadShiftJIS(nameOffset);
+                Name = br.ReadShiftJIS();
             }
 
             internal override void Write(BinaryWriterEx bw, int id)

@@ -1,6 +1,7 @@
 ﻿using SoulsFormats;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace StudioCore.Tests;
@@ -40,33 +41,42 @@ public static class MSBReadWrite
         foreach (var msb in msbs)
         {
             AssetDescription path = locator.GetMapMSB(msb);
-            var bytes = File.ReadAllBytes(path.AssetPath);
-            MSBVD m = MSBVD.Read(bytes);
-            var written = m.Write(DCX.Type.None);
-            if (!bytes.AsMemory().Span.SequenceEqual(written))
+#if MSB_READ_WRITE_LOG_ON_CRASH
+            try
             {
-                var basepath = Path.GetDirectoryName(path.AssetPath);
-                if (!Directory.Exists($@"{basepath}\mismatches"))
+#endif
+                var bytes = File.ReadAllBytes(path.AssetPath);
+                MSBVD m = MSBVD.Read(bytes);
+                var written = m.Write(DCX.Type.None);
+                var basepath = Path.GetDirectoryName(path.AssetPath).Replace("map", "map_test_mismatches");
+                if (!bytes.AsMemory().Span.SequenceEqual(written))
                 {
-                    Directory.CreateDirectory($@"{basepath}\mismatches");
+                    Directory.CreateDirectory(basepath);
+                    File.WriteAllBytes($@"{basepath}\{Path.GetFileNameWithoutExtension(path.AssetPath)}",
+                        written);
                 }
-
-                Console.WriteLine($@"Mismatch: {msb}");
-                File.WriteAllBytes($@"{basepath}\mismatches\{Path.GetFileNameWithoutExtension(path.AssetPath)}",
-                    written);
-            }
-            else
-            {
-                var basepath = Path.GetDirectoryName(path.AssetPath);
-                if (Directory.Exists($@"{basepath}\mismatches"))
+                else
                 {
-                    if (File.Exists($@"{basepath}\mismatches\{Path.GetFileNameWithoutExtension(path.AssetPath)}"))
+                    if (Directory.Exists(basepath))
                     {
-                        File.Delete($@"{basepath}\mismatches\{Path.GetFileNameWithoutExtension(path.AssetPath)}");
+                        if (File.Exists($@"{basepath}\{Path.GetFileNameWithoutExtension(path.AssetPath)}"))
+                        {
+                            File.Delete($@"{basepath}\{Path.GetFileNameWithoutExtension(path.AssetPath)}");
+                        }
+
+                        if (Directory.GetFiles(basepath).Length == 0)
+                        {
+                            Directory.Delete(basepath);
+                        }
                     }
-                    Directory.Delete($@"{basepath}\mismatches");
                 }
+#if MSB_READ_WRITE_LOG_ON_CRASH
+        }
+            catch (Exception e)
+            {
+                TaskLogs.AddLog($"Failed testing ACVD MSB: {path.AssetPath}\n{e}", Microsoft.Extensions.Logging.LogLevel.Debug);
             }
+#endif
         }
 
         return true;
