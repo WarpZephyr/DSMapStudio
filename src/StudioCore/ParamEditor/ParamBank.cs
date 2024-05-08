@@ -180,6 +180,12 @@ public class ParamBank
                 $"Cannot locate param files for {type}.\nThis game must be unpacked before modding, please use UXM Selective Unpacker.");
         }
 
+        if (type is GameType.ArmoredCoreVD)
+        {
+            return new FileNotFoundException(
+                $"Cannot locate param files for {type}.\nThis game must be unpacked before modding, please use DVDUnbinder.");
+        }
+
         if (type is GameType.DemonsSouls or GameType.Bloodborne)
         {
             return new FileNotFoundException(
@@ -1115,6 +1121,11 @@ public class ParamBank
                 if (locator.Type == GameType.ArmoredCoreVI)
                 {
                     PrimaryBank.LoadParamsAC6();
+                }
+
+                if (locator.Type == GameType.ArmoredCoreVD)
+                {
+                    
                 }
 
                 PrimaryBank.ClearParamDiffCaches();

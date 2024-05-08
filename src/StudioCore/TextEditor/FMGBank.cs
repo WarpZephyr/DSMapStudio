@@ -747,15 +747,14 @@ public static partial class FMGBank
     {
         if (LanguageFolder == "")
         {
-            LanguageFolder = @$"{AssetLocator.GameRootDirectory}\lang\en";
+            LanguageFolder = "en";
         }
 
-        var files = Directory.EnumerateFiles(LanguageFolder, "*.fmg", SearchOption.AllDirectories);
+        var files = Directory.EnumerateFiles($@"{AssetLocator.GameRootDirectory}\lang\{LanguageFolder}", "*.fmg", SearchOption.AllDirectories);
         FmgInfoBank = new List<FMGInfo>();
         foreach (var file in files)
         {
-            // TODO ACVD
-            var modfile = $@"{LanguageFolder}\{Path.GetFileName(file)}".Replace(AssetLocator.GameRootDirectory, AssetLocator.GameModDirectory);
+            var modfile = $@"{AssetLocator.GameRootDirectory}\lang\{LanguageFolder}\{Path.GetFileName(file)}";
             if (AssetLocator.GameModDirectory != null && File.Exists(modfile))
             {
                 SetFMGInfoDS2(modfile);
@@ -1196,6 +1195,15 @@ public static partial class FMGBank
         }
     }
 
+    private static void SaveFMGsACVD()
+    {
+        foreach (FMGInfo info in FmgInfoBank)
+        {
+            Utils.WriteWithBackup(AssetLocator.GameRootDirectory, AssetLocator.GameModDirectory,
+                $@"lang\{LanguageFolder}\{info.Name}.fmg", info.Fmg);
+        }
+    }
+
     public static void SaveFMGs()
     {
         try
@@ -1213,6 +1221,14 @@ public static partial class FMGBank
             if (AssetLocator.Type == GameType.DarkSoulsIISOTFS)
             {
                 SaveFMGsDS2();
+                TaskLogs.AddLog("Saved FMG text");
+                return;
+            }
+
+            // TODO ACVD
+            if (AssetLocator.Type == GameType.ArmoredCoreVD)
+            {
+                SaveFMGsACVD();
                 TaskLogs.AddLog("Saved FMG text");
                 return;
             }
