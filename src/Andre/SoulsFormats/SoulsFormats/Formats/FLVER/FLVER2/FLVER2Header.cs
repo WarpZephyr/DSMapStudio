@@ -38,6 +38,11 @@ namespace SoulsFormats
         public bool Unk4A { get; set; }
 
         /// <summary>
+        /// Unknown.
+        /// </summary>
+        public bool Unk4B { get; set; }
+
+        /// <summary>
         /// Unknown; I believe this is the primitive restart constant, but I'm not certain.
         /// </summary>
         public int Unk4C { get; set; }

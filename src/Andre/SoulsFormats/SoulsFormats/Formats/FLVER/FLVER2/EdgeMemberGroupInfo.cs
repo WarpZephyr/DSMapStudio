@@ -23,7 +23,7 @@ namespace SoulsFormats
             /// <param name="br">A <see cref="BinaryReaderEx"/>.</param>
             /// <param name="faceIndexes">An array to place decompressed face indexes into.</param>
             /// <exception cref="InvalidDataException">The member index buffer length was invalid.</exception>
-            internal EdgeMemberInfoGroup(BinaryReaderEx br, IList<int> faceIndexes)
+            internal EdgeMemberInfoGroup(BinaryReaderEx br, List<int> faceIndexes)
             {
                 long start = br.Position;
                 short memberCount = br.ReadInt16();
@@ -49,7 +49,7 @@ namespace SoulsFormats
                     var indexes = this[i].GetFaceIndexes(br, start);
                     for (int j = 0; j < indexes.Count; j++)
                     {
-                        faceIndexes[i] = indexes[i];
+                        faceIndexes.Add(indexes[i]);
                     }
                 }
             }

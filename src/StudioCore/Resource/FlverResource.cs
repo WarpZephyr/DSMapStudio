@@ -79,7 +79,7 @@ public class FlverResource : IResource, IDisposable
         }
         else
         {
-            if (al == AccessLevel.AccessGPUOptimizedOnly && type != GameType.DarkSoulsRemastered &&
+            if (al == AccessLevel.AccessGPUOptimizedOnly && type != GameType.ArmoredCoreVD && type != GameType.DarkSoulsRemastered &&
                 type != GameType.DarkSoulsPTDE)
             {
                 BinaryReaderEx br = new(false, bytes);
@@ -109,7 +109,7 @@ public class FlverResource : IResource, IDisposable
         }
         else
         {
-            if (al == AccessLevel.AccessGPUOptimizedOnly && type != GameType.DarkSoulsRemastered &&
+            if (al == AccessLevel.AccessGPUOptimizedOnly && type != GameType.ArmoredCoreVD && type != GameType.DarkSoulsRemastered &&
                 type != GameType.DarkSoulsPTDE)
             {
                 using var file =
@@ -1394,14 +1394,20 @@ public class FlverResource : IResource, IDisposable
         dest.MeshFacesets = new List<FlverSubmesh.FlverSubmeshFaceSet>();
         List<FLVER2.FaceSet>? facesets = mesh.FaceSets;
 
-        var is32bit = Flver.Header.Version > 0x20005 && mesh.VertexCount > 65535;
-        var indicesTotal = 0;
+        // TODO EDGE
+        bool is32bit = Flver.Header.Version > 0x20005 && mesh.VertexCount > 65535;
+        bool isEdgeCompressed = false;
+        int indicesTotal = 0;
         Span<ushort> fs16 = null;
         Span<int> fs32 = null;
         foreach (FLVER2.FaceSet? faceset in facesets)
         {
             indicesTotal += faceset.Indices.Length;
+            isEdgeCompressed = isEdgeCompressed || (faceset.Flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0;
         }
+
+        // TODO EDGE
+        is32bit = is32bit && !isEdgeCompressed;
 
         var vbuffersize = (uint)mesh.VertexCount * vSize;
         dest.GeomBuffer = Renderer.GeometryBufferAllocator.Allocate(vbuffersize,
@@ -1523,7 +1529,7 @@ public class FlverResource : IResource, IDisposable
                 mesh.VertexBuffers.SelectMany(b => Flver.BufferLayouts[b.LayoutIndex]);
             dest.UseNormalWBoneTransform = elements.Any(e =>
                 e.Semantic == FLVER.LayoutSemantic.Normal &&
-                (e.Type == FLVER.LayoutType.Byte4B || e.Type == FLVER.LayoutType.Byte4E));
+                (e.Type == FLVER.LayoutType.Byte4B || e.Type == FLVER.LayoutType.Byte4E || e.Type == FLVER.LayoutType.Short2toFloat2)); // TODO ACVD
             if (dest.UseNormalWBoneTransform)
             {
                 dest.Material.SetNormalWBoneTransform();
@@ -1619,7 +1625,8 @@ public class FlverResource : IResource, IDisposable
                 layoutmembers[i] = new FlverBufferLayoutMember(br);
                 if (layoutmembers[i].semantic == FLVER.LayoutSemantic.Normal &&
                     (layoutmembers[i].type == FLVER.LayoutType.Byte4B ||
-                     layoutmembers[i].type == FLVER.LayoutType.Byte4E))
+                     layoutmembers[i].type == FLVER.LayoutType.Byte4E ||
+                     layoutmembers[i].type == FLVER.LayoutType.Short2toFloat2)) // TODO ACVD
                 {
                     dest.UseNormalWBoneTransform = true;
                 }

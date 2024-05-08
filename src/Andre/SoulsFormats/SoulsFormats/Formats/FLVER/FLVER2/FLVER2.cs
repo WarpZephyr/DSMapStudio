@@ -167,7 +167,7 @@ namespace SoulsFormats
             int vertexIndicesSize = br.AssertByte([0, 8, 16, 32]);
             Header.Unicode = br.ReadBoolean();
             Header.Unk4A = br.ReadBoolean();
-            br.AssertByte(0);
+            Header.Unk4B = br.ReadBoolean();
 
             Header.Unk4C = br.ReadInt32();
 
@@ -242,10 +242,12 @@ namespace SoulsFormats
                 mesh.TakeVertexBuffers(vertexBufferDict, BufferLayouts);
                 mesh.ReadVertices(br, dataOffset, BufferLayouts, Header, Cache);
             }
-            if (faceSetDict.Count != 0)
-                throw new NotSupportedException("Orphaned face sets found.");
-            if (vertexBufferDict.Count != 0)
-                throw new NotSupportedException("Orphaned vertex buffers found.");
+
+            // TODO ACVD
+            //if (faceSetDict.Count != 0)
+            //    throw new NotSupportedException("Orphaned face sets found.");
+            //if (vertexBufferDict.Count != 0)
+            //    throw new NotSupportedException("Orphaned vertex buffers found.");
         }
 
         /// <summary>

@@ -109,11 +109,13 @@ namespace SoulsFormats
                 FaceSets = new List<FaceSet>(faceSetIndices.Length);
                 foreach (int i in faceSetIndices)
                 {
-                    if (!faceSetDict.ContainsKey(i))
-                        throw new NotSupportedException("Face set not found or already taken: " + i);
+                    if (!faceSetDict.TryGetValue(i, out FaceSet value))
+                        throw new NotSupportedException("Face set not found: " + i);
 
-                    FaceSets.Add(faceSetDict[i]);
-                    faceSetDict.Remove(i);
+                    FaceSets.Add(value);
+
+                    // TODO ACVD
+                    //faceSetDict.Remove(i);
                 }
                 faceSetIndices = null;
             }
@@ -123,11 +125,13 @@ namespace SoulsFormats
                 VertexBuffers = new List<VertexBuffer>(vertexBufferIndices.Length);
                 foreach (int i in vertexBufferIndices)
                 {
-                    if (!vertexBufferDict.ContainsKey(i))
-                        throw new NotSupportedException("Vertex buffer not found or already taken: " + i);
+                    if (!vertexBufferDict.TryGetValue(i, out VertexBuffer value))
+                        throw new NotSupportedException("Vertex buffer not found: " + i);
 
-                    VertexBuffers.Add(vertexBufferDict[i]);
-                    vertexBufferDict.Remove(i);
+                    VertexBuffers.Add(value);
+
+                    // TODO ACVD
+                    //vertexBufferDict.Remove(i);
                 }
                 vertexBufferIndices = null;
 

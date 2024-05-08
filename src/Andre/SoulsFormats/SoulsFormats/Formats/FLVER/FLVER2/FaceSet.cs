@@ -132,8 +132,9 @@ namespace SoulsFormats
 
                     br.StepIn(dataOffset + indicesOffset);
                     {
-                        Indices = new int[indexCount];
-                        EdgeMembers = new EdgeMemberInfoGroup(br, Indices);
+                        List<int> indices = [];
+                        EdgeMembers = new EdgeMemberInfoGroup(br, indices);
+                        Indices = [.. indices];
                     }
                     br.StepOut();
                 }
@@ -151,7 +152,6 @@ namespace SoulsFormats
                         Indices[i] = br.ReadUInt16();
                     }
                     br.StepOut();
-
                 }
                 else
                 {
