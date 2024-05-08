@@ -394,6 +394,11 @@ namespace SoulsFormats
                             //Tangents.Add(ReadByteNormXYZW(br));
                             AddTangent(ReadByteNormXYZW(br));
                         }
+                        else if (member.Type == LayoutType.Byte4D)
+                        {
+                            //Tangents.Add(ReadByteNormXYZW(br));
+                            AddTangent(ReadByteNormXYZW(br));
+                        }
                         else if (member.Type == LayoutType.Short4toFloat4A)
                         {
                             //Tangents.Add(ReadShortNormXYZW(br));
@@ -711,6 +716,10 @@ namespace SoulsFormats
                             WriteByteNormXYZW(bw, tangent);
                         }
                         else if (member.Type == LayoutType.Byte4C)
+                        {
+                            WriteByteNormXYZW(bw, tangent);
+                        }
+                        else if (member.Type == LayoutType.Byte4D)
                         {
                             WriteByteNormXYZW(bw, tangent);
                         }

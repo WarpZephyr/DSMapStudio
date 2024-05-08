@@ -790,6 +790,10 @@ public class FlverResource : IResource, IDisposable
         {
             tan = FLVER.Vertex.ReadByteNormXYZW(br);
         }
+        else if (type == FLVER.LayoutType.Byte4D)
+        {
+            tan = FLVER.Vertex.ReadByteNormXYZW(br);
+        }
         else if (type == FLVER.LayoutType.Short4toFloat4A)
         {
             tan = FLVER.Vertex.ReadByteNormXYZW(br);
@@ -842,6 +846,7 @@ public class FlverResource : IResource, IDisposable
             case FLVER.LayoutType.Byte4B:
             case FLVER.LayoutType.Short2toFloat2:
             case FLVER.LayoutType.Byte4C:
+            case FLVER.LayoutType.Byte4D:
             case FLVER.LayoutType.UV:
             case FLVER.LayoutType.Byte4E:
             case FLVER.LayoutType.Unknown:
@@ -1581,6 +1586,7 @@ public class FlverResource : IResource, IDisposable
         dest.PickingVertices = Marshal.AllocHGlobal(vertexCount * sizeof(Vector3));
         Span<Vector3> pvhandle = new(dest.PickingVertices.ToPointer(), vertexCount);
 
+        // TODO EDGE
         var is32bit = version > 0x20005 && vertexCount > 65535;
         bool is16bit = false;
         bool isEdgeCompressed = false;
@@ -1592,6 +1598,9 @@ public class FlverResource : IResource, IDisposable
             is16bit = is16bit || facesets[fsidx].indexSize == 16;
             isEdgeCompressed = isEdgeCompressed || (facesets[fsidx].flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0;
         }
+
+        // TODO EDGE
+        is32bit = is32bit && !isEdgeCompressed;
 
         var vbuffersize = (uint)vertexCount * vSize;
         dest.GeomBuffer = Renderer.GeometryBufferAllocator.Allocate(vbuffersize,
@@ -1893,7 +1902,7 @@ public class FlverResource : IResource, IDisposable
         br.BigEndian = false;
         br.AssertASCII("FLVER\0");
         br.BigEndian = br.AssertASCII(["L\0", "B\0"]) == "B\0";
-        var version = br.AssertInt32([0x20005, 0x20009, 0x2000C, 0x2000D, 0x2000E, 0x2000F, 0x20010, 0x20013,
+        var version = br.AssertInt32([0x20005, 0x20007, 0x20009, 0x2000C, 0x2000D, 0x2000E, 0x2000F, 0x20010, 0x20013,
             0x20014, 0x20016, 0x2001A, 0x2001B]);
         var dataOffset = br.ReadUInt32();
         br.ReadInt32(); // Data length
@@ -2295,7 +2304,10 @@ public class FlverResource : IResource, IDisposable
 
         public FlverMesh(BinaryReaderEx br)
         {
-            dynamic = br.AssertInt32([0, 1]);
+            dynamic = br.AssertByte([0, 1]);
+            br.AssertByte(0);
+            br.AssertByte(0);
+            br.AssertByte(0);
             materialIndex = br.ReadInt32();
             br.AssertInt32(0);
             br.AssertInt32(0);
@@ -2329,7 +2341,9 @@ public class FlverResource : IResource, IDisposable
             indexCount = br.ReadInt32();
             indicesOffset = br.ReadUInt32() + dataOffset;
             indexSize = 0;
-            if (version > 0x20005)
+
+            // Was version > 0x20005, but 0x20007 did not have this, and the template for FLVER2 showed version >= 0x20009
+            if (version >= 0x20009)
             {
                 br.ReadInt32(); // Indices length
                 br.AssertInt32(0);

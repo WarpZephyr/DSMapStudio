@@ -168,11 +168,11 @@ namespace SoulsFormats
                 uint num2Bytes = num2Bits / 8;
 
                 // Multiply the number of n bit indexes by the number of bits per index to get the number of n bits
-                // It must be padded to 8 bits, which I think adding 7 is supposed to do? Seen that in a python script.
-                uint numNBits = (uint)(numIndexesInNBitStream * bitsPerIndex) + 7;
+                uint numNBits = (uint)(numIndexesInNBitStream * bitsPerIndex);
 
                 // There are 8 bits per byte, so divide the number of n bits by 8.
-                uint numNBytes = numNBits / 8;
+                // Ensure the bit count is padded to 8 bits since they must be padded to bytes.
+                uint numNBytes = (numNBits + (8 - (numNBits % 8))) / 8;
 
                 // Read raw bytes
                 var bit1Bytes = br.ReadBytes(num1Bytes);
@@ -182,7 +182,17 @@ namespace SoulsFormats
                 // Read actual data from bytes (Needs better implementation later)
                 var bit1Table = bit1Bytes.ToBinary().FromBinary(1);
                 var bit2Table = bit2Bytes.ToBinary().FromBinary(2);
-                var deltaIndexes = nbitBytes.ToBinary().FromBinaryToUInt16(bitsPerIndex);
+
+                // If bits per index is 0, store 0s as the delta indexes?
+                ushort[] deltaIndexes;
+                if (bitsPerIndex == 0)
+                {
+                    deltaIndexes = new ushort[numIndexesInNBitStream];
+                }
+                else
+                {
+                    deltaIndexes = nbitBytes.ToBinary().FromBinaryToUInt16(bitsPerIndex);
+                }
 
                 // Decompress delta indexes in place.
                 DecompressDeltaIndexes(deltaIndexes, baseDelta);

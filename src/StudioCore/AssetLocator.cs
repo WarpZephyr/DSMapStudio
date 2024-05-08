@@ -192,9 +192,16 @@ public class AssetLocator
             else if (File.Exists(sfoPath))
             {
                 PARAMSFO sfo = PARAMSFO.Read(sfoPath);
-                if (sfo.Parameters["TITLE"].Data.StartsWith("Armored Core Verdict Day"))
+                string title = sfo.Parameters["TITLE"].Data;
+                switch (title)
                 {
-                    type = GameType.ArmoredCoreVD;
+                    case "Armored Core Verdict Day":
+                        type = GameType.ArmoredCoreVD;
+                        break;
+                    case "Demon's Souls":
+                    default:
+                        type = GameType.DemonsSouls;
+                        break;
                 }
             }
             else

@@ -1,7 +1,6 @@
 ﻿using SoulsFormats;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 
 namespace StudioCore.Tests;
@@ -41,7 +40,7 @@ public static class MSBReadWrite
         foreach (var msb in msbs)
         {
             AssetDescription path = locator.GetMapMSB(msb);
-#if MSB_READ_WRITE_LOG_ON_CRASH
+#if MSB_READ_WRITE_TEST_LOG_ON_CRASH
             try
             {
 #endif
@@ -70,7 +69,7 @@ public static class MSBReadWrite
                         }
                     }
                 }
-#if MSB_READ_WRITE_LOG_ON_CRASH
+#if MSB_READ_WRITE_TEST_LOG_ON_CRASH
         }
             catch (Exception e)
             {
