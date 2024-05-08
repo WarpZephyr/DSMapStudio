@@ -713,6 +713,17 @@ public static partial class FMGBank
                     return;
                 }
 
+                if (AssetLocator.Type == GameType.ArmoredCoreVD)
+                {
+                    if (ReloadACVDFMGs())
+                    {
+                        IsLoading = false;
+                        IsLoaded = true;
+                    }
+
+                    return;
+                }
+
                 SetDefaultLanguagePath();
 
                 AssetDescription itemMsgPath = AssetLocator.GetItemMsgbnd(LanguageFolder);
@@ -730,6 +741,34 @@ public static partial class FMGBank
                 IsLoaded = true;
                 IsLoading = false;
             }));
+    }
+
+    private static bool ReloadACVDFMGs()
+    {
+        if (LanguageFolder == "")
+        {
+            LanguageFolder = @$"{AssetLocator.GameRootDirectory}\lang\en";
+        }
+
+        var files = Directory.EnumerateFiles(LanguageFolder, "*.fmg", SearchOption.AllDirectories);
+        FmgInfoBank = new List<FMGInfo>();
+        foreach (var file in files)
+        {
+            // TODO ACVD
+            var modfile = $@"{LanguageFolder}\{Path.GetFileName(file)}".Replace(AssetLocator.GameRootDirectory, AssetLocator.GameModDirectory);
+            if (AssetLocator.GameModDirectory != null && File.Exists(modfile))
+            {
+                SetFMGInfoDS2(modfile);
+            }
+            else
+            {
+                SetFMGInfoDS2(file);
+            }
+        }
+
+        FmgInfoBank = [.. FmgInfoBank.OrderBy(e => e.Name)];
+        HandleDuplicateEntries();
+        return true;
     }
 
     private static bool ReloadDS2FMGs()

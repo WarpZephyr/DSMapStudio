@@ -1,4 +1,5 @@
-﻿using SoulsFormats;
+﻿using Microsoft.Toolkit.HighPerformance;
+using SoulsFormats;
 using SoulsFormats.Other.PlayStation3;
 using StudioCore.Editor;
 using System;

@@ -25,6 +25,11 @@ namespace SoulsFormats
         public bool BigEndian  { get; set; }
 
         /// <summary>
+        /// Whether or not the FMG uses UTF16 encoding.
+        /// </summary>
+        public bool Unicode { get; set; }
+
+        /// <summary>
         /// Creates an empty FMG configured for DS1/DS2.
         /// </summary>
         public FMG()
@@ -58,7 +63,7 @@ namespace SoulsFormats
             bool wide = Version == FMGVersion.DarkSouls3;
 
             int fileSize = br.ReadInt32();
-            br.AssertByte(1);
+            Unicode = br.ReadBoolean();
             br.AssertByte((byte)(Version == FMGVersion.DemonsSouls ? 0xFF : 0x00));
             br.AssertByte(0);
             br.AssertByte(0);
@@ -100,7 +105,18 @@ namespace SoulsFormats
                             stringOffset = br.ReadInt32();
 
                         int id = firstID + j;
-                        string text = stringOffset != 0 ? br.GetUTF16(stringOffset) : null;
+                        string text = null;
+                        if (stringOffset > 0)
+                        {
+                            if (Unicode)
+                            {
+                                text = br.GetUTF16(stringOffset);
+                            }
+                            else
+                            {
+                                text = br.GetShiftJIS(stringOffset);
+                            }
+                        }
                         Entries.Add(new Entry(id, text));
                     }
                 }
@@ -122,7 +138,7 @@ namespace SoulsFormats
             bw.WriteByte(0);
 
             bw.ReserveInt32("FileSize");
-            bw.WriteByte(1);
+            bw.WriteBoolean(Unicode);
             bw.WriteByte((byte)(Version == FMGVersion.DemonsSouls ? 0xFF : 0x00));
             bw.WriteByte(0);
             bw.WriteByte(0);
@@ -182,7 +198,16 @@ namespace SoulsFormats
                     bw.FillInt32($"StringOffset{i}", text == null ? 0 : (int)bw.Position);
 
                 if (text != null)
-                    bw.WriteUTF16(Entries[i].Text, true);
+                {
+                    if (Unicode)
+                    {
+                        bw.WriteUTF16(Entries[i].Text, true);
+                    }
+                    else
+                    {
+                        bw.WriteShiftJIS(Entries[i].Text, true);
+                    }
+                }
             }
 
             bw.FillInt32("FileSize", (int)bw.Position);
