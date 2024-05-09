@@ -1123,9 +1123,24 @@ public class ParamBank
                     PrimaryBank.LoadParamsAC6();
                 }
 
+                if (locator.Type == GameType.ArmoredCoreIV)
+                {
+                    // TODO AC4
+                }
+
+                if (locator.Type == GameType.ArmoredCoreFA)
+                {
+                    // TODO ACFA
+                }
+
+                if (locator.Type == GameType.ArmoredCoreV)
+                {
+                    // TODO ACV
+                }
+
                 if (locator.Type == GameType.ArmoredCoreVD)
                 {
-                    
+                    // TODO ACVD
                 }
 
                 PrimaryBank.ClearParamDiffCaches();

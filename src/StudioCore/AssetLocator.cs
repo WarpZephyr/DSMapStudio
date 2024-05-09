@@ -866,10 +866,16 @@ public class AssetLocator
                 return "SDT";
             case GameType.EldenRing:
                 return "ER";
-            case GameType.ArmoredCoreVD:
-                return "ACVD";
             case GameType.ArmoredCoreVI:
                 return "AC6";
+            case GameType.ArmoredCoreIV:
+                return "AC4";
+            case GameType.ArmoredCoreFA:
+                return "ACFA";
+            case GameType.ArmoredCoreV:
+                return "ACV";
+            case GameType.ArmoredCoreVD:
+                return "ACVD";
             default:
                 throw new Exception("Game type not set");
         }

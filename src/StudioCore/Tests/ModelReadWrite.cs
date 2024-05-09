@@ -1,5 +1,4 @@
 ﻿using DotNext.IO.MemoryMappedFiles;
-using Org.BouncyCastle.Utilities;
 using SoulsFormats;
 using StudioCore.Resource;
 using System.IO;
