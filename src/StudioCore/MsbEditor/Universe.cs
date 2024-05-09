@@ -319,32 +319,38 @@ public class Universe
         var amapid = _assetLocator.GetAssetMapID(map.Name);
 
         ResourceManager.ResourceJobBuilder job = ResourceManager.CreateNewJob(@"Loading mesh");
-        if (modelname.ToLower().StartsWith("m"))
+        if (modelname.StartsWith("m", StringComparison.CurrentCultureIgnoreCase))
         {
             loadflver = true;
             asset = _assetLocator.GetMapModel(amapid, _assetLocator.MapModelNameToAssetName(amapid, modelname));
             filt = RenderFilter.MapPiece;
         }
-        else if (modelname.ToLower().StartsWith("c"))
+        else if (modelname.StartsWith("c", StringComparison.CurrentCultureIgnoreCase))
         {
             loadflver = true;
             asset = _assetLocator.GetChrModel(modelname);
             filt = RenderFilter.Character;
         }
-        else if (modelname.ToLower().StartsWith("o") || modelname.StartsWith("AEG"))
+        else if (modelname.StartsWith("e", StringComparison.CurrentCultureIgnoreCase))
+        {
+            loadflver = true;
+            asset = _assetLocator.GetEneModel(modelname);
+            filt = RenderFilter.Character;
+        }
+        else if (modelname.StartsWith("o", StringComparison.CurrentCultureIgnoreCase) || modelname.StartsWith("AEG"))
         {
             loadflver = true;
             asset = _assetLocator.GetObjModel(modelname);
             filt = RenderFilter.Object;
         }
-        else if (modelname.ToLower().StartsWith("h"))
+        else if (modelname.StartsWith("h", StringComparison.CurrentCultureIgnoreCase))
         {
             loadcol = true;
             asset = _assetLocator.GetMapCollisionModel(amapid,
                 _assetLocator.MapModelNameToAssetName(amapid, modelname), false);
             filt = RenderFilter.Collision;
         }
-        else if (modelname.ToLower().StartsWith("n"))
+        else if (modelname.StartsWith("n", StringComparison.CurrentCultureIgnoreCase))
         {
             loadnav = true;
             asset = _assetLocator.GetMapNVMModel(amapid, _assetLocator.MapModelNameToAssetName(amapid, modelname));
@@ -799,6 +805,12 @@ public class Universe
                     {
                         chrsToLoad.Add(tasset);
                     }
+                }
+                else if (model.Name.StartsWith('e'))
+                {
+                    asset = _assetLocator.GetEneModel(model.Name);
+                    chrsToLoad.Add(asset);
+                    // TODO ACVD ene textures
                 }
                 else if (model.Name.StartsWith('o'))
                 {

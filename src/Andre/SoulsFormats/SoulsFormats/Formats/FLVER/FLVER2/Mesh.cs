@@ -154,6 +154,8 @@ namespace SoulsFormats
                     }
                 }
 
+                // TODO ACVD
+                /*
                 for (int i = 0; i < VertexBuffers.Count; i++)
                 {
                     VertexBuffer buffer = VertexBuffers[i];
@@ -161,6 +163,7 @@ namespace SoulsFormats
                     if ((buffer.BufferIndex & ~0x60000000) != i)
                         throw new FormatException("Unexpected vertex buffer index.");
                 }
+                */
             }
 
             internal void ReadVertices(BinaryReaderEx br, int dataOffset, List<BufferLayout> layouts, FLVER2Header header, FlverCache cache)

@@ -79,7 +79,7 @@ public class FlverResource : IResource, IDisposable
         }
         else
         {
-            if (al == AccessLevel.AccessGPUOptimizedOnly && type != GameType.ArmoredCoreVD && type != GameType.DarkSoulsRemastered &&
+            if (al == AccessLevel.AccessGPUOptimizedOnly && type != GameType.DarkSoulsRemastered &&
                 type != GameType.DarkSoulsPTDE)
             {
                 BinaryReaderEx br = new(false, bytes);
@@ -109,7 +109,7 @@ public class FlverResource : IResource, IDisposable
         }
         else
         {
-            if (al == AccessLevel.AccessGPUOptimizedOnly && type != GameType.ArmoredCoreVD && type != GameType.DarkSoulsRemastered &&
+            if (al == AccessLevel.AccessGPUOptimizedOnly && type != GameType.DarkSoulsRemastered &&
                 type != GameType.DarkSoulsPTDE)
             {
                 using var file =
@@ -1594,19 +1594,28 @@ public class FlverResource : IResource, IDisposable
 
         // TODO EDGE
         var is32bit = version > 0x20005 && vertexCount > 65535;
-        bool is16bit = false;
         bool isEdgeCompressed = false;
         var indicesTotal = 0;
         foreach (var fsidx in facesetIndices)
         {
-            indicesTotal += facesets[fsidx].indexCount;
-            is32bit = is32bit || facesets[fsidx].indexSize > 16;
-            is16bit = is16bit || facesets[fsidx].indexSize == 16;
-            isEdgeCompressed = isEdgeCompressed || (facesets[fsidx].flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0;
-        }
+            is32bit = (is32bit || facesets[fsidx].indexSize > 16) && !isEdgeCompressed;
+            bool edgeCompressed = (facesets[fsidx].flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0;
+            isEdgeCompressed = isEdgeCompressed || edgeCompressed;
 
-        // TODO EDGE
-        is32bit = is32bit && !isEdgeCompressed;
+            // TODO EDGE
+            // Get the true index count by going to each edge member and grabbing its EdgeGeomSpuConfigInfo numIndexes.
+            if (edgeCompressed)
+            {
+                FlverFaceset faceset = facesets[fsidx];
+                br.StepIn(faceset.indicesOffset);
+                indicesTotal += GetEdgeMembersIndexCount(br);
+                br.StepOut();
+            }
+            else
+            {
+                indicesTotal += facesets[fsidx].indexCount;
+            }
+        }
 
         var vbuffersize = (uint)vertexCount * vSize;
         dest.GeomBuffer = Renderer.GeometryBufferAllocator.Allocate(vbuffersize,
@@ -1624,7 +1633,8 @@ public class FlverResource : IResource, IDisposable
             {
                 layoutmembers[i] = new FlverBufferLayoutMember(br);
                 if (layoutmembers[i].semantic == FLVER.LayoutSemantic.Normal &&
-                    (layoutmembers[i].type == FLVER.LayoutType.Byte4B ||
+                    (layoutmembers[i].type == FLVER.LayoutType.Byte4A ||
+                     layoutmembers[i].type == FLVER.LayoutType.Byte4B ||
                      layoutmembers[i].type == FLVER.LayoutType.Byte4E ||
                      layoutmembers[i].type == FLVER.LayoutType.Short2toFloat2)) // TODO ACVD
                 {
@@ -1654,21 +1664,16 @@ public class FlverResource : IResource, IDisposable
 
         Span<ushort> fs16 = null;
         Span<int> fs32 = null;
-        Span<byte> edgeBuffer = null;
         if (is32bit)
         {
             fs32 = new Span<int>(meshIndices.ToPointer(), indicesTotal);
         }
-        else if (is16bit)
+        else
         {
             fs16 = new Span<ushort>(meshIndices.ToPointer(), indicesTotal);
         }
 
-        // TODO EDGE
-        List<ushort> decompressedEdgeIndexes = new List<ushort>();
-        int previousCount = 0;
-
-        var idxoffset = 0;
+        int idxoffset = 0;
         foreach (var fsidx in facesetIndices)
         {
             FlverFaceset faceset = facesets[fsidx];
@@ -1705,68 +1710,50 @@ public class FlverResource : IResource, IDisposable
                 newFaceSet.IsMotionBlur = true;
             }
 
-            br.StepIn(faceset.indicesOffset);
+            // TODO EDGE
+            // Prevent repeating reading edge members again
             if ((faceset.flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0)
             {
-                // TODO EDGE
-                FLVER2.EdgeMemberInfoGroup.DecompressIndexes(br, decompressedEdgeIndexes);
-                newFaceSet.IndexCount = decompressedEdgeIndexes.Count - previousCount;
-                previousCount = decompressedEdgeIndexes.Count;
+                br.StepIn(faceset.indicesOffset);
+                newFaceSet.IndexCount = GetDecompressedEdgeIndexes(br, fs16, ref idxoffset);
+                br.StepOut();
+
+                dest.MeshFacesets.Add(newFaceSet);
+                continue;
             }
-            else
+
+            br.StepIn(faceset.indicesOffset);
+            for (var i = 0; i < faceset.indexCount; i++)
             {
-                for (var i = 0; i < faceset.indexCount; i++)
+                if (faceset.indexSize == 16)
                 {
-                    if (faceset.indexSize == 16)
+                    var idx = br.ReadUInt16();
+                    if (is32bit)
                     {
-                        var idx = br.ReadUInt16();
-                        if (is32bit)
-                        {
-                            fs32[newFaceSet.IndexOffset + i] = idx == 0xFFFF ? -1 : idx;
-                        }
-                        else
-                        {
-                            fs16[newFaceSet.IndexOffset + i] = idx;
-                        }
+                        fs32[newFaceSet.IndexOffset + i] = idx == 0xFFFF ? -1 : idx;
                     }
                     else
                     {
-                        var idx = br.ReadInt32();
-                        if (idx > vertexCount)
-                        {
-                            fs32[newFaceSet.IndexOffset + i] = -1;
-                        }
-                        else
-                        {
-                            fs32[newFaceSet.IndexOffset + i] = idx;
-                        }
+                        fs16[newFaceSet.IndexOffset + i] = idx;
+                    }
+                }
+                else
+                {
+                    var idx = br.ReadInt32();
+                    if (idx > vertexCount)
+                    {
+                        fs32[newFaceSet.IndexOffset + i] = -1;
+                    }
+                    else
+                    {
+                        fs32[newFaceSet.IndexOffset + i] = idx;
                     }
                 }
             }
             br.StepOut();
 
             dest.MeshFacesets.Add(newFaceSet);
-            idxoffset += newFaceSet.IndexCount; // TODO EDGE
-        }
-
-        // TODO EDGE
-        if (isEdgeCompressed)
-        {
-            if (is32bit || is16bit)
-            {
-                throw new Exception("Having facesets both with and without edge compression is not supported.");
-            }
-
-            int edgeListIndex = 0;
-            fs16 = new Span<ushort>(meshIndices.ToPointer(), decompressedEdgeIndexes.Count);
-            foreach (var faceset in dest.MeshFacesets)
-            {
-                for (var i = 0; i < faceset.IndexCount; i++)
-                {
-                    fs16[faceset.IndexOffset + i] = decompressedEdgeIndexes[edgeListIndex];
-                    edgeListIndex++;
-                }
-            }
+            idxoffset += newFaceSet.IndexCount;
         }
 
         dest.GeomBuffer.UnmapIBuffer();
@@ -1799,6 +1786,48 @@ public class FlverResource : IResource, IDisposable
         }
 
         Marshal.FreeHGlobal(dest.PickingVertices);
+    }
+
+    private int GetEdgeMembersIndexCount(BinaryReaderEx br)
+    {
+        EdgeMemberGroup edgeGroup = new EdgeMemberGroup(br);
+        Span<EdgeMember> edgeMembers = stackalloc EdgeMember[edgeGroup.memberCount];
+
+        int indexTotal = 0;
+        for (int i = 0; i < edgeGroup.memberCount; i++)
+        {
+            edgeMembers[i] = new EdgeMember(br);
+            indexTotal += edgeMembers[i].spuConfigInfo.numIndexes;
+        }
+
+        return indexTotal;
+    }
+
+    private int GetDecompressedEdgeIndexes(BinaryReaderEx br, Span<ushort> indexes, ref int indexesOffset)
+    {
+        long start = br.Position;
+        EdgeMemberGroup edgeGroup = new EdgeMemberGroup(br);
+        Span<EdgeMember> edgeMembers = stackalloc EdgeMember[edgeGroup.memberCount];
+        for (int i = 0; i < edgeGroup.memberCount; i++)
+        {
+            edgeMembers[i] = new EdgeMember(br);
+        }
+
+        int indexCount = 0;
+        for (int i = 0; i < edgeGroup.memberCount; i++)
+        {
+            var edgeMember = edgeMembers[i];
+            br.Position = start + edgeMember.edgeIndexesOffset;
+            ushort[] memberIndexes = FLVER2.EdgeMemberInfo.DecompressIndexes(br, edgeMember.spuConfigInfo.numIndexes);
+            for (int j = 0; j < edgeMember.spuConfigInfo.numIndexes; j++)
+            {
+                indexes[indexesOffset + j] = (ushort)(memberIndexes[j] + edgeMember.baseIndex);
+            }
+            indexesOffset += memberIndexes.Length;
+            indexCount += edgeMember.spuConfigInfo.numIndexes;
+        }
+
+        return indexCount;
     }
 
     private bool LoadInternalDeS(AccessLevel al, GameType type)
@@ -2376,6 +2405,14 @@ public class FlverResource : IResource, IDisposable
         public FlverVertexBuffer(BinaryReaderEx br, uint dataOffset)
         {
             bufferIndex = br.ReadInt32();
+
+            // TODO EDGE
+            int final = bufferIndex & ~0x60000000;
+            if (final != bufferIndex)
+            {
+                bufferIndex = final;
+            }
+
             layoutIndex = br.ReadInt32();
             vertexSize = br.ReadInt32();
             vertexCount = br.ReadInt32();
@@ -2437,6 +2474,95 @@ public class FlverResource : IResource, IDisposable
             br.ReadSingle();
             br.ReadSingle();
             br.ReadSingle();
+        }
+    }
+
+    private struct EdgeMemberGroup
+    {
+        public readonly short memberCount;
+        public readonly short unk02;
+        public readonly short unk04;
+        public readonly byte unk06;
+        public readonly bool unk07;
+        public readonly int edgeIndexBuffersLength;
+
+        public EdgeMemberGroup(BinaryReaderEx br)
+        {
+            memberCount = br.ReadInt16();
+            unk02 = br.ReadInt16();
+            unk04 = br.ReadInt16();
+            unk06 = br.ReadByte();
+            unk07 = br.ReadBoolean();
+            br.AssertInt32(0);
+            edgeIndexBuffersLength = br.ReadInt32();
+        }
+    }
+
+    private struct EdgeMember
+    {
+        public readonly int edgeIndexesLength;
+        public readonly int edgeIndexesOffset;
+        public readonly byte unk10;
+        public readonly byte unk11;
+        public readonly byte unk12;
+        public readonly byte unk13;
+        public readonly short baseIndex;
+        public readonly short unk16;
+        public readonly int edgeVertexBufferLength;
+        public readonly int edgeVertexBufferOffset;
+        public readonly EdgeGeomSpuConfigInfo spuConfigInfo;
+
+        public EdgeMember(BinaryReaderEx br)
+        {
+            edgeIndexesLength = br.ReadInt32();
+            edgeIndexesOffset = br.ReadInt32();
+            br.AssertInt64(0);
+
+            var buf = br.ReadBytes(4);
+            unk10 = buf[0];
+            unk11 = buf[1];
+            unk12 = buf[2];
+            unk13 = buf[3];
+
+            baseIndex = br.ReadInt16();
+            unk16 = br.ReadInt16();
+            edgeVertexBufferLength = br.ReadInt32();
+            edgeVertexBufferOffset = br.ReadInt32();
+            br.AssertInt64(0);
+            br.AssertInt64(0);
+            spuConfigInfo = new EdgeGeomSpuConfigInfo(br);
+        }
+    }
+
+    private struct EdgeGeomSpuConfigInfo
+    {
+        public readonly byte flagsAndUniformTableCount;
+        public readonly byte commandBufferHoleSize;
+        public readonly byte inputVertexFormatId;
+        public readonly byte secondaryInputVertexFormatId;
+        public readonly byte outputVertexFormatId;
+        public readonly byte vertexDeltaFormatId;
+        public readonly byte indexesAndSkinningFlavor;
+        public readonly byte skinningMatrixFormat;
+        public readonly ushort numVertexes;
+        public readonly ushort numIndexes;
+        public readonly int indexesOffset;
+
+        public EdgeGeomSpuConfigInfo(BinaryReaderEx br)
+        {
+            var buf = br.ReadBytes(8);
+            flagsAndUniformTableCount = buf[0];
+            commandBufferHoleSize = buf[1];
+            inputVertexFormatId = buf[2];
+            secondaryInputVertexFormatId = buf[3];
+            outputVertexFormatId = buf[4];
+            vertexDeltaFormatId = buf[5];
+            indexesAndSkinningFlavor = buf[6];
+            skinningMatrixFormat = buf[7];
+
+            numVertexes = br.ReadUInt16();
+            numIndexes = br.ReadUInt16();
+            indexesOffset = br.ReadInt32();
         }
     }
 

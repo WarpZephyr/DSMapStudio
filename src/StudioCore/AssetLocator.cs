@@ -218,6 +218,7 @@ public class AssetLocator
 
     public GameType GetGameTypeForPARAMSFO(PARAMSFO sfo)
     {
+        // Try to find the title name
         if (sfo.Parameters.TryGetValue("TITLE", out PARAMSFO.Parameter parameter))
         {
             switch (parameter.Data)
@@ -235,6 +236,7 @@ public class AssetLocator
             }
         }
 
+        // Try to find the title ID
         if (sfo.Parameters.TryGetValue("TITLE_ID", out parameter))
         {
             switch (parameter.Data)
@@ -281,6 +283,7 @@ public class AssetLocator
             }
         }
 
+        // Just return Demon's Souls
         return GameType.DemonsSouls;
     }
 
@@ -1225,23 +1228,12 @@ public class AssetLocator
 
     public string MapModelNameToAssetName(string mapid, string modelname)
     {
-        //TODO ACVD
-        if (Type == GameType.ArmoredCoreVD)
-        {
-            return modelname;
-        }
-
         if (Type == GameType.DarkSoulsPTDE || Type == GameType.DarkSoulsRemastered)
         {
             return $@"{modelname}A{mapid.Substring(1, 2)}";
         }
 
-        if (Type == GameType.DemonsSouls)
-        {
-            return $@"{modelname}";
-        }
-
-        if (Type == GameType.DarkSoulsIISOTFS)
+        if (Type == GameType.DemonsSouls || Type == GameType.DarkSoulsIISOTFS || Type == GameType.ArmoredCoreVD)
         {
             return modelname;
         }
@@ -1771,12 +1763,15 @@ public class AssetLocator
     }
 
     //TODO ACVD
-    /*
     public AssetDescription GetEneModel(string ene)
     {
-        
+        AssetDescription ret = new();
+        ret.AssetName = ene;
+        ret.AssetArchiveVirtualPath = $@"ene/{ene}/model";
+        ret.AssetVirtualPath = $@"ene/{ene}/model/{ene}.flv";
+
+        return ret;
     }
-    */
 
     public List<string> GetObjModels()
     {
@@ -2166,6 +2161,16 @@ public class AssetLocator
                 {
                     var mid = pathElements[i];
                     bndpath = "";
+
+                    if (mid.Length == 12 && mid.StartsWith("ch"))
+                    {
+                        mid = mid[7..5];
+                    }
+                    else if (mid.Length > 5 && mid.StartsWith('m'))
+                    {
+                        mid = mid[..5];
+                    }
+
                     return GetAssetPath($@"model\map\{mid}\{mid}_l.tpf.dcx");
                 }
                 else
@@ -2222,6 +2227,15 @@ public class AssetLocator
                     //TODO ACVD
                     if (Type == GameType.ArmoredCoreVD)
                     {
+                        if (mapid.Length == 12 && mapid.StartsWith("ch"))
+                        {
+                            mapid = mapid[7..5];
+                        }
+                        else if (mapid.Length > 5 && mapid.StartsWith('m'))
+                        {
+                            mapid = mapid[..5];
+                        }
+
                         return GetAssetPath($@"model\map\{mapid}\{mapid}_m.dcx.bnd");
                     }
 
@@ -2329,6 +2343,24 @@ public class AssetLocator
             {
                 bndpath = "";
                 return GetChrTexturePath(chrid);
+            }
+        }
+        else if (pathElements[i].Equals("ene"))
+        {
+            i++;
+            var eneid = pathElements[i];
+            i++;
+
+            if (pathElements[i].Equals("model"))
+            {
+                bndpath = "";
+                return GetOverridenFilePath($@"model\ene\{eneid}\{eneid}_m.bnd.dcx");
+            }
+
+            if (pathElements[i].Equals("tex"))
+            {
+                bndpath = "";
+                // TODO ACVD ene textures
             }
         }
         else if (pathElements[i].Equals("obj"))

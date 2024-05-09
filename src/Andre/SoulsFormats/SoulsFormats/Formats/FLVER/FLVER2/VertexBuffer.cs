@@ -33,6 +33,14 @@ namespace SoulsFormats
             internal VertexBuffer(BinaryReaderEx br)
             {
                 BufferIndex = br.ReadInt32();
+
+                // TODO EDGE
+                int final = BufferIndex & ~0x60000000;
+                if (final != BufferIndex)
+                {
+                    BufferIndex = final;
+                }
+
                 LayoutIndex = br.ReadInt32();
                 VertexSize = br.ReadInt32();
                 VertexCount = br.ReadInt32();
@@ -73,10 +81,11 @@ namespace SoulsFormats
                 }
                 br.StepOut();
 
-                VertexSize = -1;
-                BufferIndex = -1;
-                VertexCount = -1;
-                BufferOffset = -1;
+                // TODO ACVD
+                //VertexSize = -1;
+                //BufferIndex = -1;
+                //VertexCount = -1;
+                //BufferOffset = -1;
             }
 
             internal void Write(BinaryWriterEx bw, FLVER2Header header, int index, int bufferIndex, List<BufferLayout> layouts, int vertexCount)

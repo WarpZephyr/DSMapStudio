@@ -1,6 +1,4 @@
-﻿using DotNext;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace SoulsFormats
@@ -51,29 +49,6 @@ namespace SoulsFormats
                     {
                         faceIndexes.Add(indexes[i]);
                     }
-                }
-            }
-
-            public static void DecompressIndexes(BinaryReaderEx br, List<ushort> indexes)
-            {
-                long start = br.Position;
-
-                /*
-                short memberCount = br.ReadInt16();
-                br.Position += 14;
-                */
-
-                short memberCount = br.ReadInt16();
-                var unk02 = br.ReadInt16();
-                var unk04 = br.ReadInt16();
-                var unk06 = br.ReadByte();
-                bool unk07 = br.ReadBoolean();
-                br.AssertInt32(0);
-                int memberIndexBufferLength = br.ReadInt32();
-
-                for (int i = 0; i < memberCount; i++)
-                {
-                    EdgeMemberInfo.GetFaceIndexesFast(br, indexes, start);
                 }
             }
 
