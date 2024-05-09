@@ -193,17 +193,7 @@ public class AssetLocator
             else if (File.Exists(sfoPath))
             {
                 PARAMSFO sfo = PARAMSFO.Read(sfoPath);
-                string title = sfo.Parameters["TITLE"].Data;
-                switch (title)
-                {
-                    case "Armored Core Verdict Day":
-                        type = GameType.ArmoredCoreVD;
-                        break;
-                    case "Demon's Souls":
-                    default:
-                        type = GameType.DemonsSouls;
-                        break;
-                }
+                type = GetGameTypeForPARAMSFO(sfo);
             }
             else
             {
@@ -224,6 +214,74 @@ public class AssetLocator
         }
 
         return type;
+    }
+
+    public GameType GetGameTypeForPARAMSFO(PARAMSFO sfo)
+    {
+        if (sfo.Parameters.TryGetValue("TITLE", out PARAMSFO.Parameter parameter))
+        {
+            switch (parameter.Data)
+            {
+                case "Armored Core 4":
+                    return GameType.ArmoredCoreIV;
+                case "ARMORED CORE for Answer":
+                    return GameType.ArmoredCoreFA;
+                case "ARMORED CORE V":
+                    return GameType.ArmoredCoreV;
+                case "Armored Core Verdict Day":
+                    return GameType.ArmoredCoreVD;
+                case "Demon's Souls":
+                    return GameType.DemonsSouls;
+            }
+        }
+
+        if (sfo.Parameters.TryGetValue("TITLE_ID", out parameter))
+        {
+            switch (parameter.Data)
+            {
+                case "BLKS20001":
+                case "BLJM60012":
+                case "BLJM60062":
+                case "BLUS30027":
+                case "BLES00039":
+                    return GameType.ArmoredCoreIV;
+                case "BLKS20066":
+                case "BLJM55005":
+                case "BLJM60066":
+                case "BLUS30187":
+                case "BLES00370":
+                    return GameType.ArmoredCoreFA;
+                case "BLKS20356":
+                case "BLAS50448":
+                case "BLJM60378":
+                case "BLUS30516":
+                case "BLES01440":
+                    return GameType.ArmoredCoreV;
+                case "BLKS20441":
+                case "BLAS50618":
+                case "BLJM61014":
+                case "BLJM61020":
+                case "BLUS31194":
+                case "BLES01898":
+                case "NPUB31245":
+                case "NPEB01428":
+                    return GameType.ArmoredCoreVD;
+                case "BCKS10071":
+                case "BCJS30022":
+                case "BCJS70013":
+                case "BCAS20071":
+                case "BCAS20115":
+                case "BLUS30443":
+                case "BLUS30443CE":
+                case "BLES00932":
+                case "NPJA00102":
+                case "NPUB30910":
+                case "NPEB01202":
+                    return GameType.DemonsSouls;
+            }
+        }
+
+        return GameType.DemonsSouls;
     }
 
     public bool CheckFilesExpanded(string gamepath, GameType game)
