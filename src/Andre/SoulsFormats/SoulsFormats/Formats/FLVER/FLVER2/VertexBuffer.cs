@@ -12,13 +12,21 @@ namespace SoulsFormats
         /// </summary>
         public class VertexBuffer
         {
+            public bool EdgeCompressed { get; set; }
+
+            /// <summary>
+            /// The index of this buffer into the current vertex stream.<br/>
+            /// Used to combine buffers into a single vertex stream.
+            /// </summary>
+            public int BufferIndex { get; set; }
+
             /// <summary>
             /// Index to a layout in the FLVER's layout collection.
             /// </summary>
             public int LayoutIndex { get; set; }
 
             internal int VertexSize;
-            internal int BufferIndex;
+            
             internal int VertexCount;
             internal int BufferOffset;
 
@@ -38,7 +46,12 @@ namespace SoulsFormats
                 int final = BufferIndex & ~0x60000000;
                 if (final != BufferIndex)
                 {
+                    EdgeCompressed = true;
                     BufferIndex = final;
+                }
+                else
+                {
+                    EdgeCompressed = false;
                 }
 
                 LayoutIndex = br.ReadInt32();
@@ -92,7 +105,8 @@ namespace SoulsFormats
             {
                 BufferLayout layout = layouts[LayoutIndex];
 
-                bw.WriteInt32(bufferIndex);
+                // TODO Edge I wonder if this is just a byte for flags at the start
+                bw.WriteInt32(EdgeCompressed ? (bufferIndex | 0x60000000) : bufferIndex);
                 bw.WriteInt32(LayoutIndex);
                 bw.WriteInt32(layout.Size);
                 bw.WriteInt32(vertexCount);

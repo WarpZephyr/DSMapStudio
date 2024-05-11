@@ -125,10 +125,7 @@ namespace SoulsFormats
         /// </summary>
         protected override void Read(BinaryReaderEx br)
         {
-            if (Cache == null)
-            {
-                Cache = new FlverCache();
-            }
+            Cache ??= new FlverCache();
 
             br.BigEndian = false;
 
@@ -244,10 +241,10 @@ namespace SoulsFormats
             }
 
             // TODO ACVD
-            //if (faceSetDict.Count != 0)
-            //    throw new NotSupportedException("Orphaned face sets found.");
-            //if (vertexBufferDict.Count != 0)
-            //    throw new NotSupportedException("Orphaned vertex buffers found.");
+            if (faceSetDict.Count != 0)
+                throw new NotSupportedException("Orphaned face sets found.");
+            if (vertexBufferDict.Count != 0)
+                throw new NotSupportedException("Orphaned vertex buffers found.");
         }
 
         /// <summary>

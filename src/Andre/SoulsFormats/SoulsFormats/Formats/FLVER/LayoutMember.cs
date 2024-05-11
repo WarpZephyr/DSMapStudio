@@ -10,9 +10,10 @@ namespace SoulsFormats
         public class LayoutMember
         {
             /// <summary>
-            /// Unknown; 0, 1, or 2.
+            /// The index of this member into the current layout.<br/>
+            /// Used to combine members into a single layout.
             /// </summary>
-            public int Unk00 { get; set; }
+            public int MemberIndex { get; set; }
 
             /// <summary>
             /// Format used to store this member.
@@ -77,7 +78,7 @@ namespace SoulsFormats
             /// </summary>
             public LayoutMember(LayoutType type, LayoutSemantic semantic, int index = 0, int unk00 = 0)
             {
-                Unk00 = unk00;
+                MemberIndex = unk00;
                 Type = type;
                 Semantic = semantic;
                 Index = index;
@@ -85,7 +86,7 @@ namespace SoulsFormats
 
             internal LayoutMember(BinaryReaderEx br, int structOffset)
             {
-                Unk00 = br.ReadInt32();
+                MemberIndex = br.ReadInt32();
                 br.AssertInt32(structOffset);
                 Type = br.ReadEnum32<LayoutType>();
                 Semantic = br.ReadEnum32<LayoutSemantic>();
@@ -94,7 +95,7 @@ namespace SoulsFormats
 
             internal void Write(BinaryWriterEx bw, int structOffset)
             {
-                bw.WriteInt32(Unk00);
+                bw.WriteInt32(MemberIndex);
                 bw.WriteInt32(structOffset);
                 bw.WriteUInt32((uint)Type);
                 bw.WriteUInt32((uint)Semantic);

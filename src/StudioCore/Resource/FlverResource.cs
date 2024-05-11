@@ -877,7 +877,7 @@ public class FlverResource : IResource, IDisposable
     }
 
     private unsafe void FillVerticesNormalOnly(BinaryReaderEx br, ref FlverVertexBuffer buffer,
-        Span<FlverBufferLayoutMember> layouts, Span<Vector3> pickingVerts, IntPtr vertBuffer)
+        Span<FlverBufferLayoutMember> layouts, Span<Vector3> pickingVerts, IntPtr vertBuffer, ref bool posfilled)
     {
         Span<FlverLayoutSky> verts = new(vertBuffer.ToPointer(), buffer.vertexCount);
         br.StepIn(buffer.bufferOffset);
@@ -886,11 +886,10 @@ public class FlverResource : IResource, IDisposable
             Vector3 n = Vector3.Zero;
             fixed (FlverLayoutSky* v = &verts[i])
             {
-                var posfilled = false;
                 foreach (FlverBufferLayoutMember l in layouts)
                 {
                     // ER meme
-                    if (l.unk00 == -2147483647)
+                    if (l.memberIndex == -2147483647)
                     {
                         continue;
                     }
@@ -979,7 +978,7 @@ public class FlverResource : IResource, IDisposable
             foreach (FlverBufferLayoutMember l in layouts)
             {
                 // ER meme
-                if (l.unk00 == -2147483647)
+                if (l.memberIndex == -2147483647)
                 {
                     continue;
                 }
@@ -1133,7 +1132,7 @@ public class FlverResource : IResource, IDisposable
                 foreach (FlverBufferLayoutMember l in layouts)
                 {
                     // ER meme
-                    if (l.unk00 == -2147483647)
+                    if (l.memberIndex == -2147483647)
                     {
                         continue;
                     }
@@ -1623,9 +1622,11 @@ public class FlverResource : IResource, IDisposable
         var meshVertices = dest.GeomBuffer.MapVBuffer();
         var meshIndices = dest.GeomBuffer.MapIBuffer();
 
+        bool posfilled = false;
         foreach (var vbi in vertexBufferIndices)
         {
             FlverVertexBuffer vb = buffers[vbi];
+
             FlverBufferLayout layout = layouts[vb.layoutIndex];
             Span<FlverBufferLayoutMember> layoutmembers = stackalloc FlverBufferLayoutMember[layout.memberCount];
             br.StepIn(layout.membersOffset);
@@ -1645,7 +1646,7 @@ public class FlverResource : IResource, IDisposable
             br.StepOut();
             if (dest.Material.LayoutType == MeshLayoutType.LayoutSky)
             {
-                FillVerticesNormalOnly(br, ref vb, layoutmembers, pvhandle, meshVertices);
+                FillVerticesNormalOnly(br, ref vb, layoutmembers, pvhandle, meshVertices, ref posfilled);
             }
             else if (dest.Material.LayoutType == MeshLayoutType.LayoutUV2)
             {
@@ -1692,7 +1693,6 @@ public class FlverResource : IResource, IDisposable
                 Is32Bit = is32bit,
                 PickingIndicesCount = 0
             };
-
 
             if ((faceset.flags & FLVER2.FaceSet.FSFlags.LodLevel1) > 0)
             {
@@ -2396,6 +2396,7 @@ public class FlverResource : IResource, IDisposable
 
     private struct FlverVertexBuffer
     {
+        public bool edgeCompressed;
         public int bufferIndex;
         public readonly int layoutIndex;
         public int vertexSize;
@@ -2411,6 +2412,7 @@ public class FlverResource : IResource, IDisposable
             if (final != bufferIndex)
             {
                 bufferIndex = final;
+                edgeCompressed = true;
             }
 
             layoutIndex = br.ReadInt32();
@@ -2425,14 +2427,14 @@ public class FlverResource : IResource, IDisposable
 
     private struct FlverBufferLayoutMember
     {
-        public readonly int unk00;
+        public readonly int memberIndex;
         public readonly FLVER.LayoutType type;
         public readonly FLVER.LayoutSemantic semantic;
         public readonly int index;
 
         public FlverBufferLayoutMember(BinaryReaderEx br)
         {
-            unk00 = br.ReadInt32(); // unk
+            memberIndex = br.ReadInt32(); // if greater than zero combine it with the previous member
             br.ReadInt32(); // struct offset
             type = br.ReadEnum32<FLVER.LayoutType>();
             semantic = br.ReadEnum32<FLVER.LayoutSemantic>();

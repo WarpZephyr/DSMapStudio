@@ -110,12 +110,12 @@ namespace SoulsFormats
                 foreach (int i in faceSetIndices)
                 {
                     if (!faceSetDict.TryGetValue(i, out FaceSet value))
-                        throw new NotSupportedException("Face set not found: " + i);
+                        throw new NotSupportedException("Face set not found or already taken: " + i);
 
                     FaceSets.Add(value);
 
                     // TODO ACVD
-                    //faceSetDict.Remove(i);
+                    faceSetDict.Remove(i);
                 }
                 faceSetIndices = null;
             }
@@ -126,12 +126,12 @@ namespace SoulsFormats
                 foreach (int i in vertexBufferIndices)
                 {
                     if (!vertexBufferDict.TryGetValue(i, out VertexBuffer value))
-                        throw new NotSupportedException("Vertex buffer not found: " + i);
+                        throw new NotSupportedException("Vertex buffer not found or already taken: " + i);
 
                     VertexBuffers.Add(value);
 
                     // TODO ACVD
-                    //vertexBufferDict.Remove(i);
+                    vertexBufferDict.Remove(i);
                 }
                 vertexBufferIndices = null;
 
@@ -153,17 +153,6 @@ namespace SoulsFormats
                         }
                     }
                 }
-
-                // TODO ACVD
-                /*
-                for (int i = 0; i < VertexBuffers.Count; i++)
-                {
-                    VertexBuffer buffer = VertexBuffers[i];
-                    // This appears to be some kind of flag on edge-compressed vertex buffers
-                    if ((buffer.BufferIndex & ~0x60000000) != i)
-                        throw new FormatException("Unexpected vertex buffer index.");
-                }
-                */
             }
 
             internal void ReadVertices(BinaryReaderEx br, int dataOffset, List<BufferLayout> layouts, FLVER2Header header, FlverCache cache)
