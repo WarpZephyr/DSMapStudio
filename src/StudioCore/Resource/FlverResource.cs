@@ -896,7 +896,7 @@ public class FlverResource : IResource, IDisposable
 
                     if (l.semantic == FLVER.LayoutSemantic.Position)
                     {
-                        // Edge Vertex Compression is not yet supported
+                        // Edge compression is not supported here
                         if (l.type == LayoutType.EdgeCompressed)
                         {
                             continue;
@@ -985,6 +985,12 @@ public class FlverResource : IResource, IDisposable
 
                 if (l.semantic == FLVER.LayoutSemantic.Position)
                 {
+                    // Edge compression is not supported here
+                    if (l.type == LayoutType.EdgeCompressed)
+                    {
+                        continue;
+                    }
+
                     FillVertex(&(*v).Position, br, l.type);
                     posfilled = true;
                 }
@@ -1139,6 +1145,12 @@ public class FlverResource : IResource, IDisposable
 
                     if (l.semantic == FLVER.LayoutSemantic.Position)
                     {
+                        // Edge compression is not supported here
+                        if (l.type == LayoutType.EdgeCompressed)
+                        {
+                            continue;
+                        }
+
                         FillVertex(&(*v).Position, br, l.type);
                     }
                     else if (l.semantic == FLVER.LayoutSemantic.Normal)
@@ -1715,7 +1727,14 @@ public class FlverResource : IResource, IDisposable
             if ((faceset.flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0)
             {
                 br.StepIn(faceset.indicesOffset);
-                newFaceSet.IndexCount = GetDecompressedEdgeIndexes(br, fs16, ref idxoffset);
+                if (is32bit)
+                {
+                    newFaceSet.IndexCount = GetDecompressedEdgeIndexes32(br, fs32, ref idxoffset);
+                }
+                else
+                {
+                    newFaceSet.IndexCount = GetDecompressedEdgeIndexes16(br, fs16, ref idxoffset);
+                }
                 br.StepOut();
 
                 dest.MeshFacesets.Add(newFaceSet);
@@ -1803,7 +1822,7 @@ public class FlverResource : IResource, IDisposable
         return indexTotal;
     }
 
-    private int GetDecompressedEdgeIndexes(BinaryReaderEx br, Span<ushort> indexes, ref int indexesOffset)
+    private int GetDecompressedEdgeIndexes16(BinaryReaderEx br, Span<ushort> indexes, ref int indexesOffset)
     {
         long start = br.Position;
         EdgeMemberGroup edgeGroup = new EdgeMemberGroup(br);
@@ -1822,6 +1841,33 @@ public class FlverResource : IResource, IDisposable
             for (int j = 0; j < edgeMember.spuConfigInfo.numIndexes; j++)
             {
                 indexes[indexesOffset + j] = (ushort)(memberIndexes[j] + edgeMember.baseIndex);
+            }
+            indexesOffset += memberIndexes.Length;
+            indexCount += edgeMember.spuConfigInfo.numIndexes;
+        }
+
+        return indexCount;
+    }
+
+    private int GetDecompressedEdgeIndexes32(BinaryReaderEx br, Span<int> indexes, ref int indexesOffset)
+    {
+        long start = br.Position;
+        EdgeMemberGroup edgeGroup = new EdgeMemberGroup(br);
+        Span<EdgeMember> edgeMembers = stackalloc EdgeMember[edgeGroup.memberCount];
+        for (int i = 0; i < edgeGroup.memberCount; i++)
+        {
+            edgeMembers[i] = new EdgeMember(br);
+        }
+
+        int indexCount = 0;
+        for (int i = 0; i < edgeGroup.memberCount; i++)
+        {
+            var edgeMember = edgeMembers[i];
+            br.Position = start + edgeMember.edgeIndexesOffset;
+            ushort[] memberIndexes = FLVER2.EdgeMemberInfo.DecompressIndexes(br, edgeMember.spuConfigInfo.numIndexes);
+            for (int j = 0; j < edgeMember.spuConfigInfo.numIndexes; j++)
+            {
+                indexes[indexesOffset + j] = memberIndexes[j] + edgeMember.baseIndex;
             }
             indexesOffset += memberIndexes.Length;
             indexCount += edgeMember.spuConfigInfo.numIndexes;
@@ -2508,7 +2554,7 @@ public class FlverResource : IResource, IDisposable
         public readonly byte unk11;
         public readonly byte unk12;
         public readonly byte unk13;
-        public readonly short baseIndex;
+        public readonly ushort baseIndex;
         public readonly short unk16;
         public readonly int edgeVertexBufferLength;
         public readonly int edgeVertexBufferOffset;
@@ -2526,7 +2572,7 @@ public class FlverResource : IResource, IDisposable
             unk12 = buf[2];
             unk13 = buf[3];
 
-            baseIndex = br.ReadInt16();
+            baseIndex = br.ReadUInt16();
             unk16 = br.ReadInt16();
             edgeVertexBufferLength = br.ReadInt32();
             edgeVertexBufferOffset = br.ReadInt32();

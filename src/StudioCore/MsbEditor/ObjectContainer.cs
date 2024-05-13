@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Numerics;
 using System.Xml.Serialization;
+using Veldrid.Utilities;
 
 namespace StudioCore.MsbEditor;
 
@@ -913,6 +914,12 @@ public class Map : ObjectContainer
         else if (game == GameType.ArmoredCoreVD)
         {
             AddModelsACVD(msb);
+
+            // TODO ACVD
+            if (msb is MSBVD msbvd && msbvd.DrawingTree != null && msbvd.CollisionTree != null)
+            {
+                CalculateMapStudioTree(msb, game);
+            }
         }
         else if (game == GameType.ArmoredCoreVI)
         {
@@ -1124,5 +1131,70 @@ public class Map : ObjectContainer
         }
 
         return ((MapEntity)RootObject).Serialize(idmap);
+    }
+
+    // TODO ACVD
+    public void CalculateMapStudioTree(IMsb msb, GameType game)
+    {
+        if (game == GameType.DemonsSouls)
+        {
+            throw new NotImplementedException("Demon's Souls MapStudioTree calculation is not yet implemented.");
+        }
+
+        if (game == GameType.ArmoredCoreVD)
+        {
+            if (msb is MSBVD msbvd)
+            {
+                var boundingList = GetBoundingListACVD(msbvd);
+                if (boundingList.Count < 1)
+                {
+                    return;
+                }
+
+                // TODO make tree
+
+                msbvd.DrawingTree = new MSBVD.MapStudioTree();
+                msbvd.CollisionTree = new MSBVD.MapStudioTree();
+                return;
+            }
+            else
+            {
+                throw new InvalidDataException($"{nameof(GameType)} was {game} but {nameof(msb)} was of type: {msb.GetType().Name}");
+            }
+        }
+
+        throw new NotSupportedException($"{nameof(GameType)} {game} is not supported for MapStudioTree calculation.");
+    }
+
+    // TODO ACVD
+    public List<BoundingBox> GetBoundingListACVD(MSBVD msb)
+    {
+        var parts = msb.Parts.GetEntries();
+        var boundingList = new List<BoundingBox>(parts.Count);
+
+        // Make dictionary to not have to search the entire list several times over
+        var boundingDict = new Dictionary<string, BoundingBox>();
+        foreach (Entity obj in Objects)
+        {
+            if (obj.WrappedObject is MSBVD.Part msbpart)
+            {
+                // TODO ACVD: Handle AC bounds somehow
+                boundingDict.Add(msbpart.Name, obj.GetBounds());
+            }
+        }
+
+        // Ensure they are in order of index
+        foreach (var part in parts)
+        {
+            if (!boundingDict.TryGetValue(part.Name, out BoundingBox bounds))
+            {
+                throw new KeyNotFoundException($"Could not find bounds for {part.Name}");
+            }
+
+            // TODO ACVD: Handle AC bounds somehow
+            boundingList.Add(bounds);
+        }
+
+        return boundingList;
     }
 }

@@ -134,6 +134,21 @@ namespace Veldrid.Utilities
                 Vector3.Max(box1.Max, box2.Max));
         }
 
+        public static bool Intersects(BoundingBox box1, BoundingBox box2)
+        {
+            if (box1.Max.X >= box2.Min.X && box1.Min.X <= box2.Max.X)
+            {
+                if (box1.Max.Y < box2.Min.Y || box1.Min.Y > box2.Max.Y)
+                {
+                    return false;
+                }
+
+                return box1.Max.Z >= box2.Min.Z && box1.Min.Z <= box2.Max.Z;
+            }
+
+            return false;
+        }
+
         public static bool operator ==(BoundingBox first, BoundingBox second)
         {
             return first.Equals(second);

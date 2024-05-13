@@ -1466,10 +1466,13 @@ public class Universe
             {
                 MSBVD prev = MSBVD.Read(ad.AssetPath);
                 MSBVD n = new();
+                n.Models.Version = prev.Models.Version;
+                n.Events.Version = prev.Events.Version;
+                n.Parts.Version = prev.Parts.Version;
                 n.Layers = prev.Layers;
                 n.Routes = prev.Routes;
-                n.Tree1 = prev.Tree1;
-                n.Tree2 = prev.Tree2;
+                n.DrawingTree = prev.DrawingTree;
+                n.CollisionTree = prev.CollisionTree;
                 msb = n;
             }
             else if (_assetLocator.Type == GameType.ArmoredCoreVI)

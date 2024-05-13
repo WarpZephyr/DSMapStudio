@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 
@@ -7,7 +8,7 @@ namespace SoulsFormats
     public partial class MSBVD
     {
         /// <summary>
-        /// A bounding volume hierarchy of some kind used in culling.
+        /// A hierarchy of Axis-Aligned Bounding Boxes used in calculations such as drawing and collision.
         /// </summary>
         public class MapStudioTree
         {
@@ -22,13 +23,18 @@ namespace SoulsFormats
             private protected string Name = "MAPSTUDIO_TREE_ST";
 
             /// <summary>
-            /// The root node of the Bounding Volume Hierarchy.
+            /// The root node of the Bounding Volume Hierarchy.<br/>
+            /// Set to null when not calculated yet.
             /// </summary>
             public TreeNode RootNode { get; set; }
 
+            /// <summary>
+            /// Create a new <see cref="MapStudioTree"/>.
+            /// </summary>
             public MapStudioTree()
             {
-                RootNode = new TreeNode();
+                // Set node null as we need to calculate that later
+                RootNode = null;
                 Version = 10001002;
             }
 
@@ -79,16 +85,40 @@ namespace SoulsFormats
             }
         }
 
+        /// <summary>
+        /// A node in the Bounding Volume Hierarchy.
+        /// </summary>
         public class TreeNode
         {
-            public BoundingBox Bounding { get; set; }
+            /// <summary>
+            /// The <see cref="BoundingBox"/> for this node.
+            /// </summary>
+            public BoundingBox Bounds { get; set; }
+
+            /// <summary>
+            /// The first child node of this node.
+            /// </summary>
             public TreeNode Child1 { get; set; }
+
+            /// <summary>
+            /// The second child node of this node.
+            /// </summary>
             public TreeNode Child2 { get; set; }
+
+            /// <summary>
+            /// The parts this node contains.
+            /// </summary>
             public List<short> PartIndices { get; set; }
 
-            public TreeNode()
+            /// <summary>
+            /// Create a new <see cref="TreeNode"/> with the given bounding information.
+            /// </summary>
+            /// <param name="min">The minimum extent of the bounding box.</param>
+            /// <param name="max">The maximum extent of the bounding box.</param>
+            public TreeNode(Vector3 min, Vector3 max)
             {
-                Bounding = new BoundingBox();
+                PartIndices = new List<short>();
+                Bounds = new BoundingBox(min, max);
                 Child1 = null;
                 Child2 = null;
             }
@@ -96,14 +126,15 @@ namespace SoulsFormats
             internal TreeNode(BinaryReaderEx br)
             {
                 long start = br.Position;
-                Bounding = new BoundingBox();
-                Bounding.Minimum = br.ReadVector3();
+                Vector3 minimum = br.ReadVector3();
                 int childOffset1 = br.ReadInt32();
-                Bounding.Maximum = br.ReadVector3();
+                Vector3 maximum = br.ReadVector3();
                 br.AssertInt32(0); // Another child? Another Root?
-                Bounding.Origin = br.ReadVector3();
+                Vector3 origin = br.ReadVector3();
                 int childOffset2 = br.ReadInt32();
-                Bounding.Unk = br.ReadSingle();
+                float radius = br.ReadSingle();
+                Bounds = new BoundingBox(minimum, maximum, origin, radius);
+
                 int partIndexCount = br.ReadInt32();
 
                 PartIndices = new List<short>();
@@ -132,13 +163,13 @@ namespace SoulsFormats
                 string fillStr1 = $"OffsetTreeNodeChild1_{index}";
                 string fillStr2 = $"OffsetTreeNodeChild2_{index}";
 
-                bw.WriteVector3(Bounding.Minimum);
+                bw.WriteVector3(Bounds.Minimum);
                 bw.ReserveInt32(fillStr1);
-                bw.WriteVector3(Bounding.Maximum);
+                bw.WriteVector3(Bounds.Maximum);
                 bw.WriteInt32(0); // Another child? Another Root?
-                bw.WriteVector3(Bounding.Origin);
+                bw.WriteVector3(Bounds.Origin);
                 bw.ReserveInt32(fillStr2);
-                bw.WriteSingle(Bounding.Unk);
+                bw.WriteSingle(Bounds.Radius);
                 bw.WriteInt32(PartIndices.Count);
                 for (int i = 0; i < PartIndices.Count; i++)
                 {
@@ -168,7 +199,11 @@ namespace SoulsFormats
                 }
             }
 
-            internal int GetNodeCount()
+            /// <summary>
+            /// Get the total node count starting from this node.
+            /// </summary>
+            /// <returns>The total node count.</returns>
+            public int GetNodeCount()
             {
                 int count = 1;
                 TreeNode child1 = Child1;
@@ -187,34 +222,45 @@ namespace SoulsFormats
                 return count;
             }
 
-            public class BoundingBox
+            /// <summary>
+            /// A bounding box used in various calculations between entities.
+            /// </summary>
+            public struct BoundingBox
             {
                 /// <summary>
                 /// The minimum extent of the bounding box.
                 /// </summary>
-                public Vector3 Minimum { get; set; }
+                public Vector3 Minimum;
 
                 /// <summary>
                 /// The maximum extent of the bounding box.
                 /// </summary>
-                public Vector3 Maximum { get; set; }
+                public Vector3 Maximum;
 
                 /// <summary>
                 /// The origin of the bounding box, calculated from the minimum and maximum extent.
                 /// </summary>
-                public Vector3 Origin { get; set; }
+                public Vector3 Origin;
 
                 /// <summary>
-                /// The length of the vector between the origin and min/max?
+                /// The distance between the furthest vertex of the bounding box and origin.
                 /// </summary>
-                public float Unk { get; set; }
+                // Does not seem entirely accurate, but is very close, might just be precision differences.
+                public float Radius;
 
-                public BoundingBox()
+                /// <summary>
+                /// Create a new bounding box with each value already calculated.
+                /// </summary>
+                /// <param name="min">The minimum extent of the bounding box.</param>
+                /// <param name="max">The maximum extent of the bounding box.</param>
+                /// <param name="origin">The center of the bounding box.</param>
+                /// <param name="radius">The distance between the furthest vertex of the bounding box and origin.</param>
+                internal BoundingBox(Vector3 min, Vector3 max, Vector3 origin, float radius)
                 {
-                    Minimum = new Vector3();
-                    Maximum = new Vector3();
-                    Origin = new Vector3();
-                    Unk = 0f;
+                    Minimum = min;
+                    Maximum = max;
+                    Origin = origin;
+                    Radius = radius;
                 }
 
                 /// <summary>
@@ -227,7 +273,52 @@ namespace SoulsFormats
                     Minimum = min;
                     Maximum = max;
                     Origin = new Vector3((min.X + max.X) / 2, (min.Y + max.Y) / 2, (min.Z + max.Z) / 2);
-                    Unk = Origin.Length();
+                    CalculateRadius();
+                }
+
+                /// <summary>
+                /// Calculate and set the <see cref="Radius"/> value for this <see cref="BoundingBox"/>.
+                /// </summary>
+                private void CalculateRadius()
+                {
+                    // Get the position of each point on the bounding box
+                    Span<Vector3> vertices =
+                    [
+                        new Vector3(Minimum.X, Minimum.Y, Maximum.Z),
+                        new Vector3(Maximum.X, Minimum.Y, Maximum.Z),
+                        new Vector3(Minimum.X, Maximum.Y, Maximum.Z),
+                        new Vector3(Maximum.X, Maximum.Y, Maximum.Z),
+                        new Vector3(Minimum.X, Minimum.Y, Minimum.Z),
+                        new Vector3(Maximum.X, Minimum.Y, Minimum.Z),
+                        new Vector3(Minimum.X, Maximum.Y, Minimum.Z),
+                        new Vector3(Maximum.X, Maximum.Y, Minimum.Z),
+                    ];
+
+                    // Calculate the distances of each point from the origin
+                    Span<float> distances =
+                    [
+                        Vector3.Distance(Origin, vertices[0]),
+                        Vector3.Distance(Origin, vertices[1]),
+                        Vector3.Distance(Origin, vertices[2]),
+                        Vector3.Distance(Origin, vertices[3]),
+                        Vector3.Distance(Origin, vertices[4]),
+                        Vector3.Distance(Origin, vertices[5]),
+                        Vector3.Distance(Origin, vertices[6]),
+                        Vector3.Distance(Origin, vertices[7]),
+                    ];
+
+                    // Find the max distance value
+                    float max = distances[0];
+                    for (int i = 1; i < 7; i++)
+                    {
+                        float distance = distances[i];
+                        if (distance > max)
+                        {
+                            max = distance;
+                        }
+                    }
+
+                    Radius = max;
                 }
             }
         }

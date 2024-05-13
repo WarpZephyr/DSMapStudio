@@ -45,7 +45,7 @@ namespace SoulsFormats
             /// The index all decompressed indexes are based from.<br/>
             /// Add this to all decompressed indexes.
             /// </summary>
-            internal short BaseIndex { get; private set; }
+            internal ushort BaseIndex { get; private set; }
 
             /// <summary>
             /// Unknown.
@@ -81,7 +81,7 @@ namespace SoulsFormats
                 Unk11 = br.ReadByte();
                 Unk12 = br.ReadByte();
                 Unk13 = br.ReadByte();
-                BaseIndex = br.ReadInt16();
+                BaseIndex = br.ReadUInt16();
                 Unk16 = br.ReadInt16();
                 EdgeVertexBufferLength = br.ReadInt32();
                 EdgeVertexBufferOffset = br.ReadInt32();

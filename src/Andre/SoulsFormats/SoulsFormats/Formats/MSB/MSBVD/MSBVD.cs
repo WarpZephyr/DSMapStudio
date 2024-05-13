@@ -4,6 +4,10 @@ using System.IO;
 
 namespace SoulsFormats
 {
+    /// <summary>
+    /// A map layout file used in Armored Core Verdict Day.<br/>
+    /// Extension: .msb
+    /// </summary>
     public partial class MSBVD : SoulsFile<MSBVD>, IMsb
     {
         /// <summary>
@@ -41,15 +45,20 @@ namespace SoulsFormats
         IMsbParam<IMsbPart> IMsb.Parts => Parts;
 
         /// <summary>
-        /// A bounding volume hierarchy of some kind for culling referencing parts.
+        /// A bounding volume hierarchy using Axis-Aligned Bounding Boxes for drawing.<br/>
+        /// Set to null when not in use.
         /// </summary>
-        public MapStudioTree Tree1 { get; set; }
+        public MapStudioTree DrawingTree { get; set; }
 
         /// <summary>
-        /// A bounding volume hierarchy of some kind for culling referencing parts.
+        /// A bounding volume hierarchy using Axis-Aligned Bounding Boxes for collision detection.<br/>
+        /// Set to null when not in use.
         /// </summary>
-        public MapStudioTree Tree2 { get; set; }
+        public MapStudioTree CollisionTree { get; set; }
 
+        /// <summary>
+        /// Create a new <see cref="MSBVD"/>.
+        /// </summary>
         public MSBVD()
         {
             Models = new ModelParam();
@@ -58,8 +67,8 @@ namespace SoulsFormats
             Routes = new RouteParam();
             Layers = new LayerParam();
             Parts = new PartsParam();
-            Tree1 = new MapStudioTree();
-            Tree2 = new MapStudioTree();
+            DrawingTree = new MapStudioTree();
+            CollisionTree = new MapStudioTree();
         }
 
         /// <summary>
@@ -83,15 +92,15 @@ namespace SoulsFormats
 
             if (!Parts.IsLastParam)
             {
-                Tree1 = new MapStudioTree();
-                Tree1.Read(br);
-                Tree2 = new MapStudioTree();
-                Tree2.Read(br);
+                DrawingTree = new MapStudioTree();
+                DrawingTree.Read(br);
+                CollisionTree = new MapStudioTree();
+                CollisionTree.Read(br);
             }
             else
             {
-                Tree1 = null;
-                Tree2 = null;
+                DrawingTree = null;
+                CollisionTree = null;
             }
 
             MSB.DisambiguateNames(models);
@@ -127,15 +136,15 @@ namespace SoulsFormats
             bw.FillInt32("NextParamOffset", (int)bw.Position);
             Parts.Write(bw, parts);
 
-            if (Tree1 != null && Tree2 != null)
+            if (DrawingTree != null && CollisionTree != null)
             {
                 bw.FillInt32("NextParamOffset", (int)bw.Position);
-                Tree1.Write(bw);
+                DrawingTree.Write(bw);
                 bw.FillInt32("NextParamOffset", (int)bw.Position);
-                Tree2.Write(bw);
+                CollisionTree.Write(bw);
                 bw.FillInt32("NextParamOffset", 0);
             }
-            else if (Tree1 == null && Tree2 == null)
+            else if (DrawingTree == null && CollisionTree == null)
             {
                 bw.FillInt32("NextParamOffset", 0);
             }

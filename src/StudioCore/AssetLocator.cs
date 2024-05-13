@@ -1326,8 +1326,9 @@ public class AssetLocator
         //TODO ACVD
         else if (Type == GameType.ArmoredCoreVD)
         {
-            ret.AssetArchiveVirtualPath = $@"map/{mapid}/model";
-            ret.AssetVirtualPath = $@"map/{mapid}/model/{model}.flv";
+            string mid = MapIDToAssetIDACVD(mapid);
+            ret.AssetArchiveVirtualPath = $@"map/{mid}/model";
+            ret.AssetVirtualPath = $@"map/{mid}/model/{model}.flv";
         }
         else
         {
@@ -1418,8 +1419,10 @@ public class AssetLocator
         {
             // TODO ACVD
             AssetDescription ad = new();
-            ad.AssetPath = GetAssetPath($@"model\map\{mapid}\{mapid}_l.tpf.dcx");
-            ad.AssetVirtualPath = $@"map/tex/{mapid}";
+
+            string mid = MapIDToAssetIDACVD(mapid);
+            ad.AssetPath = GetAssetPath($@"model\map\{mid}\{mid}_l.tpf.dcx");
+            ad.AssetVirtualPath = $@"map/tex/{mid}";
             ads.Add(ad);
         }
         else if (Type == GameType.ArmoredCoreVI)
@@ -2117,6 +2120,20 @@ public class AssetLocator
         return ret;
     }
 
+    public string MapIDToAssetIDACVD(string mapid)
+    {
+        if (mapid.Length == 12 && mapid.StartsWith("ch"))
+        {
+            return mapid[7..5];
+        }
+        else if (mapid.Length > 5 && mapid.StartsWith('m'))
+        {
+            return mapid[..5];
+        }
+
+        return mapid;
+    }
+
     /// <summary>
     ///     Converts a virtual path to an actual filesystem path. Only resolves virtual paths up to the bnd level,
     ///     which the remaining string is output for additional handling
@@ -2161,16 +2178,6 @@ public class AssetLocator
                 {
                     var mid = pathElements[i];
                     bndpath = "";
-
-                    if (mid.Length == 12 && mid.StartsWith("ch"))
-                    {
-                        mid = mid[7..5];
-                    }
-                    else if (mid.Length > 5 && mid.StartsWith('m'))
-                    {
-                        mid = mid[..5];
-                    }
-
                     return GetAssetPath($@"model\map\{mid}\{mid}_l.tpf.dcx");
                 }
                 else
@@ -2227,15 +2234,6 @@ public class AssetLocator
                     //TODO ACVD
                     if (Type == GameType.ArmoredCoreVD)
                     {
-                        if (mapid.Length == 12 && mapid.StartsWith("ch"))
-                        {
-                            mapid = mapid[7..5];
-                        }
-                        else if (mapid.Length > 5 && mapid.StartsWith('m'))
-                        {
-                            mapid = mapid[..5];
-                        }
-
                         return GetAssetPath($@"model\map\{mapid}\{mapid}_m.dcx.bnd");
                     }
 

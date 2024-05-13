@@ -111,7 +111,8 @@ namespace SoulsFormats
                 int indicesOffset = br.ReadInt32();
 
                 int indexSize = 0;
-                if (header.Version > 0x20005)
+                // Was version > 0x20005, but 0x20007 did not have this, and the template for FLVER2 showed version >= 0x20009
+                if (header.Version >= 0x20009)
                 {
                     br.ReadInt32(); // Indices length
                     br.AssertInt32(0);

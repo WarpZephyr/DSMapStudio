@@ -722,6 +722,12 @@ public class Entity : ISelectable, IDisposable
         return t;
     }
 
+    // TODO ACVD
+    public Veldrid.Utilities.BoundingBox GetBounds()
+    {
+        return _renderSceneMesh.GetBounds();
+    }
+
     public void SetTemporaryTransform(Transform t)
     {
         TempTransform = t;
