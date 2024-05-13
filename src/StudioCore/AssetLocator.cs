@@ -2124,7 +2124,7 @@ public class AssetLocator
     {
         if (mapid.Length == 12 && mapid.StartsWith("ch"))
         {
-            return mapid[7..5];
+            return mapid.Substring(7, 5);
         }
         else if (mapid.Length > 5 && mapid.StartsWith('m'))
         {

@@ -2,154 +2,154 @@
     "list": [
 		{
             "id": "m3100_env",
-            "name": "m3100_env",
+            "name": "Route N64",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3101_env",
-            "name": "m3101_env",
+            "name": "Route R1024",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3103_env",
-            "name": "m3103_env",
+            "name": "Dozur Desert",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3104_env",
-            "name": "m3104_env",
+            "name": "Dozur Desert (bombing)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3105_env",
-            "name": "m3105_env",
+            "name": "Massif Dolango (rock clutter)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3110_env",
-            "name": "m3110_env",
+            "name": "Massif Dolango",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3120_env",
-            "name": "m3120_env",
+            "name": "Vosto Base (storm)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3121_env",
-            "name": "m3121_env",
+            "name": "Vosto Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3130_env",
-            "name": "m3130_env",
+            "name": "Karmat Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3200_env",
-            "name": "m3200_env",
+            "name": "Ratona Naval Port",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3201_env",
-            "name": "m3201_env",
+            "name": "Old Duman",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3202_env",
-            "name": "m3202_env",
+            "name": "Mazar Tomb",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3203_env",
-            "name": "m3203_env",
+            "name": "Mazar Tomb (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3210_env",
-            "name": "m3210_env",
+            "name": "Samir Canyon",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3220_env",
-            "name": "m3220_env",
+            "name": "Quet Hills",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3230_env",
-            "name": "m3230_env",
+            "name": "ALG742-181",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3231_env",
-            "name": "m3231_env",
+            "name": "ALG742-181/REBOOT",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3300_env",
-            "name": "m3300_env",
+            "name": "Victoria City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3301_env",
-            "name": "m3301_env",
+            "name": "Maldan City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3302_env",
-            "name": "m3302_env",
+            "name": "Maldan City (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3303_env",
-            "name": "m3303_env",
+            "name": "Eduna Yard",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3304_env",
-            "name": "m3304_env",
+            "name": "FAT ROCKS (low detail)",
             "tags": [
                 ""
             ]
@@ -163,252 +163,252 @@
         },
 		{
             "id": "m3320_env",
-            "name": "m3320_env",
+            "name": "Fort Denis (approach) ",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3330_env",
-            "name": "m3330_env",
+            "name": "Fort Denis (inside city)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3400_env",
-            "name": "m3400_env",
+            "name": "Vorka City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3401_env",
-            "name": "m3401_env",
+            "name": "Magion City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3402_env",
-            "name": "m3402_env",
+            "name": "Borozniki TS",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3403_env",
-            "name": "m3403_env",
+            "name": "Borozniki TS (radiation)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3410_env",
-            "name": "m3410_env",
+            "name": "Pask Field",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3411_env",
-            "name": "m3411_env",
+            "name": "Pask Field (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3420_env",
-            "name": "m3420_env",
+            "name": "Zilma Borough",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3430_env",
-            "name": "m3430_env",
+            "name": "Under Tower GF710",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3500_env",
-            "name": "m3500_env",
+            "name": "Opal Cave (small) 3201",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3501_env",
-            "name": "m3501_env",
+            "name": "Opal Cave (full)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3510_env",
-            "name": "m3510_env",
+            "name": "Tauraca Cave",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3520_env",
-            "name": "m3520_env",
+            "name": "Calpin Wetland",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3521_env",
-            "name": "m3521_env",
+            "name": "Old Uriae",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3522_env",
-            "name": "m3522_env",
+            "name": "Emapolice",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3523_env",
-            "name": "m3523_env",
+            "name": "Emapolice (sunrise)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3524_env",
-            "name": "m3524_env",
+            "name": "Calpin Wetland (Motherwill)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3530_env",
-            "name": "m3530_env",
+            "name": "Raziania Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3600_env",
-            "name": "m3600_env",
+            "name": "Andyr City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3601_env",
-            "name": "m3601_env",
+            "name": "Pierm Snowfield",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3602_env",
-            "name": "m3602_env",
+            "name": "Yorga Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3603_env",
-            "name": "m3603_env",
+            "name": "Yorga Base (blizzard)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3610_env",
-            "name": "m3610_env",
+            "name": "Yunsk Canyon",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3620_env",
-            "name": "m3620_env",
+            "name": "Miynsky Hills",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3621_env",
-            "name": "m3621_env",
+            "name": "Miynsky Hills (bombing)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3630_env",
-            "name": "m3630_env",
+            "name": "Kensky Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3700_env",
-            "name": "m3700_env",
+            "name": "Alloy Gate City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3710_env",
-            "name": "m3710_env",
+            "name": "Windy City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3711_env",
-            "name": "m3711_env",
+            "name": "Windy City (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3720_env",
-            "name": "m3720_env",
+            "name": "BIG D TUNNEL",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3721_env",
-            "name": "m3721_env",
+            "name": "BIG D TUNNEL (working)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3730_env",
-            "name": "m3730_env",
+            "name": "Brew City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3740_env",
-            "name": "m3740_env",
+            "name": "Galef Plant",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3750_env",
-            "name": "m3750_env",
+            "name": "Agria/M42",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m4000_env",
-            "name": "m4000_env",
+            "name": "AcTest",
             "tags": [
                 ""
             ]
@@ -982,1197 +982,1197 @@
         },
 		{
             "id": "m3100",
-            "name": "m3100",
+            "name": "Route N64",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3100_arena",
-            "name": "m3100_arena",
+            "name": "Route N64",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3100_map",
-            "name": "m3100_map",
+            "name": "Route N64",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3101",
-            "name": "m3101",
+            "name": "Route R1024",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3101_aitest_hys",
-            "name": "m3101_aitest_hys",
+            "name": "Route R1024",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3101_arena",
-            "name": "m3101_arena",
+            "name": "Route R1024",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3101_map",
-            "name": "m3101_map",
+            "name": "Route R1024",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3103",
-            "name": "m3103",
+            "name": "Dozur Desert",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3103_arena",
-            "name": "m3103_arena",
+            "name": "Dozur Desert",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3103_map",
-            "name": "m3103_map",
+            "name": "Dozur Desert",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3104",
-            "name": "m3104",
+            "name": "Dozur Desert (bombing)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3104_map",
-            "name": "m3104_map",
+            "name": "Dozur Desert (bombing)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3105",
-            "name": "m3105",
+            "name": "Massif Dolango (rock clutter)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3105_map",
-            "name": "m3105_map",
+            "name": "Massif Dolango (rock clutter)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3106",
-            "name": "m3106",
+            "name": "Karmat Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3106_map",
-            "name": "m3106_map",
+            "name": "Karmat Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3110",
-            "name": "m3110",
+            "name": "Massif Dolango",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3110_arena",
-            "name": "m3110_arena",
+            "name": "Massif Dolango",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3110_map",
-            "name": "m3110_map",
+            "name": "Massif Dolango",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3120",
-            "name": "m3120",
+            "name": "Vosto Base (storm)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3120_arena",
-            "name": "m3120_arena",
+            "name": "Vosto Base (storm)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3120_map",
-            "name": "m3120_map",
+            "name": "Vosto Base (storm)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3121",
-            "name": "m3121",
+            "name": "Vosto Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3121_map",
-            "name": "m3121_map",
+            "name": "Vosto Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3130",
-            "name": "m3130",
+            "name": "Karmat Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3130_map",
-            "name": "m3130_map",
+            "name": "Karmat Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3200",
-            "name": "m3200",
+            "name": "Ratona Naval Port",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3200_arena",
-            "name": "m3200_arena",
+            "name": "Ratona Naval Port",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3200_map",
-            "name": "m3200_map",
+            "name": "Ratona Naval Port",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3201",
-            "name": "m3201",
+            "name": "Old Duman",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3201_arena",
-            "name": "m3201_arena",
+            "name": "Old Duman",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3201_map",
-            "name": "m3201_map",
+            "name": "Old Duman",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3202",
-            "name": "m3202",
+            "name": "Mazar Tomb",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3202_arena",
-            "name": "m3202_arena",
+            "name": "Mazar Tomb",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3202_map",
-            "name": "m3202_map",
+            "name": "Mazar Tomb",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3203",
-            "name": "m3203",
+            "name": "Mazar Tomb (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3203_arena",
-            "name": "m3203_arena",
+            "name": "Mazar Tomb (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3203_map",
-            "name": "m3203_map",
+            "name": "Mazar Tomb (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3205",
-            "name": "m3205",
+            "name": "Quet Hills (low detail)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3205_map",
-            "name": "m3205_map",
+            "name": "Quet Hills (low detail)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3210",
-            "name": "m3210",
+            "name": "Samir Canyon",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3210_arena",
-            "name": "m3210_arena",
+            "name": "Samir Canyon",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3210_map",
-            "name": "m3210_map",
+            "name": "Samir Canyon",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3220",
-            "name": "m3220",
+            "name": "Quet Hills",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3220_arena",
-            "name": "m3220_arena",
+            "name": "Quet Hills",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3220_map",
-            "name": "m3220_map",
+            "name": "Quet Hills",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3230",
-            "name": "m3230",
+            "name": "ALG742-181",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3230_map",
-            "name": "m3230_map",
+            "name": "ALG742-181",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3231",
-            "name": "m3231",
+            "name": "ALG742-181/REBOOT",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3231_map",
-            "name": "m3231_map",
+            "name": "ALG742-181/REBOOT",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3300",
-            "name": "m3300",
+            "name": "Victoria City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3300_arena",
-            "name": "m3300_arena",
+            "name": "Victoria City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3300_map",
-            "name": "m3300_map",
+            "name": "Victoria City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3301",
-            "name": "m3301",
+            "name": "Maldan City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3301_arena",
-            "name": "m3301_arena",
+            "name": "Maldan City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3301_map",
-            "name": "m3301_map",
+            "name": "Maldan City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3302",
-            "name": "m3302",
+            "name": "Maldan City (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3302_map",
-            "name": "m3302_map",
+            "name": "Maldan City (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3303",
-            "name": "m3303",
+            "name": "Eduna Yard",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3303_arena",
-            "name": "m3303_arena",
+            "name": "Eduna Yard",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3303_map",
-            "name": "m3303_map",
+            "name": "Eduna Yard",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3304",
-            "name": "m3304",
+            "name": "FAT ROCKS (low detail)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3304_map",
-            "name": "m3304_map",
+            "name": "FAT ROCKS (low detail)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3306",
-            "name": "m3306",
+            "name": "Fort Denis (approach) (low detail)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3306_map",
-            "name": "m3306_map",
+            "name": "Fort Denis (approach) (low detail)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3310",
-            "name": "m3310",
+            "name": "FAT ROCKS",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3310_arena",
-            "name": "m3310_arena",
+            "name": "FAT ROCKS",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3310_map",
-            "name": "m3310_map",
+            "name": "FAT ROCKS",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3311",
-            "name": "m3311",
+            "name": "FAT ROCKS (flooded)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3311_arena",
-            "name": "m3311_arena",
+            "name": "FAT ROCKS (flooded)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3311_map",
-            "name": "m3311_map",
+            "name": "FAT ROCKS (flooded)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3320",
-            "name": "m3320",
+            "name": "Fort Denis (approach)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3320_map",
-            "name": "m3320_map",
+            "name": "Fort Denis (approach)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3330",
-            "name": "m3330",
+            "name": "Fort Denis (inside city)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3330_map",
-            "name": "m3330_map",
+            "name": "Fort Denis (inside city)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3400",
-            "name": "m3400",
+            "name": "Vorka City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3400_arena",
-            "name": "m3400_arena",
+            "name": "Vorka City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3400_map",
-            "name": "m3400_map",
+            "name": "Vorka City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3401",
-            "name": "m3401",
+            "name": "Magion City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3401_map",
-            "name": "m3401_map",
+            "name": "Magion City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3402",
-            "name": "m3402",
+            "name": "Borozniki TS",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3402_arena",
-            "name": "m3402_arena",
+            "name": "Borozniki TS",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3402_map",
-            "name": "m3402_map",
+            "name": "Borozniki TS",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3403",
-            "name": "m3403",
+            "name": "Borozniki TS (radiation)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3403_arena",
-            "name": "m3403_arena",
+            "name": "Borozniki TS (radiation)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3403_map",
-            "name": "m3403_map",
+            "name": "Borozniki TS (radiation)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3410",
-            "name": "m3410",
+            "name": "Pask Field",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3410_arena",
-            "name": "m3410_arena",
+            "name": "Pask Field",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3410_map",
-            "name": "m3410_map",
+            "name": "Pask Field",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3411",
-            "name": "m3411",
+            "name": "Pask Field (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3411_map",
-            "name": "m3411_map",
+            "name": "Pask Field (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3420",
-            "name": "m3420",
+            "name": "Zilma Borough",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3420_map",
-            "name": "m3420_map",
+            "name": "Zilma Borough",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3430",
-            "name": "m3430",
+            "name": "Under Tower GF710",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3430_map",
-            "name": "m3430_map",
+            "name": "Under Tower GF710",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3500",
-            "name": "m3500",
+            "name": "Opal Cave (small) 3201",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3500_map",
-            "name": "m3500_map",
+            "name": "Opal Cave (small) 3201",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3501",
-            "name": "m3501",
+            "name": "Opal Cave (full)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3501_arena",
-            "name": "m3501_arena",
+            "name": "Opal Cave (full)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3501_map",
-            "name": "m3501_map",
+            "name": "Opal Cave (full)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3510",
-            "name": "m3510",
+            "name": "Tauraca Cave",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3510_arena",
-            "name": "m3510_arena",
+            "name": "Tauraca Cave",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3510_map",
-            "name": "m3510_map",
+            "name": "Tauraca Cave",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3520",
-            "name": "m3520",
+            "name": "Calpin Wetland",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3520_arena",
-            "name": "m3520_arena",
+            "name": "Calpin Wetland",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3520_map",
-            "name": "m3520_map",
+            "name": "Calpin Wetland",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3521",
-            "name": "m3521",
+            "name": "Old Uriae",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3521_arena",
-            "name": "m3521_arena",
+            "name": "Old Uriae",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3521_map",
-            "name": "m3521_map",
+            "name": "Old Uriae",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3522",
-            "name": "m3522",
+            "name": "Emapolice",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3522_arena",
-            "name": "m3522_arena",
+            "name": "Emapolice",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3522_map",
-            "name": "m3522_map",
+            "name": "Emapolice",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3523",
-            "name": "m3523",
+            "name": "Emapolice (sunrise)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3523_map",
-            "name": "m3523_map",
+            "name": "Emapolice (sunrise)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3524",
-            "name": "m3524",
+            "name": "Calpin Wetland (Motherwill)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3524_map",
-            "name": "m3524_map",
+            "name": "Calpin Wetland (Motherwill)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3524_mother_test03",
-            "name": "m3524_mother_test03",
+            "name": "Calpin Wetland (Motherwill)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3530",
-            "name": "m3530",
+            "name": "Raziania Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3530_map",
-            "name": "m3530_map",
+            "name": "Raziania Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3600",
-            "name": "m3600",
+            "name": "Andyr City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3600_arena",
-            "name": "m3600_arena",
+            "name": "Andyr City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3600_map",
-            "name": "m3600_map",
+            "name": "Andyr City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3601",
-            "name": "m3601",
+            "name": "Pierm Snowfield",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3601_arena",
-            "name": "m3601_arena",
+            "name": "Pierm Snowfield",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3601_map",
-            "name": "m3601_map",
+            "name": "Pierm Snowfield",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3602",
-            "name": "m3602",
+            "name": "Yorga Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3602_arena",
-            "name": "m3602_arena",
+            "name": "Yorga Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3602_map",
-            "name": "m3602_map",
+            "name": "Yorga Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3603",
-            "name": "m3603",
+            "name": "Yorga Base (blizzard)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3603_map",
-            "name": "m3603_map",
+            "name": "Yorga Base (blizzard)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3610",
-            "name": "m3610",
+            "name": "Yunsk Canyon",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3610_map",
-            "name": "m3610_map",
+            "name": "Yunsk Canyon",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3620",
-            "name": "m3620",
+            "name": "Miynsky Hills",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3620_arena",
-            "name": "m3620_arena",
+            "name": "Miynsky Hills",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3620_map",
-            "name": "m3620_map",
+            "name": "Miynsky Hills",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3621",
-            "name": "m3621",
+            "name": "Miynsky Hills (bombing)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3621_map",
-            "name": "m3621_map",
+            "name": "Miynsky Hills (bombing)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3630",
-            "name": "m3630",
+            "name": "Kensky Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3630_map",
-            "name": "m3630_map",
+            "name": "Kensky Base",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3700",
-            "name": "m3700",
+            "name": "Alloy Gate City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3700_arena",
-            "name": "m3700_arena",
+            "name": "Alloy Gate City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3700_map",
-            "name": "m3700_map",
+            "name": "Alloy Gate City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3710",
-            "name": "m3710",
+            "name": "Windy City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3710_arena",
-            "name": "m3710_arena",
+            "name": "Windy City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3710_map",
-            "name": "m3710_map",
+            "name": "Windy City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3711",
-            "name": "m3711",
+            "name": "Windy City (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3711_arena",
-            "name": "m3711_arena",
+            "name": "Windy City (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3711_map",
-            "name": "m3711_map",
+            "name": "Windy City (night)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3720",
-            "name": "m3720",
+            "name": "BIG D TUNNEL",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3720_arena",
-            "name": "m3720_arena",
+            "name": "BIG D TUNNEL",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3720_map",
-            "name": "m3720_map",
+            "name": "BIG D TUNNEL",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3721",
-            "name": "m3721",
+            "name": "BIG D TUNNEL (working)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3721_map",
-            "name": "m3721_map",
+            "name": "BIG D TUNNEL (working)",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3730",
-            "name": "m3730",
+            "name": "Brew City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3730_arena",
-            "name": "m3730_arena",
+            "name": "Brew City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3730_map",
-            "name": "m3730_map",
+            "name": "Brew City",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3740",
-            "name": "m3740",
+            "name": "Galef Plant",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3740_arena",
-            "name": "m3740_arena",
+            "name": "Galef Plant",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3740_map",
-            "name": "m3740_map",
+            "name": "Galef Plant",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3750",
-            "name": "m3750",
+            "name": "Agria/M42",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m3750_map",
-            "name": "m3750_map",
+            "name": "Agria/M42",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m4000",
-            "name": "m4000",
+            "name": "AcTest",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m4000_actest",
-            "name": "m4000_actest",
+            "name": "AcTest",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m4000_aitest",
-            "name": "m4000_aitest",
+            "name": "AcTest",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m4000_map",
-            "name": "m4000_map",
+            "name": "AcTest",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m9100",
-            "name": "m9100",
+            "name": "Test Map",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m9100_map",
-            "name": "m9100_map",
+            "name": "Test Map",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m9101",
-            "name": "m9101",
+            "name": "Test Map",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m9101_map",
-            "name": "m9101_map",
+            "name": "Test Map",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m9102",
-            "name": "m9102",
+            "name": "Test Map",
             "tags": [
                 ""
             ]
         },
 		{
             "id": "m9102_map",
-            "name": "m9102_map",
+            "name": "Test Map",
             "tags": [
                 ""
             ]

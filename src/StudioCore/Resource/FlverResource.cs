@@ -1656,6 +1656,17 @@ public class FlverResource : IResource, IDisposable
             }
 
             br.StepOut();
+
+            // Skip edge compressed buffers
+            if (vb.edgeCompressed
+            && layoutmembers.Length == 1
+            && layoutmembers[0].type == LayoutType.EdgeCompressed
+            && layoutmembers[0].semantic == LayoutSemantic.Position
+            && posfilled)
+            {
+                continue;
+            }
+
             if (dest.Material.LayoutType == MeshLayoutType.LayoutSky)
             {
                 FillVerticesNormalOnly(br, ref vb, layoutmembers, pvhandle, meshVertices, ref posfilled);
