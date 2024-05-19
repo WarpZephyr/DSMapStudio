@@ -161,6 +161,7 @@ namespace SoulsFormats
             {
                 Name = name;
                 ResourcePath = "";
+                Config1 = new UnkConfig1();
             }
 
             /// <summary>
