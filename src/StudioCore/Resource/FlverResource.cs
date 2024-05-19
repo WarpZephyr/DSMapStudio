@@ -1417,9 +1417,6 @@ public class FlverResource : IResource, IDisposable
             isEdgeCompressed = isEdgeCompressed || (faceset.Flags & FLVER2.FaceSet.FSFlags.EdgeCompressed) > 0;
         }
 
-        // TODO EDGE
-        is32bit = is32bit && !isEdgeCompressed;
-
         var vbuffersize = (uint)mesh.VertexCount * vSize;
         dest.GeomBuffer = Renderer.GeometryBufferAllocator.Allocate(vbuffersize,
             (uint)indicesTotal * (is32bit ? 4u : 2u), (int)vSize, 4);

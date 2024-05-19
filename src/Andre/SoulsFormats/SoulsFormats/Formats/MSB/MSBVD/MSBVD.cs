@@ -8,7 +8,7 @@ namespace SoulsFormats
     /// A map layout file used in Armored Core Verdict Day.<br/>
     /// Extension: .msb
     /// </summary>
-    public partial class MSBVD : SoulsFile<MSBVD>, IMsb
+    public partial class MSBVD : SoulsFile<MSBVD>, IMsbBound<MSBVD.MapStudioTree>
     {
         /// <summary>
         /// Model files that are available for parts to use.
@@ -48,13 +48,14 @@ namespace SoulsFormats
         /// A bounding volume hierarchy using Axis-Aligned Bounding Boxes for drawing.<br/>
         /// Set to null when not in use.
         /// </summary>
-        public MapStudioTree DrawingTree { get; set; }
+        public MapStudioTreeParam DrawingTree { get; set; }
 
         /// <summary>
         /// A bounding volume hierarchy using Axis-Aligned Bounding Boxes for collision detection.<br/>
         /// Set to null when not in use.
         /// </summary>
-        public MapStudioTree CollisionTree { get; set; }
+        public MapStudioTreeParam CollisionTree { get; set; }
+        public IReadOnlyList<IMsbTreeParam<MapStudioTree>> Trees => [DrawingTree, CollisionTree];
 
         /// <summary>
         /// Create a new <see cref="MSBVD"/>.
@@ -67,8 +68,8 @@ namespace SoulsFormats
             Routes = new RouteParam();
             Layers = new LayerParam();
             Parts = new PartsParam();
-            DrawingTree = new MapStudioTree();
-            CollisionTree = new MapStudioTree();
+            DrawingTree = new MapStudioTreeParam();
+            CollisionTree = new MapStudioTreeParam();
         }
 
         /// <summary>
@@ -92,9 +93,9 @@ namespace SoulsFormats
 
             if (!Parts.IsLastParam)
             {
-                DrawingTree = new MapStudioTree();
+                DrawingTree = new MapStudioTreeParam();
                 DrawingTree.Read(br);
-                CollisionTree = new MapStudioTree();
+                CollisionTree = new MapStudioTreeParam();
                 CollisionTree.Read(br);
             }
             else

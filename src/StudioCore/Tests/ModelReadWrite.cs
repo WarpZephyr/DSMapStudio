@@ -1,6 +1,7 @@
 ﻿using DotNext.IO.MemoryMappedFiles;
 using SoulsFormats;
 using StudioCore.Resource;
+using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 
@@ -47,5 +48,37 @@ public static class ModelReadWrite
         }
 
         return true;
+    }
+
+    public static bool RunReadACVD(AssetLocator locator, string path, string name)
+    {
+        var resource = new FlverResource();
+
+        if (BND3.Is(path))
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return false;
+            }
+
+            var bnd = BND3.Read(path);
+            foreach (var bfile in bnd.Files)
+            {
+                if (bfile.Name.EndsWith(".flv") || bfile.Name.EndsWith(".flv.dcx") && bfile.Name.Contains(name))
+                {
+                    resource._Load(bfile.Bytes, AccessLevel.AccessGPUOptimizedOnly, GameType.ArmoredCoreVD);
+                    return true;
+                }
+            }
+        }
+        else
+        {
+            var mmf = MemoryMappedFile.CreateFromFile(path, FileMode.Open, null, 0, MemoryMappedFileAccess.Read);
+            var accessor = mmf.CreateMemoryAccessor(0, 0, MemoryMappedFileAccess.Read);
+            resource._Load(accessor.Memory, AccessLevel.AccessGPUOptimizedOnly, GameType.ArmoredCoreVD);
+            return true;
+        }
+
+        return false;
     }
 }

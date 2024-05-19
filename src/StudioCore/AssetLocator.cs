@@ -1251,6 +1251,15 @@ public class AssetLocator
         //TODO ACVD
         if (Type is GameType.ArmoredCoreVD)
         {
+            if (mapid.Length == 12 && mapid.StartsWith("ch"))
+            {
+                return mapid.Substring(7, 5);
+            }
+            else if (mapid.Length > 5 && mapid.StartsWith('m'))
+            {
+                return mapid[..5];
+            }
+
             return mapid;
         }
 
@@ -1306,7 +1315,7 @@ public class AssetLocator
         //TODO ACVD
         else if (Type == GameType.ArmoredCoreVD)
         {
-            ret.AssetPath = GetAssetPath($@"model\map\{mapid}_m.dcx.bnd");
+            ret.AssetPath = GetAssetPath($@"model\map\{mapid}\{mapid}_m.dcx.bnd");
         }
         else if (Type == GameType.ArmoredCoreVI)
         {
@@ -1326,7 +1335,22 @@ public class AssetLocator
         //TODO ACVD
         else if (Type == GameType.ArmoredCoreVD)
         {
-            string mid = MapIDToAssetIDACVD(mapid);
+            string mid = GetAssetMapID(mapid);
+            string omid = GetOverrideAssetMapID(mid, ret.AssetPath);
+            if (mid != omid)
+            {
+                string pre = ret.AssetPath;
+                if (mid != mapid)
+                    ret.AssetPath = ret.AssetPath.Replace(mapid, omid);
+                else
+                    ret.AssetPath = ret.AssetPath.Replace(mid, omid);
+
+                if (!File.Exists(ret.AssetPath))
+                    ret.AssetPath = pre;
+                else
+                    mid = omid;
+            }
+
             ret.AssetArchiveVirtualPath = $@"map/{mid}/model";
             ret.AssetVirtualPath = $@"map/{mid}/model/{model}.flv";
         }
@@ -1420,8 +1444,20 @@ public class AssetLocator
             // TODO ACVD
             AssetDescription ad = new();
 
-            string mid = MapIDToAssetIDACVD(mapid);
+            string mid = GetAssetMapID(mapid);
             ad.AssetPath = GetAssetPath($@"model\map\{mid}\{mid}_l.tpf.dcx");
+
+            string omid = GetOverrideAssetMapID(mid, ad.AssetPath);
+            if (mid != omid)
+            {
+                string pre = ad.AssetPath;
+                ad.AssetPath = ad.AssetPath.Replace(mid, omid);
+                if (!File.Exists(ad.AssetPath))
+                    ad.AssetPath = pre;
+                else
+                    mid = omid;
+            }
+
             ad.AssetVirtualPath = $@"map/tex/{mid}";
             ads.Add(ad);
         }
@@ -2120,15 +2156,14 @@ public class AssetLocator
         return ret;
     }
 
-    public string MapIDToAssetIDACVD(string mapid)
+    public string GetOverrideAssetMapID(string mapid, string path)
     {
-        if (mapid.Length == 12 && mapid.StartsWith("ch"))
+        if (Type == GameType.ArmoredCoreVD)
         {
-            return mapid.Substring(7, 5);
-        }
-        else if (mapid.Length > 5 && mapid.StartsWith('m'))
-        {
-            return mapid[..5];
+            if (!File.Exists(path))
+            {
+                return mapid[..4] + '0';
+            }
         }
 
         return mapid;

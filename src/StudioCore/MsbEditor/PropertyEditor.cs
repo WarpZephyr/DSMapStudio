@@ -12,6 +12,8 @@ using System.Drawing;
 using System.Linq;
 using System.Numerics;
 using System.Reflection;
+using System.Diagnostics;
+using static SoulsFormats.MSBD;
 
 namespace StudioCore.MsbEditor;
 
@@ -631,14 +633,124 @@ public class PropertyEditor
         }
     }
 
+    private void PropEditorMapStudioTree(IMsbTree tree, string typeName)
+    {
+        string name = nameof(IMsbTree.Bounds);
+        var boundsOpen = ImGui.TreeNodeEx(name, ImGuiTreeNodeFlags.DefaultOpen);
+        ImGui.NextColumn();
+        ImGui.SetNextItemWidth(-1);
+        name = nameof(MsbBoundingBox);
+        ImGui.Text(name);
+        ImGui.NextColumn();
+        if (boundsOpen)
+        {
+            int id = 0;
+            var bb = tree.Bounds;
+
+            name = nameof(MsbBoundingBox.Min);
+            var min = bb.Min;
+            ImGui.PushID(id);
+            ImGui.AlignTextToFramePadding();
+            PropContextRowOpener();
+            ImGui.Text(name);
+            ImGui.NextColumn();
+            ImGui.SetNextItemWidth(-1);
+            ImGui.SetNextItemWidth(-1);
+            ImGui.InputFloat3($"##{name}", ref min, flags: ImGuiInputTextFlags.ReadOnly);
+            ImGui.NextColumn();
+            ImGui.PopID();
+            id++;
+
+            name = nameof(MsbBoundingBox.Max);
+            var max = bb.Max;
+            ImGui.PushID(id);
+            ImGui.AlignTextToFramePadding();
+            PropContextRowOpener();
+            ImGui.Text(name);
+            ImGui.NextColumn();
+            ImGui.SetNextItemWidth(-1);
+            ImGui.SetNextItemWidth(-1);
+            ImGui.InputFloat3($"##{name}", ref max, flags: ImGuiInputTextFlags.ReadOnly);
+            ImGui.NextColumn();
+            ImGui.PopID();
+            id++;
+
+            name = nameof(MsbBoundingBox.Origin);
+            var origin = bb.Origin;
+            ImGui.PushID(id);
+            ImGui.AlignTextToFramePadding();
+            PropContextRowOpener();
+            ImGui.Text(name);
+            ImGui.NextColumn();
+            ImGui.SetNextItemWidth(-1);
+            ImGui.SetNextItemWidth(-1);
+            ImGui.InputFloat3($"##{name}", ref origin, flags: ImGuiInputTextFlags.ReadOnly);
+            ImGui.NextColumn();
+            ImGui.PopID();
+            id++;
+
+            name = nameof(MsbBoundingBox.Radius);
+            var radius = bb.Radius;
+            ImGui.PushID(id);
+            ImGui.AlignTextToFramePadding();
+            PropContextRowOpener();
+            ImGui.Text(name);
+            ImGui.NextColumn();
+            ImGui.SetNextItemWidth(-1);
+            ImGui.SetNextItemWidth(-1);
+            ImGui.InputFloat($"##{name}", ref radius, flags: ImGuiInputTextFlags.ReadOnly);
+            ImGui.NextColumn();
+            ImGui.PopID();
+
+            ImGui.TreePop();
+        }
+
+        name = nameof(IMsbTree.Left);
+        var leftOpen = ImGui.TreeNodeEx(name);
+        ImGui.NextColumn();
+        ImGui.SetNextItemWidth(-1);
+        ImGui.Text(typeName);
+        ImGui.NextColumn();
+        if (leftOpen)
+        {
+            if (tree.Left != null)
+            {
+                PropEditorMapStudioTree(tree.Left, typeName);
+            }
+            ImGui.TreePop();
+        }
+
+        name = nameof(IMsbTree.Right);
+        var rightOpen = ImGui.TreeNodeEx(name);
+        ImGui.NextColumn();
+        ImGui.SetNextItemWidth(-1);
+        ImGui.Text(typeName);
+        ImGui.NextColumn();
+        if (rightOpen)
+        {
+            if (tree.Right != null)
+            {
+                PropEditorMapStudioTree(tree.Right, typeName);
+            }
+            ImGui.TreePop();
+        }
+
+        name = nameof(IMsbTree.PartIndices);
+        ImGui.Text(name);
+        ImGui.NextColumn();
+        ImGui.SetNextItemWidth(-1);
+        var partsStr = string.Join(',', tree.PartIndices);
+        ImGui.InputText($"## {name}", ref partsStr, 255, ImGuiInputTextFlags.ReadOnly);
+        ImGui.NextColumn();
+    }
+
     private void PropEditorGeneric(Selection selection, HashSet<Entity> entSelection, object target = null,
         bool decorate = true, int classIndex = -1)
     {
         var scale = MapStudioNew.GetUIScale();
         Entity firstEnt = entSelection.First();
-        var obj = target == null ? firstEnt.WrappedObject : target;
+        var obj = target ?? firstEnt.WrappedObject;
         Type type = obj.GetType();
-
         PropertyInfo[] properties = _propCache.GetCachedProperties(type);
 
         if (decorate)
@@ -651,6 +763,11 @@ public class PropertyEditor
             ImGui.NextColumn();
         }
 
+        if (type.Name == nameof(MsbBoundingBox))
+        {
+            Debugger.Break();
+        }
+
         // Custom editors
         if (type == typeof(FLVER2.BufferLayout))
         {
@@ -661,6 +778,23 @@ public class PropertyEditor
             else
             {
                 ImGui.Text("Cannot edit multiples of this object at once.");
+            }
+        }
+        else if (type.GetInterface(nameof(IMsbTree)) != null)
+        {
+            string typeName = type.Name;
+            var tree = (IMsbTree)obj;
+
+            ImGui.AlignTextToFramePadding();
+            var open = ImGui.TreeNodeEx("Tree", ImGuiTreeNodeFlags.DefaultOpen);
+            ImGui.NextColumn();
+            ImGui.SetNextItemWidth(-1);
+            ImGui.Text(typeName);
+            ImGui.NextColumn();
+            if (open)
+            {
+                PropEditorMapStudioTree(tree, typeName);
+                ImGui.TreePop();
             }
         }
         else
@@ -925,16 +1059,19 @@ public class PropertyEditor
                 }
                 else if (typ.IsClass && typ != typeof(string) && !typ.IsArray)
                 {
-                    var open = ImGui.TreeNodeEx(prop.Name, ImGuiTreeNodeFlags.DefaultOpen);
-                    ImGui.NextColumn();
-                    ImGui.SetNextItemWidth(-1);
                     var o = prop.GetValue(obj);
-                    ImGui.Text(o.GetType().Name);
-                    ImGui.NextColumn();
-                    if (open)
+                    if (o != null)
                     {
-                        PropEditorGeneric(selection, entSelection, o, false);
-                        ImGui.TreePop();
+                        var open = ImGui.TreeNodeEx(prop.Name, ImGuiTreeNodeFlags.DefaultOpen);
+                        ImGui.NextColumn();
+                        ImGui.SetNextItemWidth(-1);
+                        ImGui.Text(o.GetType().Name);
+                        ImGui.NextColumn();
+                        if (open)
+                        {
+                            PropEditorGeneric(selection, entSelection, o, false);
+                            ImGui.TreePop();
+                        }
                     }
 
                     ImGui.PopID();

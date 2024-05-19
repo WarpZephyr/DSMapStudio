@@ -40,7 +40,13 @@ public static class PropFinderUtil
 
             if (p.PropertyType.IsNested)
             {
-                var retObj = GetPropData(prop, p.GetValue(obj), classIndex);
+                var nextObj = p.GetValue(obj);
+                if (nextObj == null)
+                {
+                    continue;
+                }
+
+                var retObj = GetPropData(prop, nextObj, classIndex);
                 if (retObj != null)
                     return retObj;
             }
@@ -78,6 +84,11 @@ public static class PropFinderUtil
     /// <returns>PropertyInfo if found, otherwise null.</returns>
     public static PropertyInfo? FindProperty(string prop, object obj, int classIndex = -1)
     {
+        if (obj == null)
+        {
+            return null;
+        }
+
         var proppy = obj.GetType().GetProperty(prop, BindingFlags.IgnoreCase | BindingFlags.Instance | BindingFlags.Public);
         if (proppy != null)
             return proppy;

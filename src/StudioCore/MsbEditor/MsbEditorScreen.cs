@@ -17,6 +17,9 @@ using Veldrid.Sdl2;
 using Veldrid.Utilities;
 using Viewport = StudioCore.Gui.Viewport;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using static SoulsFormats.MCG;
+using static StudioCore.Utilities.SoulsMapMetadataGenerator;
+using SoulsFormats.KF4;
 
 namespace StudioCore.MsbEditor;
 
@@ -301,6 +304,199 @@ public class MsbEditorScreen : EditorScreen, SceneTreeEventHandler
                 }
             }
             _drawEntities.Clear();
+        }
+    }
+
+    /// <summary>
+    /// Handles rendering MapStudioTree bounding boxes.
+    /// </summary>
+    public static class MapStudioTreeDrawManager
+    {
+        /// <summary>
+        /// Flags for enabling or disabling viewing MapStudioTrees depending on their state.
+        /// </summary>
+        [Flags]
+        public enum NodeDisplayFlags
+        {
+            /// <summary>
+            /// Display MapStudioTrees that have no part indices.
+            /// </summary>
+            DisplayEmpty = 1,
+
+            /// <summary>
+            /// Display MapStudioTrees that have exactly one part index.
+            /// </summary>
+            DisplaySingle = 2,
+
+            /// <summary>
+            /// Display MapStudioTrees that have more than one part index.
+            /// </summary>
+            DisplayMulti = 4
+        }
+
+        /// <summary>
+        /// The tree entities the manager currently has render meshes for.
+        /// </summary>
+        private static readonly HashSet<Entity> _treeEntities = new();
+
+        /// <summary>
+        /// Flags for enabling or disabling viewing MapStudioTrees depending on their state.
+        /// </summary>
+        private static NodeDisplayFlags _displayFlags = DefaultDisplayFlags;
+
+        /// <summary>
+        /// Flags for enabling or disabling viewing MapStudioTrees depending on their state.
+        /// </summary>
+        public static NodeDisplayFlags DisplayFlags
+        {
+            get => _displayFlags;
+            set
+            {
+                _displayFlags = value;
+                UpdateRenderFilter();
+            }
+        }
+
+        /// <summary>
+        /// The default <see cref="DisplayFlags"/>.
+        /// </summary>
+        public const NodeDisplayFlags DefaultDisplayFlags = NodeDisplayFlags.DisplayEmpty | NodeDisplayFlags.DisplaySingle | NodeDisplayFlags.DisplayMulti;
+
+        /// <summary>
+        /// Update the render filter for whether or not a part should be displayed.
+        /// </summary>
+        private static void UpdateRenderFilter()
+        {
+            foreach (var entity in _treeEntities)
+            {
+                var node = entity.WrappedObject as IMsbTree;
+                if (!Display(node.PartIndices.Count))
+                {
+                    entity.RenderSceneMesh.Visible = false;
+                }
+                else
+                {
+                    entity.RenderSceneMesh.Visible = true;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the color for a MapStudioTree bounding box render depending on its state.
+        /// </summary>
+        private static System.Drawing.Color GetColor(int count)
+        {
+            switch (count)
+            {
+                case 0:
+                    return System.Drawing.Color.Red;
+                case 1:
+                    return System.Drawing.Color.Green;
+                default:
+                    return System.Drawing.Color.Blue;
+            }
+        }
+
+        /// <summary>
+        /// Gets the color for when a MapStudioTree is selected depending on its state.
+        /// </summary>
+        private static System.Drawing.Color GetSelectedColor(int count)
+        {
+            switch (count)
+            {
+                case 0:
+                    return System.Drawing.Color.DarkRed;
+                case 1:
+                    return System.Drawing.Color.DarkGreen;
+                default:
+                    return System.Drawing.Color.DarkBlue;
+            }
+        }
+
+        /// <summary>
+        /// Whether or not the current <see cref="DisplayFlags"/> allow displaying MapStudioTrees of a specific state.
+        /// </summary>
+        private static bool Display(int count)
+        {
+            switch (count)
+            {
+                case 0:
+                    return (DisplayFlags & NodeDisplayFlags.DisplayEmpty) != 0;
+                case 1:
+                    return (DisplayFlags & NodeDisplayFlags.DisplaySingle) != 0;
+                default:
+                    return (DisplayFlags & NodeDisplayFlags.DisplayMulti) != 0;
+            }
+        }
+
+        /// <summary>
+        /// Gets a render mesh for a single node and it's children.
+        /// </summary>
+        private static void GenerateNode(Universe universe, ObjectContainer map, Entity mapObject)
+        {
+            var node = mapObject.WrappedObject as IMsbTree;
+            int count = node.PartIndices.Count;
+            var bounds = node.Bounds;
+            mapObject.RenderSceneMesh = universe.GetBoundingBoxDrawable(mapObject, Vector3.Zero, Vector3.Zero, bounds.Min, bounds.Max, GetColor(count), GetSelectedColor(count));
+            if (!Display(count))
+            {
+                mapObject.RenderSceneMesh.Visible = false;
+            }
+            _treeEntities.Add(mapObject);
+
+            foreach (var childObject in mapObject.Children)
+            {
+                GenerateNode(universe, map, childObject);
+            }
+        }
+
+        /// <summary>
+        /// Generates MapStudioTree bounding boxes of the selected tree index for all loaded maps.
+        /// </summary>
+        public static void Generate(Universe universe, int treeIndex)
+        {
+            // Clear the previously loaded tree.
+            Clear();
+
+            // Check each map
+            var loadedMaps = universe.LoadedObjectContainers.Values.Where(x => x != null);
+            foreach (var map in loadedMaps)
+            {
+                int currentTreeIndex = 0;
+                var mapObjects = map.Objects;
+                for (int i = 0; i < mapObjects.Count; i++)
+                {
+                    var mapObject = mapObjects[i];
+                    
+                    // If the map object is not a MapStudioTree or if it is one and its not a root, continue.
+                    if ((mapObject.WrappedObject is not IMsbTree) || (mapObject.Parent != map.RootObject))
+                    {
+                        continue;
+                    }
+                    else if (currentTreeIndex != treeIndex) // If the found tree root is not the desired index continue.
+                    {
+                        currentTreeIndex++;
+                        continue;
+                    }
+
+                    // Generate bounding boxes for this MapStudioTree node and all of it's children.
+                    GenerateNode(universe, map, mapObject);
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Clears all loaded MapStudioTree bounding box render meshes.
+        /// </summary>
+        public static void Clear()
+        {
+            foreach (var ent in _treeEntities)
+            {
+                ent.RenderSceneMesh.Dispose();
+                ent.RenderSceneMesh = null;
+            }
+            _treeEntities.Clear();
         }
     }
 
@@ -864,6 +1060,68 @@ public class MsbEditorScreen : EditorScreen, SceneTreeEventHandler
                     }
                     ImGui.EndMenu();
                 }
+            }
+
+            if (ImGui.BeginMenu("Render MapStudioTree bounding boxes"))
+            {
+                if (ImGui.BeginMenu("Filter##MapStudioTrees"))
+                {
+                    var originalFlags = MapStudioTreeDrawManager.DisplayFlags;
+                    var currentFlags = originalFlags;
+
+                    bool[] displayFlags =
+                    [
+                        (currentFlags & MapStudioTreeDrawManager.NodeDisplayFlags.DisplayEmpty) != 0,
+                        (currentFlags & MapStudioTreeDrawManager.NodeDisplayFlags.DisplaySingle) != 0,
+                        (currentFlags & MapStudioTreeDrawManager.NodeDisplayFlags.DisplayMulti) != 0,
+                    ];
+
+                    ImGui.Checkbox("Display Empty", ref displayFlags[0]);
+                    ImGui.Checkbox("Display Single", ref displayFlags[1]);
+                    ImGui.Checkbox("Display Multi", ref displayFlags[2]);
+
+                    if (displayFlags[0])
+                        currentFlags |= MapStudioTreeDrawManager.NodeDisplayFlags.DisplayEmpty;
+                    else
+                        currentFlags &= ~MapStudioTreeDrawManager.NodeDisplayFlags.DisplayEmpty;
+
+                    if (displayFlags[1])
+                        currentFlags |= MapStudioTreeDrawManager.NodeDisplayFlags.DisplaySingle;
+                    else
+                        currentFlags &= ~MapStudioTreeDrawManager.NodeDisplayFlags.DisplaySingle;
+
+                    if (displayFlags[2])
+                        currentFlags |= MapStudioTreeDrawManager.NodeDisplayFlags.DisplayMulti;
+                    else
+                        currentFlags &= ~MapStudioTreeDrawManager.NodeDisplayFlags.DisplayMulti;
+
+                    if (currentFlags != originalFlags)
+                        MapStudioTreeDrawManager.DisplayFlags = currentFlags;
+
+                    ImGui.EndMenu();
+                }
+
+                if (ImGui.BeginMenu("Render##MapStudioTrees"))
+                {
+                    var names = Map.GetMapStudioTreeNames(Universe.GameType);
+                    for (int i = 0; i < names.Length; i++)
+                    {
+                        string name = names[i];
+                        if (ImGui.MenuItem(name, null, false, loadedMaps.Any()))
+                        {
+                            MapStudioTreeDrawManager.Generate(Universe, i);
+                        }
+                    }
+
+                    ImGui.EndMenu();
+                }
+
+                if (ImGui.MenuItem("Clear##MapStudioTrees"))
+                {
+                    MapStudioTreeDrawManager.Clear();
+                }
+
+                ImGui.EndMenu();
             }
 
             if (ImGui.MenuItem("Check loaded maps for duplicate Entity IDs", loadedMaps.Any()))

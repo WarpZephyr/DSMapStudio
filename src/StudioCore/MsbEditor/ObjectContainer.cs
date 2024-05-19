@@ -9,6 +9,7 @@ using System.Linq;
 using System.Numerics;
 using System.Xml.Serialization;
 using Veldrid.Utilities;
+using static SoulsFormats.MCG;
 
 namespace StudioCore.MsbEditor;
 
@@ -271,6 +272,20 @@ public class Map : ObjectContainer
 
             Objects.Add(n);
             RootObject.AddChild(n);
+        }
+
+        // TODO ACVD
+        if (msb is IMsbBound<MSBVD.MapStudioTree> msbBound)
+        {
+            var trees = msbBound.Trees;
+            for (int i = 0; i < trees.Count; i++)
+            {
+                var tree = trees[i];
+                if (tree != null && tree.Tree != null)
+                {
+                    AddTreeNodes(RootObject, tree.Tree);
+                }
+            }
         }
 
         foreach (Entity m in Objects)
@@ -861,6 +876,23 @@ public class Map : ObjectContainer
         }
     }
 
+    private void AddTreeNodes(Entity parent, IMsbTree node)
+    {
+        var n = new MapEntity(this, node, MapEntity.MapEntityType.MapStudioTree);
+        Objects.Add(n);
+        parent.AddChild(n);
+
+        if (node.Left != null)
+        {
+            AddTreeNodes(n, node.Left);
+        }
+
+        if (node.Right != null)
+        {
+            AddTreeNodes(n, node.Right);
+        }
+    }
+
     public void SerializeToMSB(IMsb msb, GameType game)
     {
         foreach (Entity m in Objects)
@@ -1145,16 +1177,26 @@ public class Map : ObjectContainer
         {
             if (msb is MSBVD msbvd)
             {
-                var boundingList = GetBoundingListACVD(msbvd);
-                if (boundingList.Count < 1)
+                msbvd.DrawingTree = new MSBVD.MapStudioTreeParam();
+                msbvd.CollisionTree = new MSBVD.MapStudioTreeParam();
+
+                var boundingList = GetMsbTreePartInfo(msbvd).OrderBy(x => x.Radius);
+                MapStudioTree tree = null;
+                foreach (var node in boundingList)
                 {
-                    return;
+                    if (tree == null)
+                    {
+                        tree = new MapStudioTree(node.Bounds, [node.Index]);
+                        continue;
+                    }
+
+                    tree.AddSimple(node.Bounds, node.Index);
                 }
+                tree.EnlargeBounds(200);
 
-                // TODO make tree
-
-                msbvd.DrawingTree = new MSBVD.MapStudioTree();
-                msbvd.CollisionTree = new MSBVD.MapStudioTree();
+                var ntree = tree.ToMsbTree<MSBVD.MapStudioTree>();
+                msbvd.DrawingTree.Tree = ntree;
+                msbvd.CollisionTree.Tree = ntree;
                 return;
             }
             else
@@ -1167,16 +1209,16 @@ public class Map : ObjectContainer
     }
 
     // TODO ACVD
-    public List<BoundingBox> GetBoundingListACVD(MSBVD msb)
+    private List<MsbTreePartInfo> GetMsbTreePartInfo(IMsb msb)
     {
         var parts = msb.Parts.GetEntries();
-        var boundingList = new List<BoundingBox>(parts.Count);
+        var boundingList = new List<MsbTreePartInfo>(parts.Count);
 
         // Make dictionary to not have to search the entire list several times over
         var boundingDict = new Dictionary<string, BoundingBox>();
         foreach (Entity obj in Objects)
         {
-            if (obj.WrappedObject is MSBVD.Part msbpart)
+            if (obj.WrappedObject is IMsbPart msbpart)
             {
                 // TODO ACVD: Handle AC bounds somehow
                 boundingDict.Add(msbpart.Name, obj.GetBounds());
@@ -1184,6 +1226,7 @@ public class Map : ObjectContainer
         }
 
         // Ensure they are in order of index
+        short index = 0;
         foreach (var part in parts)
         {
             if (!boundingDict.TryGetValue(part.Name, out BoundingBox bounds))
@@ -1192,9 +1235,23 @@ public class Map : ObjectContainer
             }
 
             // TODO ACVD: Handle AC bounds somehow
-            boundingList.Add(bounds);
+            boundingList.Add(new MsbTreePartInfo(index, part.Position, bounds));
+            index++;
         }
 
         return boundingList;
+    }
+
+    public static string[] GetMapStudioTreeNames(GameType game)
+    {
+        switch (game)
+        {
+            case GameType.DemonsSouls:
+                return ["Tree"];
+            case GameType.ArmoredCoreVD:
+                return ["DrawingTree", "CollisionTree"];
+            default:
+                return [];
+        }
     }
 }

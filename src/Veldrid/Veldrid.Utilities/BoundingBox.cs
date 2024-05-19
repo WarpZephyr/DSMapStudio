@@ -45,6 +45,24 @@ namespace Veldrid.Utilities
             return Max - Min;
         }
 
+        public float GetVolume()
+        {
+            if (Min == Max)
+            {
+                return 0f;
+            }
+
+            Vector3 dimensions = GetDimensions();
+            return dimensions.X * dimensions.Y * dimensions.Z;
+        }
+
+        public static float GetOverlapingVolume(BoundingBox box1, BoundingBox box2)
+        {
+            return MathF.Max(MathF.Min(box2.Max.X, box1.Max.X) - MathF.Max(box2.Min.X, box1.Min.X), 0)
+                 * MathF.Max(MathF.Min(box2.Max.Y, box1.Max.Y) - MathF.Max(box2.Min.Y, box1.Min.Y), 0)
+                 * MathF.Max(MathF.Min(box2.Max.Z, box1.Max.Z) - MathF.Max(box2.Min.Z, box1.Min.Z), 0);
+        }
+
         public static unsafe BoundingBox Transform(BoundingBox box, Matrix4x4 mat)
         {
             AlignedBoxCorners corners = box.GetCorners();
@@ -132,21 +150,6 @@ namespace Veldrid.Utilities
             return new BoundingBox(
                 Vector3.Min(box1.Min, box2.Min),
                 Vector3.Max(box1.Max, box2.Max));
-        }
-
-        public static bool Intersects(BoundingBox box1, BoundingBox box2)
-        {
-            if (box1.Max.X >= box2.Min.X && box1.Min.X <= box2.Max.X)
-            {
-                if (box1.Max.Y < box2.Min.Y || box1.Min.Y > box2.Max.Y)
-                {
-                    return false;
-                }
-
-                return box1.Max.Z >= box2.Min.Z && box1.Min.Z <= box2.Max.Z;
-            }
-
-            return false;
         }
 
         public static bool operator ==(BoundingBox first, BoundingBox second)

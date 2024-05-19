@@ -996,7 +996,8 @@ public class MapEntity : Entity
         DS2GeneratorRegist,
         DS2Event,
         DS2EventLocation,
-        DS2ObjectInstance
+        DS2ObjectInstance,
+        MapStudioTree
     }
 
     public MapEntity()
@@ -1068,6 +1069,10 @@ public class MapEntity : Entity
             else if (Type == MapEntityType.DS2ObjectInstance)
             {
                 icon = ForkAwesome.Database;
+            }
+            else if (Type == MapEntityType.MapStudioTree)
+            {
+                icon = ForkAwesome.Tree;
             }
 
             return $@"{icon} {Utils.ImGuiEscape(Name, null)}";

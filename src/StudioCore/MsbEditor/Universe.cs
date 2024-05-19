@@ -302,6 +302,20 @@ public class Universe
         return mesh;
     }
 
+    public RenderableProxy GetBoundingBoxDrawable(Entity obj, Vector3 position, Vector3 rotation, Vector3 localMin, Vector3 localMax, System.Drawing.Color color, System.Drawing.Color colorSelected)
+    {
+        DebugPrimitives.DbgPrimBoundingBox box = new(new Transform(position, rotation), localMin, localMax, color);
+        DebugPrimitiveRenderableProxy mesh = new(_renderScene.OpaqueRenderables, box)
+        {
+            BaseColor = color,
+            HighlightedColor = colorSelected,
+            World = obj.GetWorldMatrix(),
+            DrawFilter = RenderFilter.Debug
+        };
+        mesh.SetSelectable(obj);
+        return mesh;
+    }
+
     /// <summary>
     ///     Creates a drawable for a model and registers it with the scene. Will load
     ///     the required assets in the background if they aren't already loaded.
