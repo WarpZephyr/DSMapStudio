@@ -844,17 +844,24 @@ public class Entity : ISelectable, IDisposable
                 // CollisionName field is not empty
                 RenderGroupRefName = collisionNameValue;
 
-                Entity colNameEnt = Container.GetObjectByName(collisionNameValue); // Get entity referenced by CollisionName
-                if (colNameEnt != null)
+                foreach (var colNameEnt in Container.GetObjectsByName(collisionNameValue)) // Get entity referenced by CollisionName
                 {
-                    // Get DrawGroups from CollisionName reference
-                    var colNamePropDraw = PropFinderUtil.FindProperty("DrawGroups", colNameEnt.WrappedObject);;
-                    var colNamePropDisp = PropFinderUtil.FindProperty("DisplayGroups", colNameEnt.WrappedObject);;
-                    colNamePropDisp ??= PropFinderUtil.FindProperty("DispGroups", colNameEnt.WrappedObject);
+                    if (colNameEnt != null)
+                    {
+                        // Get DrawGroups from CollisionName reference
+                        var colNamePropDraw = PropFinderUtil.FindProperty("DrawGroups", colNameEnt.WrappedObject);
+                        var colNamePropDisp = PropFinderUtil.FindProperty("DisplayGroups", colNameEnt.WrappedObject);
+                        colNamePropDisp ??= PropFinderUtil.FindProperty("DispGroups", colNameEnt.WrappedObject);
 
-                    Drawgroups = (uint[])PropFinderUtil.FindPropertyValue(colNamePropDraw, colNameEnt.WrappedObject);
-                    Dispgroups = (uint[])PropFinderUtil.FindPropertyValue(colNamePropDisp, colNameEnt.WrappedObject);
-                    return;
+                        if (colNamePropDraw == null || colNamePropDisp == null)
+                        {
+                            continue;
+                        }
+
+                        Drawgroups = (uint[])PropFinderUtil.FindPropertyValue(colNamePropDraw, colNameEnt.WrappedObject);
+                        Dispgroups = (uint[])PropFinderUtil.FindPropertyValue(colNamePropDisp, colNameEnt.WrappedObject);
+                        return;
+                    }
                 }
 
                 if (Universe.postLoad)

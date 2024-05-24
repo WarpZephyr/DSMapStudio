@@ -151,7 +151,7 @@ namespace SoulsFormats
             /// <summary>
             /// Unknown; Seems to have bytes that affect shadows and fog?
             /// </summary>
-            private UnkConfig1 Config1 { get; set; }
+            public UnkConfig1 Config1 { get; set; }
 
             /// <summary>
             /// Creates a new Model entry with default values. This is to be used as a base for overriding types.

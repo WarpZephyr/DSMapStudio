@@ -4,9 +4,11 @@ using SoulsFormats.Other.PlayStation3;
 using StudioCore.Editor;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 
 namespace StudioCore;
@@ -134,14 +136,14 @@ public class AssetLocator
     public GameType Type { get; private set; } = GameType.Undefined;
 
     /// <summary>
-    ///     The game interroot where all the game assets are
-    /// </summary>
-    public string GameRootDirectory { get; private set; }
-
-    /// <summary>
     ///     An optional override mod directory where modded files are stored
     /// </summary>
     public string GameModDirectory { get; private set; }
+
+    /// <summary>
+    ///     The game interroot where all the game assets are
+    /// </summary>
+    public string GameRootDirectory { get; private set; }
 
     /// <summary>
     ///     Directory where misc DSMapStudio files associated with a project are stored.
@@ -1253,14 +1255,10 @@ public class AssetLocator
         {
             if (mapid.Length == 12 && mapid.StartsWith("ch"))
             {
-                return mapid.Substring(7, 5);
-            }
-            else if (mapid.Length > 5 && mapid.StartsWith('m'))
-            {
-                return mapid[..5];
+                return string.Concat(mapid.AsSpan(7, 4), "0");
             }
 
-            return mapid;
+            return mapid[..4] + '0';
         }
 
         if (Type is GameType.EldenRing or GameType.ArmoredCoreVI)
@@ -1335,24 +1333,8 @@ public class AssetLocator
         //TODO ACVD
         else if (Type == GameType.ArmoredCoreVD)
         {
-            string mid = GetAssetMapID(mapid);
-            string omid = GetOverrideAssetMapID(mid, ret.AssetPath);
-            if (mid != omid)
-            {
-                string pre = ret.AssetPath;
-                if (mid != mapid)
-                    ret.AssetPath = ret.AssetPath.Replace(mapid, omid);
-                else
-                    ret.AssetPath = ret.AssetPath.Replace(mid, omid);
-
-                if (!File.Exists(ret.AssetPath))
-                    ret.AssetPath = pre;
-                else
-                    mid = omid;
-            }
-
-            ret.AssetArchiveVirtualPath = $@"map/{mid}/model";
-            ret.AssetVirtualPath = $@"map/{mid}/model/{model}.flv";
+            ret.AssetArchiveVirtualPath = $@"map/{mapid}/model";
+            ret.AssetVirtualPath = $@"map/{mapid}/model/{model}.flv";
         }
         else
         {
@@ -1444,21 +1426,8 @@ public class AssetLocator
             // TODO ACVD
             AssetDescription ad = new();
 
-            string mid = GetAssetMapID(mapid);
-            ad.AssetPath = GetAssetPath($@"model\map\{mid}\{mid}_l.tpf.dcx");
-
-            string omid = GetOverrideAssetMapID(mid, ad.AssetPath);
-            if (mid != omid)
-            {
-                string pre = ad.AssetPath;
-                ad.AssetPath = ad.AssetPath.Replace(mid, omid);
-                if (!File.Exists(ad.AssetPath))
-                    ad.AssetPath = pre;
-                else
-                    mid = omid;
-            }
-
-            ad.AssetVirtualPath = $@"map/tex/{mid}";
+            ad.AssetPath = GetAssetPath($@"model\map\{mapid}\{mapid}_htdcx.bnd");
+            ad.AssetArchiveVirtualPath = $@"map/tex/{mapid}/tex";
             ads.Add(ad);
         }
         else if (Type == GameType.ArmoredCoreVI)
@@ -1938,7 +1907,7 @@ public class AssetLocator
         if (Type == GameType.ArmoredCoreVD)
         {
             ad.AssetPath = GetOverridenFilePath($@"model\obj\{obj}\{obj}.tpf.dcx");
-            ad.AssetVirtualPath = $@"obj/tex/{obj}";
+            ad.AssetVirtualPath = $@"obj/{obj}/tex";
             return ad;
         }
 
@@ -2156,19 +2125,6 @@ public class AssetLocator
         return ret;
     }
 
-    public string GetOverrideAssetMapID(string mapid, string path)
-    {
-        if (Type == GameType.ArmoredCoreVD)
-        {
-            if (!File.Exists(path))
-            {
-                return mapid[..4] + '0';
-            }
-        }
-
-        return mapid;
-    }
-
     /// <summary>
     ///     Converts a virtual path to an actual filesystem path. Only resolves virtual paths up to the bnd level,
     ///     which the remaining string is output for additional handling
@@ -2213,7 +2169,7 @@ public class AssetLocator
                 {
                     var mid = pathElements[i];
                     bndpath = "";
-                    return GetAssetPath($@"model\map\{mid}\{mid}_l.tpf.dcx");
+                    return GetAssetPath($@"model\map\{mid}\{mid}_htdcx.bnd");
                 }
                 else
                 {
@@ -2378,7 +2334,7 @@ public class AssetLocator
                 return GetChrTexturePath(chrid);
             }
         }
-        else if (pathElements[i].Equals("ene"))
+        else if (pathElements[i].Equals("ene")) // TODO ACVD
         {
             i++;
             var eneid = pathElements[i];
@@ -2393,26 +2349,23 @@ public class AssetLocator
             if (pathElements[i].Equals("tex"))
             {
                 bndpath = "";
-                // TODO ACVD ene textures
+                return GetOverridenFilePath($@"model\ene\{eneid}\{eneid}.tpf.dcx");
             }
         }
         else if (pathElements[i].Equals("obj"))
         {
             i++;
-            string objid;
+            string objid = pathElements[i];
+            i++;
 
             //TODO ACVD
             // Skip the BND only processing for textures the rest of the games are doing.
             if (Type == GameType.ArmoredCoreVD && pathElements[i].Equals("tex"))
             {
-                i++;
-                objid = pathElements[i];
                 bndpath = "";
                 return GetOverridenFilePath($@"model\obj\{objid}\{objid}.tpf.dcx");
             }
-
-            objid = pathElements[i];
-            i++;
+            
             if (pathElements[i].Equals("model") || pathElements[i].Equals("tex"))
             {
                 bndpath = "";

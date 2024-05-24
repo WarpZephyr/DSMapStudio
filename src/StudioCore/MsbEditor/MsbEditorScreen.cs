@@ -16,10 +16,6 @@ using Veldrid;
 using Veldrid.Sdl2;
 using Veldrid.Utilities;
 using Viewport = StudioCore.Gui.Viewport;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using static SoulsFormats.MCG;
-using static StudioCore.Utilities.SoulsMapMetadataGenerator;
-using SoulsFormats.KF4;
 
 namespace StudioCore.MsbEditor;
 

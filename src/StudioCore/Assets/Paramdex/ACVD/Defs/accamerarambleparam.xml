@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PARAMDEF XmlVersion="3">
-  <ParamType>AC_CAMERA_RAMBLE_PARAM_ST</ParamType>
+  <ParamType>ACCAM_RAMBLE_PARAM_ST</ParamType>
   <DataVersion>1</DataVersion>
   <BigEndian>True</BigEndian>
   <Unicode>False</Unicode>

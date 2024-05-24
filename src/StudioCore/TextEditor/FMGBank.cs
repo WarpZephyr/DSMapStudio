@@ -573,6 +573,26 @@ public static partial class FMGBank
         return info;
     }
 
+    private static void SetFMGInfoACVD(string file, string root)
+    {
+        // TODO: DS2 FMG grouping & UI sorting (copy SetFMGInfo)
+        FMG fmg = FMG.Read(file);
+        var name = Path.GetFileNameWithoutExtension(file);
+        FMGInfo info = new()
+        {
+            FileName = file.Split("\\").Last(),
+            Name = name,
+            RootPath = file[root.Length..],
+            FmgID = FmgIDType.None,
+            Fmg = fmg,
+            EntryType = FmgEntryTextType.TextBody,
+            EntryCategory = FmgEntryCategory.None,
+            UICategory = FmgUICategory.Text
+        };
+        ActiveUITypes[info.UICategory] = true;
+        FmgInfoBank.Add(info);
+    }
+
     private static void SetFMGInfoDS2(string file)
     {
         // TODO: DS2 FMG grouping & UI sorting (copy SetFMGInfo)
@@ -757,11 +777,11 @@ public static partial class FMGBank
             var modfile = $@"{AssetLocator.GameRootDirectory}\lang\{LanguageFolder}\{Path.GetFileName(file)}";
             if (AssetLocator.GameModDirectory != null && File.Exists(modfile))
             {
-                SetFMGInfoDS2(modfile);
+                SetFMGInfoACVD(modfile, AssetLocator.GameModDirectory);
             }
             else
             {
-                SetFMGInfoDS2(file);
+                SetFMGInfoACVD(file, AssetLocator.GameRootDirectory);
             }
         }
 
@@ -1199,8 +1219,7 @@ public static partial class FMGBank
     {
         foreach (FMGInfo info in FmgInfoBank)
         {
-            Utils.WriteWithBackup(AssetLocator.GameRootDirectory, AssetLocator.GameModDirectory,
-                $@"lang\{LanguageFolder}\{info.Name}.fmg", info.Fmg);
+            Utils.WriteWithBackup(AssetLocator.GameRootDirectory, AssetLocator.GameModDirectory, info.RootPath, info.Fmg);
         }
     }
 
@@ -1336,6 +1355,7 @@ public static partial class FMGBank
         public FMG Fmg;
         public FmgIDType FmgID;
         public string Name;
+        public string RootPath;
 
         /// <summary>
         ///     List of associated children to this FMGInfo used to get patch entry data.

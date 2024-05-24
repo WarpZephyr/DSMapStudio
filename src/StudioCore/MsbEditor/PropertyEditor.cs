@@ -120,7 +120,7 @@ public class PropertyEditor
         {
             var val = (byte)oldval;
             var strval = $@"{val}";
-            if (ImGui.InputText("##value", ref strval, 3))
+            if (ImGui.InputText("##value", ref strval, 4))
             {
                 var res = byte.TryParse(strval, out val);
                 if (res)

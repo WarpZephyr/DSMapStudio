@@ -1,11 +1,11 @@
 ﻿#nullable enable
 using DotNext.IO.MemoryMappedFiles;
-using Microsoft.AspNetCore.Http.Features;
 using SoulsFormats;
 using StudioCore.MsbEditor;
 using StudioCore.Scene;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.MemoryMappedFiles;
 using System.Linq;
@@ -21,6 +21,7 @@ namespace StudioCore.Resource;
 public class FlverResource : IResource, IDisposable
 {
     //private static ArrayPool<FlverLayout> VerticesPool = ArrayPool<FlverLayout>.Create();
+    public string VirtualPath { get; set; }
 
     public const bool CaptureMaterialLayouts = false;
     private static readonly Stack<FlverCache> FlverCaches = new();
@@ -168,40 +169,70 @@ public class FlverResource : IResource, IDisposable
         //GC.Collect();
     }
 
+    private string TexturePathFromResourceVirtualPath(string texpath)
+    {
+        // Map texture reference
+        if (VirtualPath.Contains(@"map/"))
+        {
+            var splits = VirtualPath.Split('/');
+            var mapid = splits[1];
+            return $@"map/tex/{mapid}/{Path.GetFileNameWithoutExtension(texpath)}";
+        }
+
+        // Enemy (ene) texture reference
+        if (VirtualPath.Contains(@"ene/"))
+        {
+            var splits = VirtualPath.Split('/');
+            var eneid = splits[1];
+            return $@"ene/{eneid}/tex/{Path.GetFileNameWithoutExtension(texpath)}";
+        }
+
+        // Obj texture reference
+        if (VirtualPath.Contains(@"obj/"))
+        {
+            var splits = VirtualPath.Split('/');
+            var objid = splits[1];
+            return $@"obj/{objid}/tex/{Path.GetFileNameWithoutExtension(texpath)}";
+        }
+
+        return texpath;
+    }
+
     private string TexturePathToVirtual(string texpath)
     {
+        // Map texture reference
         if (texpath.Contains(@"\map\"))
         {
             var splits = texpath.Split('\\');
             var mapid = splits[splits.Length - 3];
             return $@"map/tex/{mapid}/{Path.GetFileNameWithoutExtension(texpath)}";
         }
-        // Chr texture reference
 
+        // Chr texture reference
         if (texpath.Contains(@"\chr\"))
         {
             var splits = texpath.Split('\\');
             var chrid = splits[splits.Length - 3];
             return $@"chr/{chrid}/tex/{Path.GetFileNameWithoutExtension(texpath)}";
         }
-        // Obj texture reference
 
+        // Obj texture reference
         if (texpath.Contains(@"\obj\"))
         {
             var splits = texpath.Split('\\');
             var objid = splits[splits.Length - 3];
             return $@"obj/{objid}/tex/{Path.GetFileNameWithoutExtension(texpath)}";
         }
-        // Asset (aet) texture references
 
+        // Asset (aet) texture references
         if (texpath.Contains(@"\aet") || texpath.StartsWith("aet"))
         {
             var splits = texpath.Split('\\');
             var aetid = splits[splits.Length - 1].Substring(0, 6);
             return $@"aet/{aetid}/{Path.GetFileNameWithoutExtension(texpath)}";
         }
-        // Parts texture reference
 
+        // Parts texture reference
         if (texpath.Contains(@"\parts\"))
         {
             var splits = texpath.Split('\\');
@@ -209,7 +240,7 @@ public class FlverResource : IResource, IDisposable
             return $@"parts/{partsId}/tex/{Path.GetFileNameWithoutExtension(texpath)}";
         }
 
-        return texpath;
+        return TexturePathFromResourceVirtualPath(texpath);
     }
 
     private void LookupTexture(FlverMaterial.TextureType textureType, FlverMaterial dest, string type, string mpath,
@@ -249,7 +280,8 @@ public class FlverResource : IResource, IDisposable
 
         if (!dest.TextureResourceFilled[(int)textureType])
         {
-            ResourceManager.AddResourceListener<TextureResource>(TexturePathToVirtual(path.ToLower()), dest,
+            var virt = TexturePathToVirtual(path.ToLower());
+            ResourceManager.AddResourceListener<TextureResource>(virt, dest,
                 AccessLevel.AccessGPUOptimizedOnly, (int)textureType);
             dest.TextureResourceFilled[(int)textureType] = true;
         }
@@ -337,6 +369,14 @@ public class FlverResource : IResource, IDisposable
         {
             LookupTexture(FlverMaterial.TextureType.BlendmaskTextureResource, dest, texType, mpath, mtd);
             blendMask = true;
+        }
+        else if (paramNameCheck == "G_EMISSIONTEXTURE") // TODO ACVD
+        {
+            LookupTexture(FlverMaterial.TextureType.EmissionTextureResource, dest, texType, mpath, mtd);
+        }
+        else if (paramNameCheck == "G_GITEXTURE") // TODO ACVD
+        {
+            LookupTexture(FlverMaterial.TextureType.EmissionTextureResource, dest, texType, mpath, mtd);
         }
     }
 
@@ -2136,6 +2176,7 @@ public class FlverResource : IResource, IDisposable
             NormalTextureResource2,
             SpecularTextureResource,
             SpecularTextureResource2,
+            EmissionTextureResource, // TODO ACVD
             ShininessTextureResource,
             ShininessTextureResource2,
             BlendmaskTextureResource,
@@ -2250,6 +2291,7 @@ public class FlverResource : IResource, IDisposable
             SetMaterialTexture(TextureType.NormalTextureResource2, ref MaterialData.normalTex2, 1);
             SetMaterialTexture(TextureType.SpecularTextureResource, ref MaterialData.specTex, 2);
             SetMaterialTexture(TextureType.SpecularTextureResource2, ref MaterialData.specTex2, 2);
+            SetMaterialTexture(TextureType.EmissionTextureResource, ref MaterialData.emissiveTex, 2); // TODO ACVD
             SetMaterialTexture(TextureType.ShininessTextureResource, ref MaterialData.shininessTex, 2);
             SetMaterialTexture(TextureType.ShininessTextureResource2, ref MaterialData.shininessTex2, 2);
             SetMaterialTexture(TextureType.BlendmaskTextureResource, ref MaterialData.blendMaskTex, 0);

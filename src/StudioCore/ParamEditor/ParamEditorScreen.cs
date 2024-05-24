@@ -553,6 +553,27 @@ public class ParamEditorScreen : EditorScreen
             ImGui.EndMenu();
         }
 
+        if (ImGui.BeginMenu("Param Language", !ParamBank.PrimaryBank.IsLoadingParams))
+        {
+            Dictionary<string, string> folders = ParamBank.PrimaryBank.AssetLocator.GetMsgLanguages();
+            if (folders.Count == 0)
+            {
+                ImGui.TextColored(new Vector4(1.0f, 0.0f, 0.0f, 1.0f), "Cannot find language folders.");
+            }
+            else
+            {
+                foreach (KeyValuePair<string, string> path in folders)
+                {
+                    if (ImGui.MenuItem(path.Key, "", ParamBank.LanguageFolder == path.Key))
+                    {
+                        ChangeLanguage(path.Key);
+                    }
+                }
+            }
+
+            ImGui.EndMenu();
+        }
+
         if (ImGui.BeginMenu("View"))
         {
             if (ImGui.MenuItem("New View"))
@@ -1128,6 +1149,7 @@ public class ParamEditorScreen : EditorScreen
     public void OnProjectChanged(ProjectSettings newSettings)
     {
         _projectSettings = newSettings;
+        ParamBank.LanguageFolder = _projectSettings.LastParamLanguageUsed;
         foreach (ParamEditorView view in _views)
         {
             if (view != null)
@@ -2119,5 +2141,12 @@ public class ParamEditorScreen : EditorScreen
                 MessageBoxIcon.Error);
             return null;
         }
+    }
+
+    private void ChangeLanguage(string path)
+    {
+        _projectSettings.LastParamLanguageUsed = path;
+        ParamBank.LanguageFolder = path;
+        UICache.ClearCaches();
     }
 }

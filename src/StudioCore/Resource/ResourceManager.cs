@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using System.Threading.Tasks.Schedulers;
+using System.Diagnostics;
 
 namespace StudioCore.Resource;
 
@@ -21,7 +22,7 @@ namespace StudioCore.Resource;
 ///     A background thread will manage the unloading and streaming in of assets. This is designed to map closely to
 ///     the souls asset system, but in a more abstract way
 /// </summary>
-public static class ResourceManager
+public static partial class ResourceManager
 {
     [Flags]
     public enum ResourceType
@@ -37,14 +38,34 @@ public static class ResourceManager
     private static QueuedTaskScheduler JobScheduler = new(4, "JobMaster");
     private static readonly TaskFactory JobTaskFactory = new(JobScheduler);
 
+    /// <summary>
+    /// The <see cref="AssetLocator"/> for processing virtual paths.
+    /// </summary>
     public static AssetLocator Locator;
 
+    /// <summary>
+    /// The database of loaded resources.
+    /// </summary>
     private static readonly Dictionary<string, IResourceHandle> ResourceDatabase = new();
+
+    /// <summary>
+    /// The active jobs and their progress.
+    /// </summary>
     private static readonly ConcurrentDictionary<ResourceJob, int> ActiveJobProgress = new();
+
+    /// <summary>
+    /// The files that are currently being processed.
+    /// </summary>
     private static readonly HashSet<string> InFlightFiles = new();
 
+    /// <summary>
+    /// Requests to be notified of when a resource loads.
+    /// </summary>
     private static readonly BufferBlock<AddResourceLoadNotificationRequest> _notificationRequests = new();
 
+    /// <summary>
+    /// Requests to unload resources.
+    /// </summary>
     private static readonly BufferBlock<UnloadResourceRequest> _unloadRequests = new();
 
     private static int Pending = 0;
@@ -158,34 +179,41 @@ public static class ResourceManager
         action.Binder = null;
     }
 
-    private static IResourceHandle ConstructHandle(Type t, string virtualpath)
+    /// <summary>
+    /// Constructs a handle containing the requested resource type and virtual path.
+    /// </summary>
+    /// <param name="resourceType">The type of the resource to construct of a handle for.</param>
+    /// <param name="virtualpath">The virtual path to the resource.</param>
+    /// <returns>A resource handle for a resource.</returns>
+    /// <exception cref="NotSupportedException">The given resource type is not supported or implemented.</exception>
+    private static IResourceHandle ConstructHandle(Type resourceType, string virtualpath)
     {
-        if (t == typeof(FlverResource))
+        if (resourceType == typeof(FlverResource))
         {
             return new ResourceHandle<FlverResource>(virtualpath);
         }
 
-        if (t == typeof(HavokCollisionResource))
+        if (resourceType == typeof(HavokCollisionResource))
         {
             return new ResourceHandle<HavokCollisionResource>(virtualpath);
         }
 
-        if (t == typeof(HavokNavmeshResource))
+        if (resourceType == typeof(HavokNavmeshResource))
         {
             return new ResourceHandle<HavokNavmeshResource>(virtualpath);
         }
 
-        if (t == typeof(NVMNavmeshResource))
+        if (resourceType == typeof(NVMNavmeshResource))
         {
             return new ResourceHandle<NVMNavmeshResource>(virtualpath);
         }
 
-        if (t == typeof(TextureResource))
+        if (resourceType == typeof(TextureResource))
         {
             return new ResourceHandle<TextureResource>(virtualpath);
         }
 
-        throw new Exception("Unhandled resource type");
+        throw new NotSupportedException("Unhandled resource type");
     }
 
     /// <summary>
@@ -205,6 +233,12 @@ public static class ResourceManager
         return src == target;
     }
 
+    /// <summary>
+    /// Creates a <see cref="BinderReader"/> for a Binder file.
+    /// </summary>
+    /// <param name="filePath">The path to the Binder file.</param>
+    /// <param name="type">The current game type to determine which version of Binder to use.</param>
+    /// <returns>A <see cref="BinderReader"/>.</returns>
     public static BinderReader InstantiateBinderReaderForFile(string filePath, GameType type)
     {
         if (filePath == null || !File.Exists(filePath))
@@ -230,6 +264,9 @@ public static class ResourceManager
         return new BND4Reader(filePath);
     }
 
+    /// <summary>
+    /// Unloads resources that have nothing requesting them.
+    /// </summary>
     public static void UnloadUnusedResources()
     {
         foreach (KeyValuePair<string, IResourceHandle> r in ResourceDatabase)
@@ -241,6 +278,11 @@ public static class ResourceManager
         }
     }
 
+    /// <summary>
+    /// Creates a new <see cref="ResourceJob"/> using a <see cref="ResourceJobBuilder"/>.
+    /// </summary>
+    /// <param name="name">The name of the job.</param>
+    /// <returns>A <see cref="ResourceJobBuilder"/> for building a <see cref="ResourceJob"/>.</returns>
     public static ResourceJobBuilder CreateNewJob(string name)
     {
         return new ResourceJobBuilder(name);
@@ -250,13 +292,12 @@ public static class ResourceManager
     ///     The primary way to get a handle to the resource, this will call the provided listener once the requested
     ///     resource is available and loaded. This will be called on the main UI thread.
     /// </summary>
-    /// <param name="resourceName"></param>
-    /// <param name="listener"></param>
-    public static void AddResourceListener<T>(string resourceName, IResourceEventListener listener, AccessLevel al,
-        int tag = 0) where T : IResource
+    /// <param name="resourceName">The name of the requested resource.</param>
+    /// <param name="listener">The listener waiting for the resource.</param>
+    /// <param name="al">The requested access level to the requested resource.</param>
+    public static void AddResourceListener<T>(string resourceName, IResourceEventListener listener, AccessLevel al, int tag = 0) where T : IResource
     {
-        _notificationRequests.Post(
-            new AddResourceLoadNotificationRequest(resourceName.ToLower(), typeof(T), listener, al, tag));
+        _notificationRequests.Post(new AddResourceLoadNotificationRequest(resourceName.ToLower(), typeof(T), listener, al, tag));
     }
 
     public static void MarkResourceInFlight(string resourceName, AccessLevel al)
@@ -268,11 +309,16 @@ public static class ResourceManager
         ResourceDatabase[lResourceName].AccessLevel = al;*/
     }
 
+    /// <summary>
+    /// Check if a resource is loaded or being loaded if the required access level is met.
+    /// </summary>
+    /// <param name="resourceName">The name of the resource to check.</param>
+    /// <param name="al">The access level requested.</param>
+    /// <returns>Whether or no a resource is loaded or being loaded.</returns>
     public static bool IsResourceLoadedOrInFlight(string resourceName, AccessLevel al)
     {
         var lResourceName = resourceName.ToLower();
-        return ResourceDatabase.ContainsKey(lResourceName) &&
-               CheckAccessLevel(al, ResourceDatabase[lResourceName].AccessLevel);
+        return ResourceDatabase.ContainsKey(lResourceName) && CheckAccessLevel(al, ResourceDatabase[lResourceName].AccessLevel);
     }
 
     public static void UnloadResource(IResourceHandle resource, bool unloadOnlyIfUnused)
@@ -290,28 +336,34 @@ public static class ResourceManager
         _scheduleUnloadedTexturesLoad = true;
     }
 
+    /// <summary>
+    /// Process the current tasks the <see cref="ResourceManager"/> has.
+    /// </summary>
     public static void UpdateTasks()
     {
         // Process any resource notification requests
-        var res = _notificationRequests.TryReceiveAll(out IList<AddResourceLoadNotificationRequest> requests);
-        if (res)
+        if (_notificationRequests.TryReceiveAll(out IList<AddResourceLoadNotificationRequest> requests))
         {
-            foreach (AddResourceLoadNotificationRequest r in requests)
+            foreach (AddResourceLoadNotificationRequest request in requests)
             {
-                var lResourceName = r.ResourceVirtualPath.ToLower();
-                if (!ResourceDatabase.ContainsKey(lResourceName))
+                // Flatten the name of the resource to lowercase for the database
+                var lResourceName = request.ResourceVirtualPath.ToLower();
+
+                // Try to get the resource from the database and add it if it doesn't already exist.
+                if (!ResourceDatabase.TryGetValue(lResourceName, out IResourceHandle registration))
                 {
-                    ResourceDatabase.Add(lResourceName, ConstructHandle(r.Type, r.ResourceVirtualPath));
+                    registration = ConstructHandle(request.Type, request.ResourceVirtualPath);
+                    ResourceDatabase.Add(lResourceName, registration);
                 }
 
-                IResourceHandle registration = ResourceDatabase[lResourceName];
-                registration.AddResourceEventListener(r.Listener, r.AccessLevel, r.tag);
+                // Add a resource listener for the resource
+                registration.AddResourceEventListener(request.Listener, request.AccessLevel, request.tag);
             }
         }
 
         // If no loading job is currently in flight, process any unload requests
-        var count = ActiveJobProgress.Count;
-        if (count == 0)
+        var jobCount = ActiveJobProgress.Count;
+        if (jobCount == 0)
         {
             InFlightFiles.Clear();
             if (_unloadRequests.TryReceiveAll(out IList<UnloadResourceRequest> toUnload))
@@ -334,7 +386,7 @@ public static class ResourceManager
             }
         }
 
-        if (count > 0)
+        if (jobCount > 0)
         {
             HashSet<ResourceJob> toRemove = new();
             foreach (KeyValuePair<ResourceJob, int> job in ActiveJobProgress)
@@ -348,12 +400,12 @@ public static class ResourceManager
 
             foreach (ResourceJob rm in toRemove)
             {
-                int o;
-                ActiveJobProgress.TryRemove(rm, out o);
+                ActiveJobProgress.TryRemove(rm, out _);
             }
         }
         else
         {
+            // Post processing jobs
             if (Renderer.GeometryBufferAllocator != null &&
                 Renderer.GeometryBufferAllocator.HasStagingOrPending())
             {
@@ -388,6 +440,11 @@ public static class ResourceManager
         _prevCount = ActiveJobProgress.Count;
     }
 
+    /// <summary>
+    /// Draw the current tasks to the GUI.
+    /// </summary>
+    /// <param name="w">The width of the tasks window.</param>
+    /// <param name="h">The height of the tasks window.</param>
     public static void OnGuiDrawTasks(float w, float h)
     {
         var scale = MapStudioNew.GetUIScale();
@@ -424,7 +481,10 @@ public static class ResourceManager
         }
     }
 
-    public static unsafe void OnGuiDrawResourceList()
+    /// <summary>
+    /// Draw the current resource list to the GUI.
+    /// </summary>
+    public static void OnGuiDrawResourceList()
     {
         if (!ImGui.Begin("Resource List"))
         {
@@ -459,12 +519,16 @@ public static class ResourceManager
         ImGui.End();
     }
 
+    /// <summary>
+    /// Shutdown the <see cref="ResourceManager"/>.
+    /// </summary>
     public static void Shutdown()
     {
         JobScheduler.Dispose();
         JobScheduler = null;
     }
 
+    // Unused
     public interface IResourceTask
     {
         public void Run();
@@ -620,311 +684,7 @@ public static class ResourceManager
         }
     }
 
-    /// <summary>
-    ///     A named job that runs many tasks and whose progress will appear in the progress window
-    /// </summary>
-    public class ResourceJob
-    {
-        private readonly ActionBlock<LoadBinderResourcesAction> _loadBinderResources;
-
-        private readonly TransformManyBlock<LoadTPFResourcesAction, LoadTPFTextureResourceRequest>
-            _loadTPFResources;
-
-        private readonly BufferBlock<ResourceLoadedReply> _processedResources;
-        private int _courseSize;
-        private int TotalSize;
-
-        public ResourceJob(string name)
-        {
-            ExecutionDataflowBlockOptions options = new() { MaxDegreeOfParallelism = DataflowBlockOptions.Unbounded };
-            Name = name;
-            _loadTPFResources =
-                new TransformManyBlock<LoadTPFResourcesAction, LoadTPFTextureResourceRequest>(LoadTPFResources,
-                    options);
-
-            //options.MaxDegreeOfParallelism = 4;
-            _loadBinderResources = new ActionBlock<LoadBinderResourcesAction>(LoadBinderResources, options);
-            _processedResources = new BufferBlock<ResourceLoadedReply>();
-
-            FlverLoadPipeline = new ResourceLoadPipeline<FlverResource>(_processedResources);
-            HavokCollisionLoadPipeline = new ResourceLoadPipeline<HavokCollisionResource>(_processedResources);
-            HavokNavmeshLoadPipeline = new ResourceLoadPipeline<HavokNavmeshResource>(_processedResources);
-            NVMNavmeshLoadPipeline = new ResourceLoadPipeline<NVMNavmeshResource>(_processedResources);
-            TPFTextureLoadPipeline = new TextureLoadPipeline(_processedResources);
-            _loadTPFResources.LinkTo(TPFTextureLoadPipeline.LoadTPFTextureResourceRequest);
-        }
-
-        public string Name { get; }
-        public int Progress { get; private set; }
-
-        // Asset load pipelines
-        internal IResourceLoadPipeline FlverLoadPipeline { get; }
-        internal IResourceLoadPipeline HavokCollisionLoadPipeline { get; }
-        internal IResourceLoadPipeline HavokNavmeshLoadPipeline { get; }
-        internal IResourceLoadPipeline NVMNavmeshLoadPipeline { get; }
-        internal IResourceLoadPipeline TPFTextureLoadPipeline { get; }
-
-        public bool Finished { get; private set; }
-
-        internal void IncrementEstimateTaskSize(int size)
-        {
-            Interlocked.Add(ref TotalSize, size);
-        }
-
-        internal void IncrementCourseEstimateTaskSize(int size)
-        {
-            Interlocked.Add(ref _courseSize, size);
-        }
-
-        public int GetEstimateTaskSize()
-        {
-            return Math.Max(TotalSize, _courseSize);
-        }
-
-        internal void AddLoadTPFResources(LoadTPFResourcesAction action)
-        {
-            _loadTPFResources.Post(action);
-        }
-
-        internal void AddLoadBinderResources(LoadBinderResourcesAction action)
-        {
-            _courseSize++;
-            _loadBinderResources.Post(action);
-        }
-
-        public Task Complete()
-        {
-            return JobTaskFactory.StartNew(() =>
-            {
-                _loadBinderResources.Complete();
-                _loadBinderResources.Completion.Wait();
-                FlverLoadPipeline.LoadByteResourceBlock.Complete();
-                FlverLoadPipeline.LoadFileResourceRequest.Complete();
-                HavokCollisionLoadPipeline.LoadByteResourceBlock.Complete();
-                HavokCollisionLoadPipeline.LoadFileResourceRequest.Complete();
-                HavokNavmeshLoadPipeline.LoadByteResourceBlock.Complete();
-                HavokNavmeshLoadPipeline.LoadFileResourceRequest.Complete();
-                _loadTPFResources.Complete();
-                _loadTPFResources.Completion.Wait();
-                TPFTextureLoadPipeline.LoadTPFTextureResourceRequest.Complete();
-                FlverLoadPipeline.LoadByteResourceBlock.Completion.Wait();
-                FlverLoadPipeline.LoadFileResourceRequest.Completion.Wait();
-                HavokCollisionLoadPipeline.LoadByteResourceBlock.Completion.Wait();
-                HavokCollisionLoadPipeline.LoadFileResourceRequest.Completion.Wait();
-                HavokNavmeshLoadPipeline.LoadByteResourceBlock.Completion.Wait();
-                HavokNavmeshLoadPipeline.LoadFileResourceRequest.Completion.Wait();
-                TPFTextureLoadPipeline.LoadTPFTextureResourceRequest.Completion.Wait();
-                Finished = true;
-            });
-        }
-
-        public void ProcessLoadedResources()
-        {
-            if (_processedResources.TryReceiveAll(out IList<ResourceLoadedReply> processed))
-            {
-                Progress += processed.Count;
-                foreach (ResourceLoadedReply p in processed)
-                {
-                    var lPath = p.VirtualPath.ToLower();
-                    if (!ResourceDatabase.ContainsKey(lPath))
-                    {
-                        ResourceDatabase.Add(lPath, ConstructHandle(p.Resource.GetType(), p.VirtualPath));
-                    }
-
-                    IResourceHandle reg = ResourceDatabase[lPath];
-                    reg._ResourceLoaded(p.Resource, p.AccessLevel);
-                }
-            }
-        }
-    }
-
-    public class ResourceJobBuilder
-    {
-        private readonly ResourceJob _job;
-        private readonly HashSet<string> archivesToLoad = new();
-        private string Name;
-
-        public ResourceJobBuilder(string name)
-        {
-            _job = new ResourceJob(name);
-            Name = name;
-        }
-
-        /// <summary>
-        ///     Loads an entire archive in this virtual path
-        /// </summary>
-        /// <param name="virtualPath"></param>
-        public void AddLoadArchiveTask(string virtualPath, AccessLevel al, bool populateOnly,
-            HashSet<string> assets = null)
-        {
-            if (InFlightFiles.Contains(virtualPath))
-            {
-                return;
-            }
-
-            InFlightFiles.Add(virtualPath);
-            if (virtualPath == "null")
-            {
-                return;
-            }
-
-            if (!archivesToLoad.Contains(virtualPath))
-            {
-                archivesToLoad.Add(virtualPath);
-                _job.AddLoadBinderResources(new LoadBinderResourcesAction(_job, virtualPath, al, populateOnly,
-                    ResourceType.All, assets));
-            }
-        }
-
-        public void AddLoadArchiveTask(string virtualPath, AccessLevel al, bool populateOnly, ResourceType filter,
-            HashSet<string> assets = null)
-        {
-            if (InFlightFiles.Contains(virtualPath))
-            {
-                return;
-            }
-
-            InFlightFiles.Add(virtualPath);
-            if (virtualPath == "null")
-            {
-                return;
-            }
-
-            if (!archivesToLoad.Contains(virtualPath))
-            {
-                archivesToLoad.Add(virtualPath);
-                _job.AddLoadBinderResources(new LoadBinderResourcesAction(_job, virtualPath, al, populateOnly,
-                    filter, assets));
-            }
-        }
-
-        /// <summary>
-        ///     Loads a loose virtual file
-        /// </summary>
-        /// <param name="virtualPath"></param>
-        public void AddLoadFileTask(string virtualPath, AccessLevel al)
-        {
-            if (InFlightFiles.Contains(virtualPath))
-            {
-                return;
-            }
-
-            InFlightFiles.Add(virtualPath);
-
-            string bndout;
-            var path = Locator.VirtualToRealPath(virtualPath, out bndout);
-
-            IResourceLoadPipeline pipeline;
-            if (path == null || virtualPath == "null")
-            {
-                return;
-            }
-
-            if (virtualPath.EndsWith(".hkx"))
-            {
-                pipeline = _job.HavokCollisionLoadPipeline;
-            }
-            else if (path.ToUpper().EndsWith(".TPF") || path.ToUpper().EndsWith(".TPF.DCX"))
-            {
-                var virt = virtualPath;
-                if (virt.StartsWith(@"map/tex"))
-                {
-                    Regex regex = new(@"\d{4}$");
-                    if (regex.IsMatch(virt))
-                    {
-                        virt = virt.Substring(0, virt.Length - 5);
-                    }
-                    else if (virt.EndsWith("tex"))
-                    {
-                        virt = virt.Substring(0, virt.Length - 4);
-                    }
-                }
-
-                _job.AddLoadTPFResources(new LoadTPFResourcesAction(_job, virt, path, al, Locator.Type));
-                return;
-            }
-            else
-            {
-                pipeline = _job.FlverLoadPipeline;
-            }
-
-            pipeline.LoadFileResourceRequest.Post(new LoadFileResourceRequest(virtualPath, path, al, Locator.Type));
-        }
-
-        /// <summary>
-        ///     Attempts to load unloaded resources (with active references) via UDSFM textures
-        /// </summary>
-        public void AddLoadUDSFMTexturesTask()
-        {
-            foreach (KeyValuePair<string, IResourceHandle> r in ResourceDatabase)
-            {
-                if (!r.Value.IsLoaded())
-                {
-                    var texpath = r.Key;
-                    string path = null;
-                    if (texpath.StartsWith("map/tex"))
-                    {
-                        path = $@"{Locator.GameRootDirectory}\map\tx\{Path.GetFileName(texpath)}.tpf";
-                    }
-
-                    if (path != null && File.Exists(path))
-                    {
-                        _job.AddLoadTPFResources(new LoadTPFResourcesAction(_job,
-                            Path.GetDirectoryName(r.Key).Replace('\\', '/'),
-                            path, AccessLevel.AccessGPUOptimizedOnly, Locator.Type));
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Looks for unloaded textures and queues them up for loading. References to parts and Elden Ring AETs depend on this
-        /// </summary>
-        public void AddLoadUnloadedTextures()
-        {
-            HashSet<string> assetTpfs = new();
-            foreach (KeyValuePair<string, IResourceHandle> r in ResourceDatabase)
-            {
-                if (!r.Value.IsLoaded())
-                {
-                    var texpath = r.Key;
-                    string path = null;
-                    if (texpath.StartsWith("aet/"))
-                    {
-                        var splits = texpath.Split('/');
-                        var aetid = splits[1];
-                        var aetname = splits[2];
-                        var fullaetid = aetname.Substring(0, 10);
-
-                        if (assetTpfs.Contains(fullaetid))
-                        {
-                            continue;
-                        }
-
-                        path = Locator.GetAetTexture(fullaetid).AssetPath;
-
-                        assetTpfs.Add(fullaetid);
-                    }
-
-                    if (path != null && File.Exists(path))
-                    {
-                        _job.AddLoadTPFResources(new LoadTPFResourcesAction(_job,
-                            Path.GetDirectoryName(r.Key).Replace('\\', '/'), path,
-                            AccessLevel.AccessGPUOptimizedOnly, Locator.Type));
-                    }
-                }
-            }
-        }
-
-        public Task Complete()
-        {
-            // Build the job, register it with the task manager, and start it
-            ActiveJobProgress[_job] = 0;
-            Task jobtask = _job.Complete();
-            return jobtask;
-        }
-    }
-
+    // Unused
     private class ResourceRegistration
     {
         public ResourceRegistration(AccessLevel al)

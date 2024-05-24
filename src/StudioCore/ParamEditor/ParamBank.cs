@@ -1,10 +1,12 @@
 ﻿using Andre.Formats;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using Octokit;
 using SoulsFormats;
 using StudioCore.Editor;
 using StudioCore.Platform;
 using StudioCore.TextEditor;
+using StudioCore.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -52,6 +54,11 @@ public class ParamBank
     ///     By convention, ParamTypes ending in "_TENTATIVE" do not have official data to reference.
     /// </summary>
     private static Dictionary<string, string> _tentativeParamType;
+
+    /// <summary>
+    /// Dictionary of resource lists used in some Armored Core games to find params.
+    /// </summary>
+    private static Dictionary<string, HashSet<string>> _resourceListParams;
 
     /// <summary>
     ///     Map related params.
@@ -114,6 +121,8 @@ public class ParamBank
     internal AssetLocator AssetLocator;
 
     private Param EnemyParam;
+
+    public static string LanguageFolder { get; set; }
 
     public static bool IsDefsLoaded { get; private set; }
     public static bool IsMetaLoaded { get; private set; }
@@ -1051,6 +1060,187 @@ public class ParamBank
         }
     }
 
+    private void LoadParamsACVD()
+    {
+        LoadParamsIntoBankACVD(AssetLocator.GameModDirectory, _params);
+        LoadParamsIntoBankACVD(AssetLocator.GameRootDirectory, _params);
+    }
+
+    private void LoadVParamsACVD()
+    {
+        LoadParamsIntoBankACVD(AssetLocator.GameRootDirectory, _params);
+    }
+
+    private static void LoadParamsIntoBankACVD(string dir, Dictionary<string, Param> paramBank)
+    {
+        if (_resourceListParams != null)
+        {
+            foreach (var list in _resourceListParams.Values)
+            {
+                foreach (var path in list)
+                {
+                    if (!paramBank.ContainsKey(path))
+                    {
+                        string fullPath = $@"{dir}\{path}";
+                        if (File.Exists(fullPath))
+                        {
+                            Param param = Param.ReadIgnoreCompression(fullPath);
+                            if (_paramdefs.TryGetValue(param.ParamType, out PARAMDEF def))
+                            {
+                                param.ApplyParamdef(def);
+                                paramBank.Add(path, param);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        string paramDir = $@"{dir}\param";
+        string submissionParamDir = $@"{dir}\mission\submission";
+        LoadLooseParam(dir, $@"{paramDir}\customaichipparam.bin", true, paramBank);
+        LoadLooseParams(dir, submissionParamDir, "*.bin", true, paramBank);
+
+        var langs = PrimaryBank.AssetLocator.GetMsgLanguages();
+        foreach (var lang in langs.Keys)
+        {
+            string langDir = $@"{dir}\lang\{lang}";
+            string langParamDir = $@"{langDir}\param";
+            string langTextDir = $@"{langDir}\text";
+            string langAiParamDir = $@"{langTextDir}\ai";
+            string langMissionParamDir = $@"{langTextDir}\mission";
+
+            LoadLooseParams(dir, langParamDir, "hometowninfo*", true, paramBank);
+            LoadLooseParams(dir, langMissionParamDir, "*.bin", true, paramBank);
+            LoadLooseParams(dir, langMissionParamDir, "*.emtm", true, paramBank);
+            LoadLooseParam(dir, $@"{langAiParamDir}\aisys.bin", true, paramBank);
+            LoadLooseParam(dir, $@"{langAiParamDir}\aisys.emtm", true, paramBank);
+            LoadLooseParam(dir, $@"{langAiParamDir}\aisys.tsmap", true, paramBank);
+            LoadLooseParam(dir, $@"{langAiParamDir}\aisys.tsmap", true, paramBank);
+        }
+    }
+
+    private static void LoadLooseParams(string root, string dir, string wildcard, bool useRelativePath, Dictionary<string, Param> paramBank)
+    {
+        if (Directory.Exists(dir))
+        {
+            if (!dir.Contains(root))
+            {
+                useRelativePath = false;
+            }
+
+            foreach (var file in Directory.EnumerateFiles(dir, wildcard, SearchOption.TopDirectoryOnly))
+            {
+                LoadLooseParam(root, file, useRelativePath, paramBank);
+            }
+        }
+    }
+
+    private static void LoadLooseParam(string root, string file, bool useRelativePath, Dictionary<string, Param> paramBank)
+    {
+        var key = useRelativePath ? file[root.Length..] : Path.GetFileNameWithoutExtension(file);
+        if (!paramBank.ContainsKey(key))
+        {
+            Param param = Param.ReadIgnoreCompression(file);
+            if (_paramdefs.TryGetValue(param.ParamType, out PARAMDEF def))
+            {
+                param.ApplyParamdef(def);
+                paramBank.Add(key, param);
+            }
+        }
+    }
+
+    private static void LoadResourceLists(string root, GameType type)
+    {
+        _resourceListParams = new Dictionary<string, HashSet<string>>();
+        if (type == GameType.ArmoredCoreVD)
+        {
+            string systemPath = $@"{root}\system";
+            if (Directory.Exists(systemPath))
+            {
+                foreach (var list in Directory.EnumerateFiles(systemPath, "*paramlist.xml", SearchOption.TopDirectoryOnly))
+                {
+                    _resourceListParams.Add(Path.GetFileNameWithoutExtension(list), ResolveResourceListPaths(ResourceList.DeserializeFromXml(list).GetDefParams()));
+                }
+            }
+
+            string paramPath = $@"{root}\param";
+            if (Directory.Exists(paramPath))
+            {
+                foreach (var list in Directory.EnumerateFiles(paramPath, "*paramlist.xml", SearchOption.TopDirectoryOnly))
+                {
+                    _resourceListParams.Add(Path.GetFileNameWithoutExtension(list), ResolveResourceListPaths(ResourceList.DeserializeFromXml(list).GetDefParams()));
+                }
+            }
+        }
+    }
+
+    private static HashSet<string> ResolveResourceListPaths(HashSet<string> paths)
+    {
+        var list = new HashSet<string>(paths.Count);
+        if (GameVariables.HasPath())
+        {
+            foreach (var path in paths)
+            {
+                string newPath = PathUtils.StripURI(PathUtils.ResolveAliasPath(path)).ToLowerInvariant();
+                if (!newPath.StartsWith('\\'))
+                    newPath = '\\' + newPath;
+                list.Add(newPath);
+            }
+        }
+        else
+        {
+            foreach (var path in paths)
+            {
+                string newPath = PathUtils.StripURI(PathUtils.StripAlias(path)).ToLowerInvariant();
+                if (!newPath.StartsWith('\\'))
+                    newPath = '\\' + newPath;
+                list.Add(newPath);
+            }
+        }
+
+        return list;
+    }
+
+    public static HashSet<string> GetParamsInResourceList(string resourceList)
+    {
+        if (_resourceListParams == null
+         || _resourceListParams.Count < 1
+        || !_resourceListParams.TryGetValue(resourceList, out HashSet<string> values))
+        {
+            return [];
+        }
+
+        return values;
+    }
+
+    public static List<string> FilterParamKeysUsingResourceList(string resourceList, List<string> paramKeys, bool filterOut)
+    {
+        var resListParams = GetParamsInResourceList(resourceList);
+        var list = new List<string>();
+        if (filterOut)
+        {
+            foreach (var key in paramKeys)
+            {
+                if (!resListParams.Contains(key))
+                {
+                    list.Add(key);
+                }
+            }
+        }
+        else
+        {
+            foreach (var key in paramKeys)
+            {
+                if (resListParams.Contains(key))
+                {
+                    list.Add(key);
+                }
+            }
+        }
+        return list;
+    }
+
     //Some returns and repetition, but it keeps all threading and loading-flags visible inside this method
     public static void ReloadParams(ProjectSettings settings, NewProjectOptions options)
     {
@@ -1065,6 +1255,14 @@ public class ParamBank
 
         PrimaryBank._params = new Dictionary<string, Param>();
         PrimaryBank.IsLoadingParams = true;
+        LanguageFolder = settings.LastParamLanguageUsed;
+
+        // Set default
+        if (string.IsNullOrWhiteSpace(LanguageFolder))
+        {
+            TaskLogs.AddLog("Param language folder not set, defaulting to en.", LogLevel.Warning);
+            LanguageFolder = "en";
+        }
 
         UICache.ClearCaches();
 
@@ -1140,7 +1338,13 @@ public class ParamBank
 
                 if (locator.Type == GameType.ArmoredCoreVD)
                 {
-                    // TODO ACVD
+                    if (_resourceListParams == null)
+                    {
+                        LoadResourceLists(locator.GameModDirectory, GameType.ArmoredCoreVD);
+                        LoadResourceLists(locator.GameRootDirectory, GameType.ArmoredCoreVD);
+                    }
+
+                    PrimaryBank.LoadParamsACVD();
                 }
 
                 PrimaryBank.ClearParamDiffCaches();
@@ -1189,6 +1393,26 @@ public class ParamBank
                         if (locator.Type == GameType.ArmoredCoreVI)
                         {
                             VanillaBank.LoadVParamsAC6();
+                        }
+
+                        if (locator.Type == GameType.ArmoredCoreIV)
+                        {
+                            // TODO AC4
+                        }
+
+                        if (locator.Type == GameType.ArmoredCoreFA)
+                        {
+                            // TODO ACFA
+                        }
+
+                        if (locator.Type == GameType.ArmoredCoreV)
+                        {
+                            // TODO ACV
+                        }
+
+                        if (locator.Type == GameType.ArmoredCoreVD)
+                        {
+                            VanillaBank.LoadVParamsACVD();
                         }
 
                         VanillaBank.IsLoadingParams = false;
@@ -2030,6 +2254,14 @@ public class ParamBank
         _pendingUpgrade = false;
     }
 
+    private void SaveParamsACVD()
+    {
+        foreach (var param in _params)
+        {
+            Utils.WriteWithBackup(AssetLocator.GameRootDirectory, AssetLocator.GameModDirectory, param.Key, param.Value);
+        }
+    }
+
     public void SaveParams(bool loose = false, bool partialParams = false)
     {
         if (_params == null)
@@ -2075,6 +2307,26 @@ public class ParamBank
         if (AssetLocator.Type == GameType.ArmoredCoreVI)
         {
             SaveParamsAC6();
+        }
+
+        if (AssetLocator.Type == GameType.ArmoredCoreIV)
+        {
+            // TODO AC4
+        }
+
+        if (AssetLocator.Type == GameType.ArmoredCoreFA)
+        {
+            // TODO ACFA
+        }
+
+        if (AssetLocator.Type == GameType.ArmoredCoreV)
+        {
+            // TODO ACV
+        }
+
+        if (AssetLocator.Type == GameType.ArmoredCoreVD)
+        {
+            SaveParamsACVD();
         }
     }
 

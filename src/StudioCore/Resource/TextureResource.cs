@@ -6,7 +6,12 @@ namespace StudioCore.Resource;
 
 public class TextureResource : IResource, IDisposable
 {
-    private readonly int TPFIndex;
+    public string VirtualPath { get; set; }
+
+    public TPF.TPFPlatform Platform { get; set; }
+    public TPF.Texture Texture { get; private set; }
+
+    public TexturePool.TextureHandle GPUTexture { get; private set; }
 
     public TextureResource()
     {
@@ -15,17 +20,13 @@ public class TextureResource : IResource, IDisposable
 
     public TextureResource(TPF tex, int index)
     {
-        Texture = tex;
-        TPFIndex = index;
+        Platform = tex.Platform;
+        Texture = tex.Textures[index];
     }
-
-    public TPF Texture { get; private set; }
-
-    public TexturePool.TextureHandle GPUTexture { get; private set; }
 
     public bool _LoadTexture(AccessLevel al)
     {
-        if (TexturePool.TextureHandle.IsTPFCube(Texture.Textures[TPFIndex], Texture.Platform))
+        if (TexturePool.TextureHandle.IsTPFCube(Texture, Platform))
         {
             GPUTexture = Renderer.GlobalCubeTexturePool.AllocateTextureDescriptor();
         }
@@ -44,7 +45,7 @@ public class TextureResource : IResource, IDisposable
             return false;
         }
 
-        if (Texture.Platform == TPF.TPFPlatform.PC || Texture.Platform == TPF.TPFPlatform.PS3)
+        if (Platform == TPF.TPFPlatform.PC || Platform == TPF.TPFPlatform.PS3)
         {
             Renderer.AddLowPriorityBackgroundUploadTask((d, cl) =>
             {
@@ -53,12 +54,12 @@ public class TextureResource : IResource, IDisposable
                     return;
                 }
 
-                GPUTexture.FillWithTPF(d, cl, Texture.Platform, Texture.Textures[TPFIndex],
-                    Texture.Textures[TPFIndex].Name);
+                GPUTexture.FillWithTPF(d, cl, Platform, Texture,
+                    Texture.Name);
                 Texture = null;
             });
         }
-        else if (Texture.Platform == TPF.TPFPlatform.PS4)
+        else if (Platform == TPF.TPFPlatform.PS4)
         {
             Renderer.AddLowPriorityBackgroundUploadTask((d, cl) =>
             {
@@ -67,8 +68,8 @@ public class TextureResource : IResource, IDisposable
                     return;
                 }
 
-                GPUTexture.FillWithPS4TPF(d, cl, Texture.Platform, Texture.Textures[TPFIndex],
-                    Texture.Textures[TPFIndex].Name);
+                GPUTexture.FillWithPS4TPF(d, cl, Platform, Texture,
+                    Texture.Name);
                 Texture = null;
             });
         }

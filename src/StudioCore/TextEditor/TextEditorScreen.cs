@@ -7,6 +7,7 @@ using System.Linq;
 using System.Numerics;
 using Veldrid;
 using Veldrid.Sdl2;
+using StudioCore.ParamEditor;
 
 namespace StudioCore.TextEditor;
 

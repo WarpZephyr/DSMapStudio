@@ -12,9 +12,5 @@
       <Maximum>10000</Maximum>
       <SortID>1</SortID>
     </Field>
-    <Field Def="dummy8 reserved[2]">
-      <DisplayName />
-      <SortID>3</SortID>
-    </Field>
   </Fields>
 </PARAMDEF>

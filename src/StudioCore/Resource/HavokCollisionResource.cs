@@ -12,6 +12,7 @@ namespace StudioCore.Resource;
 
 public class HavokCollisionResource : IResource, IDisposable
 {
+    public string VirtualPath { get; set; }
     public CollisionSubmesh[] GPUMeshes;
     public HKX Hkx;
     public hkRootLevelContainer Hkx2;

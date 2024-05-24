@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PARAMDEF XmlVersion="3">
-  <ParamType>FILTER_SHAKED_NOIZE_PARAM_ST</ParamType>
+  <ParamType>SHAKED_NOIZE_FILTER</ParamType>
   <DataVersion>1</DataVersion>
   <BigEndian>True</BigEndian>
   <Unicode>False</Unicode>

@@ -9,6 +9,7 @@ using System.Numerics;
 using System.Reflection;
 using Veldrid;
 using Octokit;
+using System.IO;
 
 namespace StudioCore.ParamEditor;
 
@@ -27,6 +28,12 @@ public class ParamEditorView
     private bool _mapParamView;
     private bool _eventParamView;
     private bool _gConfigParamView;
+    private bool _filterParamView;
+    private bool _bulletParamView;
+    private bool _submissionParamView;
+    private bool _langParamView;
+    private bool _emtmParamView;
+    private bool _tsmapParamView;
 
     internal ParamEditorScreen _paramEditor;
 
@@ -121,6 +128,85 @@ public class ParamEditorView
 
             ImGui.Separator();
         }
+        else if (ParamBank.PrimaryBank.AssetLocator.Type is GameType.ArmoredCoreVD)
+        {
+            if (ImGui.Checkbox("Edit Draw General Params", ref _mapParamView))
+            {
+                _filterParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                _tsmapParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Filter Params", ref _filterParamView))
+            {
+                _mapParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                _tsmapParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Bullet Params", ref _bulletParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                _tsmapParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Submission Params", ref _submissionParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _bulletParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                _tsmapParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Lang Params", ref _langParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _emtmParamView = false;
+                _tsmapParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Event Message Text Map Params", ref _emtmParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                _tsmapParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit TSMap Params", ref _tsmapParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                UICache.ClearCaches();
+            }
+        }
     }
 
     private void ParamView_ParamList_Pinned(float scale)
@@ -133,8 +219,7 @@ public class ParamEditorView
             foreach (var paramKey in pinnedParamKeyList)
             {
                 HashSet<int> primary = ParamBank.PrimaryBank.VanillaDiffCache.GetValueOrDefault(paramKey, null);
-                Param p = ParamBank.PrimaryBank.Params[paramKey];
-                if (p != null)
+                if (ParamBank.PrimaryBank.Params.TryGetValue(paramKey, out Param p))
                 {
                     ParamMetaData meta = ParamMetaData.Get(p.AppliedParamdef);
                     var Wiki = meta?.Wiki;
@@ -226,6 +311,72 @@ public class ParamEditorView
                     keyList = keyList.FindAll(p => !p.StartsWith("Gconfig"));
                 }
             }
+            else if (ParamBank.PrimaryBank.AssetLocator.Type is GameType.ArmoredCoreVD)
+            {
+                if (_mapParamView)
+                {
+                    keyList = ParamBank.FilterParamKeysUsingResourceList("drawgeneralparamlist", keyList, false);
+                }
+                else
+                {
+                    keyList = ParamBank.FilterParamKeysUsingResourceList("drawgeneralparamlist", keyList, true);
+                }
+
+                if (_filterParamView)
+                {
+                    keyList = ParamBank.FilterParamKeysUsingResourceList("filterparamlist", keyList, false);
+                }
+                else
+                {
+                    keyList = ParamBank.FilterParamKeysUsingResourceList("filterparamlist", keyList, true);
+                }
+
+                // Could use the resource list but this is probably more stable
+                if (_bulletParamView)
+                {
+                    keyList = keyList.FindAll(p => p.Contains("\\bullet\\"));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !p.Contains("\\bullet\\"));
+                }
+
+                if (_submissionParamView)
+                {
+                    keyList = keyList.FindAll(p => p.Contains("submission"));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !p.Contains("submission"));
+                }
+
+                if (_langParamView)
+                {
+                    keyList = keyList.FindAll(p => p.Contains($@"lang\{ParamBank.LanguageFolder}") && !p.EndsWith(".emtm") && !p.EndsWith(".tsmap"));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !(p.Contains("lang") && !p.EndsWith(".emtm") && !p.EndsWith(".tsmap")));
+                }
+
+                if (_emtmParamView)
+                {
+                    keyList = keyList.FindAll(p => p.EndsWith(".emtm") && p.Contains(ParamBank.LanguageFolder));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !p.EndsWith(".emtm"));
+                }
+
+                if (_tsmapParamView)
+                {
+                    keyList = keyList.FindAll(p => p.EndsWith(".tsmap") && p.Contains(ParamBank.LanguageFolder));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !p.EndsWith(".tsmap"));
+                }
+            }
 
             if (CFG.Current.Param_AlphabeticalParams)
             {
@@ -262,7 +413,7 @@ public class ParamEditorView
                 ImGui.PushStyleColorVec4(ImGuiCol.Text, ALLVANILLACOLOUR);
             }
 
-            if (ImGui.Selectable($"{paramKey}", paramKey == _selection.GetActiveParam()))
+            if (ImGui.Selectable(Path.GetFileNameWithoutExtension(paramKey), paramKey == _selection.GetActiveParam()))
             {
                 //_selection.setActiveParam(param.Key);
                 EditorCommandQueue.AddCommand($@"param/view/{_viewIndex}/{paramKey}");

@@ -44,6 +44,8 @@ public class ProjectSettings
     // FMG editor
     public string LastFmgLanguageUsed { get; set; } = "";
 
+    public string LastParamLanguageUsed { get; set; } = "";
+
     public void Serialize(string path)
     {
         var jsonString =

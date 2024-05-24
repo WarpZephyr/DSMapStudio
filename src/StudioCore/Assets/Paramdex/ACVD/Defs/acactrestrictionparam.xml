@@ -55,7 +55,7 @@
       <Maximum>1</Maximum>
       <SortID>7</SortID>
     </Field>
-    <Field Def="dummy8 reserved[8]">
+    <Field Def="dummy8 reserved[1]">
       <DisplayName>--予約--</DisplayName>
       <Enum>ON_OFF</Enum>
       <EditFlags>None</EditFlags>

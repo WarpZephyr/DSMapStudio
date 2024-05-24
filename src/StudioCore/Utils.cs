@@ -326,7 +326,7 @@ public static class Utils
             }
 
             // Make a backup of the original file if a mod path doesn't exist
-            if (moddir == null && !File.Exists($@"{assetgamepath}.bak") && File.Exists(assetgamepath))
+            if ((moddir == null || moddir == gamedir) && !File.Exists($@"{assetgamepath}.bak") && File.Exists(assetgamepath))
             {
                 File.Copy(assetgamepath, $@"{assetgamepath}.bak", true);
             }

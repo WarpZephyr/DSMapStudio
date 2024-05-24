@@ -15,6 +15,7 @@ namespace StudioCore.Resource;
 
 public class HavokNavmeshResource : IResource, IDisposable
 {
+    public string VirtualPath { get; set; }
     public int GraphIndexCount;
 
     public hkRootLevelContainer HkxRoot;

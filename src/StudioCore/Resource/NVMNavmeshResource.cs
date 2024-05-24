@@ -10,6 +10,7 @@ namespace StudioCore.Resource;
 
 public class NVMNavmeshResource : IResource, IDisposable
 {
+    public string VirtualPath { get; set; }
     public int IndexCount;
 
     public NVM Nvm;

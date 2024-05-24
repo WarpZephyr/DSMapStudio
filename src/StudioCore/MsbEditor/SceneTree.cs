@@ -1015,6 +1015,7 @@ public class SceneTree : IActionEventHandler
     public bool IsPartEnemy(Entity e)
     {
         return e.WrappedObject is MSB1.Part.Enemy ||
+            e.WrappedObject is MSBVD.Part.Enemy ||
             e.WrappedObject is MSB3.Part.Enemy ||
             e.WrappedObject is MSBB.Part.Enemy ||
             e.WrappedObject is MSBD.Part.Enemy ||

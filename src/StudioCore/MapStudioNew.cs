@@ -405,6 +405,19 @@ public class MapStudioNew
         _assetLocator.SetFromProjectSettings(newsettings, moddir);
         _settingsMenu.ProjSettings = _projectSettings;
 
+        // System variables from game for pathing
+        if (_assetLocator.Type == GameType.ArmoredCoreVD)
+        {
+            if (GameVariables.HasVariables(_assetLocator.GameModDirectory, _assetLocator.Type))
+            {
+                GameVariables.LoadVariables(_assetLocator.GameModDirectory, _assetLocator.Type);
+            }
+            else if (GameVariables.HasVariables(_assetLocator.GameRootDirectory, _assetLocator.Type))
+            {
+                GameVariables.LoadVariables(_assetLocator.GameRootDirectory, _assetLocator.Type);
+            }
+        }
+
         // Banks
         ModelAliasBank.Bank.ReloadAliasBank();
         MapAliasBank.Bank.ReloadAliasBank();
