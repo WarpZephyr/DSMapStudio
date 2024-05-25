@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SoulsFormats
 {
-    public partial class MSBVD
+    public partial class MSBV
     {
         /// <summary>
         /// The different types of events.
@@ -232,113 +232,81 @@ namespace SoulsFormats
                 {
                     public short Unk00 { get; set; }
                     public short Unk02 { get; set; }
-                    public UnkBloomConfig BloomConfig1 { get; set; }
-                    public UnkBloomConfig BloomConfig2 { get; set; }
+                    public short Unk04 { get; set; }
+                    public short Unk06 { get; set; }
+                    public short Unk08 { get; set; }
+                    public short Unk0A { get; set; }
+                    public short Unk0C { get; set; }
+                    public short Unk0E { get; set; }
+                    public short Unk10 { get; set; }
+                    public short Unk12 { get; set; }
+                    public short Unk14 { get; set; }
+                    public short Unk16 { get; set; }
+                    public short Unk18 { get; set; }
+                    public short Unk1A { get; set; }
+                    public short Unk1C { get; set; }
+                    public short Unk1E { get; set; }
+                    public short Unk20 { get; set; }
+                    public short Unk22 { get; set; }
+                    public short Unk24 { get; set; }
+                    public short Unk26 { get; set; }
+                    public short Unk28 { get; set; }
+                    public short Unk2A { get; set; }
+                    public short Unk2C { get; set; }
+                    public short Unk2E { get; set; }
+                    public int Unk30 { get; set; }
+                    public int Unk34 { get; set; }
+                    public short Unk38 { get; set; }
+                    public short Unk3A { get; set; }
+                    public short Unk3C { get; set; }
+                    public short Unk3E { get; set; }
+                    public short Unk40 { get; set; }
+                    public short Unk42 { get; set; }
+                    public short Unk44 { get; set; }
+                    public short Unk46 { get; set; }
+                    public short Unk48 { get; set; }
+                    public short Unk4A { get; set; }
                     public short Unk4C { get; set; }
-                    public short Unk4E { get; set; }
-                    public float Unk50 { get; set; }
-                    public float Unk54 { get; set; }
-                    public float Unk58 { get; set; }
-                    public float Unk5C { get; set; }
-                    public float Unk60 { get; set; }
-                    public float Unk64 { get; set; }
-                    public float Unk68 { get; set; }
-                    public float Unk6C { get; set; }
-                    public float Unk70 { get; set; }
-                    public float Unk74 { get; set; }
-                    public float Unk78 { get; set; }
-                    public float Unk7C { get; set; }
-                    public float Unk80 { get; set; }
-                    public float Unk84 { get; set; }
-                    public float Unk88 { get; set; }
-                    public float Unk8C { get; set; }
-                    public float Unk90 { get; set; }
-                    public float Unk94 { get; set; }
-                    public float Unk98 { get; set; }
-                    public float Unk9C { get; set; }
-                    public float Unk100 { get; set; }
-                    public float Unk104 { get; set; }
-                    public float Unk108 { get; set; }
-                    public float Unk10C { get; set; }
-                    public float Unk110 { get; set; }
-                    public float Unk114 { get; set; }
-                    public float Unk118 { get; set; }
-                    public float Unk11C { get; set; }
-                    public float Unk120 { get; set; }
-                    public float Unk124 { get; set; }
-                    public byte Unk128 { get; set; }
-                    public byte Unk129 { get; set; }
-                    public byte Unk12A { get; set; }
-                    public byte Unk12B { get; set; }
-                    public float Unk12C { get; set; }
-                    public float Unk130 { get; set; }
-                    public float Unk134 { get; set; }
-                    public float Unk138 { get; set; }
-                    public float Unk13C { get; set; }
-                    public float Unk140 { get; set; }
-                    public float Unk144 { get; set; }
-                    public float Unk148 { get; set; }
-                    public float Unk14C { get; set; }
-                    public float Unk150 { get; set; }
-                    public float Unk154 { get; set; }
-                    public float Unk158 { get; set; }
-                    public float Unk15C { get; set; }
 
                     public LightConfig()
                     {
                         Unk00 = 0;
-                        Unk02 = 0;
-                        BloomConfig1 = new UnkBloomConfig();
-                        BloomConfig2 = new UnkBloomConfig();
-                        Unk4C = 0;
-                        Unk4E = 40;
-                        Unk50 = 1f;
-                        Unk54 = 1f;
-                        Unk58 = 1f;
-                        Unk5C = 1f;
-                        Unk60 = 1f;
-                        Unk64 = 1f;
-                        Unk68 = 1f;
-                        Unk6C = 1f;
-                        Unk70 = 1f;
-                        Unk74 = 1f;
-                        Unk78 = 1f;
-                        Unk7C = 1f;
-                        Unk80 = 1f;
-                        Unk84 = 1f;
-                        Unk88 = 1f;
-                        Unk8C = 1f;
-                        Unk90 = 1f;
-                        Unk94 = 1f;
-                        Unk98 = 1f;
-                        Unk9C = 0;
-                        Unk100 = 0.9f;
-                        Unk104 = 0.9f;
-                        Unk108 = 0.8f;
-                        Unk10C = 1f;
-                        Unk110 = 1400f;
-                        Unk114 = 20f;
-                        Unk118 = 50f;
-                        Unk11C = 10f;
-                        Unk120 = 0.1f;
-                        Unk124 = 0.5f;
-                        Unk128 = 0;
-                        Unk129 = 0;
-                        Unk12A = 0;
-                        Unk12B = 0;
-                        Unk12C = 0;
-                        Unk130 = 0;
-                        Unk134 = 0;
-                        Unk138 = 0;
-                        Unk13C = 0;
-                        Unk140 = 0;
-                        Unk144 = 0;
-                        Unk148 = 0;
-                        Unk14C = 0;
-                        Unk150 = 0;
-                        Unk154 = 0;
-                        Unk158 = 0;
-                        Unk15C = 0;
+                        Unk02 = 30;
+                        Unk04 = -50;
+                        Unk06 = -1;
+                        Unk08 = -246;
+                        Unk0A = -1;
+                        Unk0C = -226;
+                        Unk0E = 40;
+                        Unk10 = -50;
+                        Unk12 = -1;
+                        Unk14 = -236;
+                        Unk16 = -21;
+                        Unk18 = -7846;
+                        Unk1A = -40;
+                        Unk1C = -100;
+                        Unk1E = -32640;
+                        Unk20 = -32763;
+                        Unk22 = -32640;
+                        Unk24 = -32763;
+                        Unk26 = -25701;
+                        Unk28 = -25846;
+                        Unk2A = -25701;
+                        Unk2C = -25846;
+                        Unk2E = 0;
+                        Unk30 = -20;
+                        Unk34 = 230;
+                        Unk38 = 7800;
+                        Unk3A = 20480;
+                        Unk3C = 0;
+                        Unk3E = 0;
+                        Unk40 = 0;
+                        Unk42 = 0;
+                        Unk44 = 0;
+                        Unk46 = 16;
+                        Unk48 = 25819;
+                        Unk4A = -7936;
+                        Unk4C = -28415;
                     }
 
                     /// <summary>
@@ -347,8 +315,6 @@ namespace SoulsFormats
                     public LightConfig DeepCopy()
                     {
                         var lightConfig = (LightConfig)MemberwiseClone();
-                        lightConfig.BloomConfig1 = BloomConfig1.DeepCopy();
-                        lightConfig.BloomConfig2 = BloomConfig2.DeepCopy();
                         return lightConfig;
                     }
 
@@ -356,214 +322,85 @@ namespace SoulsFormats
                     {
                         Unk00 = br.ReadInt16();
                         Unk02 = br.ReadInt16();
-                        BloomConfig1 = new UnkBloomConfig(br);
-                        BloomConfig2 = new UnkBloomConfig(br);
+                        Unk04 = br.ReadInt16();
+                        Unk06 = br.ReadInt16();
+                        Unk08 = br.ReadInt16();
+                        Unk0A = br.ReadInt16();
+                        Unk0C = br.ReadInt16();
+                        Unk0E = br.ReadInt16();
+                        Unk10 = br.ReadInt16();
+                        Unk12 = br.ReadInt16();
+                        Unk14 = br.ReadInt16();
+                        Unk16 = br.ReadInt16();
+                        Unk18 = br.ReadInt16();
+                        Unk1A = br.ReadInt16();
+                        Unk1C = br.ReadInt16();
+                        Unk1E = br.ReadInt16();
+                        Unk20 = br.ReadInt16();
+                        Unk22 = br.ReadInt16();
+                        Unk24 = br.ReadInt16();
+                        Unk26 = br.ReadInt16();
+                        Unk28 = br.ReadInt16();
+                        Unk2A = br.ReadInt16();
+                        Unk2C = br.ReadInt16();
+                        Unk2E = br.ReadInt16();
+                        Unk30 = br.ReadInt32();
+                        Unk34 = br.ReadInt32();
+                        Unk38 = br.ReadInt16();
+                        Unk3A = br.ReadInt16();
+                        Unk3C = br.ReadInt16();
+                        Unk3E = br.ReadInt16();
+                        Unk40 = br.ReadInt16();
+                        Unk42 = br.ReadInt16();
+                        Unk44 = br.ReadInt16();
+                        Unk46 = br.ReadInt16();
+                        Unk48 = br.ReadInt16();
+                        Unk4A = br.ReadInt16();
                         Unk4C = br.ReadInt16();
-                        Unk4E = br.ReadInt16();
-                        Unk50 = br.ReadSingle();
-                        Unk54 = br.ReadSingle();
-                        Unk58 = br.ReadSingle();
-                        Unk5C = br.ReadSingle();
-                        Unk60 = br.ReadSingle();
-                        Unk64 = br.ReadSingle();
-                        Unk68 = br.ReadSingle();
-                        Unk6C = br.ReadSingle();
-                        Unk70 = br.ReadSingle();
-                        Unk74 = br.ReadSingle();
-                        Unk78 = br.ReadSingle();
-                        Unk7C = br.ReadSingle();
-                        Unk80 = br.ReadSingle();
-                        Unk84 = br.ReadSingle();
-                        Unk88 = br.ReadSingle();
-                        Unk8C = br.ReadSingle();
-                        Unk90 = br.ReadSingle();
-                        Unk94 = br.ReadSingle();
-                        Unk98 = br.ReadSingle();
-                        Unk9C = br.ReadSingle();
-                        Unk100 = br.ReadSingle();
-                        Unk104 = br.ReadSingle();
-                        Unk108 = br.ReadSingle();
-                        Unk10C = br.ReadSingle();
-                        Unk110 = br.ReadSingle();
-                        Unk114 = br.ReadSingle();
-                        Unk118 = br.ReadSingle();
-                        Unk11C = br.ReadSingle();
-                        Unk120 = br.ReadSingle();
-                        Unk124 = br.ReadSingle();
-                        Unk128 = br.ReadByte();
-                        Unk129 = br.ReadByte();
-                        Unk12A = br.ReadByte();
-                        Unk12B = br.ReadByte();
-                        Unk12C = br.ReadSingle();
-                        Unk130 = br.ReadSingle();
-                        Unk134 = br.ReadSingle();
-                        Unk138 = br.ReadSingle();
-                        Unk13C = br.ReadSingle();
-                        Unk140 = br.ReadSingle();
-                        Unk144 = br.ReadSingle();
-                        Unk148 = br.ReadSingle();
-                        Unk14C = br.ReadSingle();
-                        Unk150 = br.ReadSingle();
-                        Unk154 = br.ReadSingle();
-                        Unk158 = br.ReadSingle();
-                        Unk15C = br.ReadSingle();
+                        br.AssertPattern(434, 0);
                     }
 
                     internal void Write(BinaryWriterEx bw)
                     {
                         bw.WriteInt16(Unk00);
                         bw.WriteInt16(Unk02);
-                        BloomConfig1.Write(bw);
-                        BloomConfig2.Write(bw);
+                        bw.WriteInt16(Unk04);
+                        bw.WriteInt16(Unk06);
+                        bw.WriteInt16(Unk08);
+                        bw.WriteInt16(Unk0A);
+                        bw.WriteInt16(Unk0C);
+                        bw.WriteInt16(Unk0E);
+                        bw.WriteInt16(Unk10);
+                        bw.WriteInt16(Unk12);
+                        bw.WriteInt16(Unk14);
+                        bw.WriteInt16(Unk16);
+                        bw.WriteInt16(Unk18);
+                        bw.WriteInt16(Unk1A);
+                        bw.WriteInt16(Unk1C);
+                        bw.WriteInt16(Unk1E);
+                        bw.WriteInt16(Unk20);
+                        bw.WriteInt16(Unk22);
+                        bw.WriteInt16(Unk24);
+                        bw.WriteInt16(Unk26);
+                        bw.WriteInt16(Unk28);
+                        bw.WriteInt16(Unk2A);
+                        bw.WriteInt16(Unk2C);
+                        bw.WriteInt16(Unk2E);
+                        bw.WriteInt32(Unk30);
+                        bw.WriteInt32(Unk34);
+                        bw.WriteInt16(Unk38);
+                        bw.WriteInt16(Unk3A);
+                        bw.WriteInt16(Unk3C);
+                        bw.WriteInt16(Unk3E);
+                        bw.WriteInt16(Unk40);
+                        bw.WriteInt16(Unk42);
+                        bw.WriteInt16(Unk44);
+                        bw.WriteInt16(Unk46);
+                        bw.WriteInt16(Unk48);
+                        bw.WriteInt16(Unk4A);
                         bw.WriteInt16(Unk4C);
-                        bw.WriteInt16(Unk4E);
-                        bw.WriteSingle(Unk50);
-                        bw.WriteSingle(Unk54);
-                        bw.WriteSingle(Unk58);
-                        bw.WriteSingle(Unk5C);
-                        bw.WriteSingle(Unk60);
-                        bw.WriteSingle(Unk64);
-                        bw.WriteSingle(Unk68);
-                        bw.WriteSingle(Unk6C);
-                        bw.WriteSingle(Unk70);
-                        bw.WriteSingle(Unk74);
-                        bw.WriteSingle(Unk78);
-                        bw.WriteSingle(Unk7C);
-                        bw.WriteSingle(Unk80);
-                        bw.WriteSingle(Unk84);
-                        bw.WriteSingle(Unk88);
-                        bw.WriteSingle(Unk8C);
-                        bw.WriteSingle(Unk90);
-                        bw.WriteSingle(Unk94);
-                        bw.WriteSingle(Unk98);
-                        bw.WriteSingle(Unk9C);
-                        bw.WriteSingle(Unk100);
-                        bw.WriteSingle(Unk104);
-                        bw.WriteSingle(Unk108);
-                        bw.WriteSingle(Unk10C);
-                        bw.WriteSingle(Unk110);
-                        bw.WriteSingle(Unk114);
-                        bw.WriteSingle(Unk118);
-                        bw.WriteSingle(Unk11C);
-                        bw.WriteSingle(Unk120);
-                        bw.WriteSingle(Unk124);
-                        bw.WriteByte(Unk128);
-                        bw.WriteByte(Unk129);
-                        bw.WriteByte(Unk12A);
-                        bw.WriteByte(Unk12B);
-                        bw.WriteSingle(Unk12C);
-                        bw.WriteSingle(Unk130);
-                        bw.WriteSingle(Unk134);
-                        bw.WriteSingle(Unk138);
-                        bw.WriteSingle(Unk13C);
-                        bw.WriteSingle(Unk140);
-                        bw.WriteSingle(Unk144);
-                        bw.WriteSingle(Unk148);
-                        bw.WriteSingle(Unk14C);
-                        bw.WriteSingle(Unk150);
-                        bw.WriteSingle(Unk154);
-                        bw.WriteSingle(Unk158);
-                        bw.WriteSingle(Unk15C);
+                        bw.WritePattern(434, 0);
                     }
-
-                    #region Sub Struct
-
-                    public class UnkBloomConfig
-                    {
-                        public short Unk00 { get; set; }
-                        public short Unk02 { get; set; }
-                        public Bloom Bloom1 { get; set; }
-                        public Bloom Bloom2 { get; set; }
-
-                        public UnkBloomConfig()
-                        {
-                            Unk00 = 0;
-                            Unk02 = 0;
-                            Bloom1 = new Bloom();
-                            Bloom2 = new Bloom();
-                        }
-
-                        /// <summary>
-                        /// Creates a deep copy of the struct.
-                        /// </summary>
-                        public UnkBloomConfig DeepCopy()
-                        {
-                            var unkBloomConfig = (UnkBloomConfig)MemberwiseClone();
-                            unkBloomConfig.Bloom1 = Bloom1.DeepCopy();
-                            unkBloomConfig.Bloom2 = Bloom2.DeepCopy();
-                            return unkBloomConfig;
-                        }
-
-                        internal UnkBloomConfig(BinaryReaderEx br)
-                        {
-                            Unk00 = br.ReadInt16();
-                            Unk02 = br.ReadInt16();
-                            Bloom1 = new Bloom(br);
-                            Bloom2 = new Bloom(br);
-                        }
-
-                        internal void Write(BinaryWriterEx bw)
-                        {
-                            bw.WriteInt16(Unk00);
-                            bw.WriteInt16(Unk02);
-                            Bloom1.Write(bw);
-                            Bloom2.Write(bw);
-                        }
-
-                        #region Sub Struct
-
-                        public class Bloom
-                        {
-                            public float Red { get; set; }
-                            public float Blue { get; set; }
-                            public float Green { get; set; }
-                            public float Unk { get; set; }
-
-                            public Bloom()
-                            {
-                                Red = 1f;
-                                Blue = 1f;
-                                Green = 1f;
-                                Unk = 1f;
-                            }
-
-                            public Bloom(float red, float blue, float green)
-                            {
-                                Red = red;
-                                Blue = blue;
-                                Green = green;
-                                Unk = 1f;
-                            }
-
-                            /// <summary>
-                            /// Creates a deep copy of the struct.
-                            /// </summary>
-                            public Bloom DeepCopy()
-                            {
-                                return (Bloom)MemberwiseClone();
-                            }
-
-                            internal Bloom(BinaryReaderEx br)
-                            {
-                                Red = br.ReadSingle();
-                                Blue = br.ReadSingle();
-                                Green = br.ReadSingle();
-                                Unk = br.ReadSingle();
-                            }
-
-                            internal void Write(BinaryWriterEx bw)
-                            {
-                                bw.WriteSingle(Red);
-                                bw.WriteSingle(Blue);
-                                bw.WriteSingle(Green);
-                                bw.WriteSingle(Unk);
-                            }
-                        }
-
-                        #endregion
-                    }
-
-                    #endregion
                 }
 
                 #endregion
@@ -608,7 +445,9 @@ namespace SoulsFormats
                     public UnkSceneConfig7 Config7 { get; set; }
                     public UnkSceneConfig8 Config8 { get; set; }
                     public UnkSceneConfig9 Config9 { get; set; }
-                    public UnkSceneConfig10 Config10 { get; set; }
+                    public UnkSceneConfig12 Config12 { get; set; }
+                    public UnkSceneConfig13 Config13 { get; set; }
+                    public UnkSceneConfig14 Config14 { get; set; }
 
                     public SceneConfig()
                     {
@@ -621,7 +460,9 @@ namespace SoulsFormats
                         Config7 = new UnkSceneConfig7();
                         Config8 = new UnkSceneConfig8();
                         Config9 = new UnkSceneConfig9();
-                        Config10 = new UnkSceneConfig10();
+                        Config12 = new UnkSceneConfig12();
+                        Config13 = new UnkSceneConfig13();
+                        Config14 = new UnkSceneConfig14();
                     }
 
                     /// <summary>
@@ -639,7 +480,9 @@ namespace SoulsFormats
                         sceneConfig.Config7 = Config7.DeepCopy();
                         sceneConfig.Config8 = Config8.DeepCopy();
                         sceneConfig.Config9 = Config9.DeepCopy();
-                        sceneConfig.Config10 = Config10.DeepCopy();
+                        sceneConfig.Config12 = Config12.DeepCopy();
+                        sceneConfig.Config13 = Config13.DeepCopy();
+                        sceneConfig.Config14 = Config14.DeepCopy();
                         return sceneConfig;
                     }
 
@@ -656,7 +499,11 @@ namespace SoulsFormats
                         int offsetUnkSceneConfig8 = br.ReadInt32();
                         int offsetUnkSceneConfig9 = br.ReadInt32();
                         int offsetUnkSceneConfig10 = br.ReadInt32();
-                        br.AssertPattern(24, 0);
+                        int offsetUnkSceneConfig11 = br.ReadInt32();
+                        int offsetUnkSceneConfig12 = br.ReadInt32();
+                        int offsetUnkSceneConfig13 = br.ReadInt32();
+                        int offsetUnkSceneConfig14 = br.ReadInt32();
+                        br.AssertPattern(456, 0);
 
                         br.Position = start + offsetUnkSceneConfig1;
                         Config1 = new UnkSceneConfig1(br);
@@ -685,12 +532,20 @@ namespace SoulsFormats
                         br.Position = start + offsetUnkSceneConfig9;
                         Config9 = new UnkSceneConfig9(br);
 
-                        if (offsetUnkSceneConfig10 > 0)
-                        {
-                            br.Position = start + offsetUnkSceneConfig10;
-                            Config10 = new UnkSceneConfig10(br);
-                        }
+                        br.Position = start + offsetUnkSceneConfig10;
+                        br.AssertPattern(128, 0); // Always null
 
+                        br.Position = start + offsetUnkSceneConfig11;
+                        br.AssertPattern(512, 0); // Always null
+
+                        br.Position = start + offsetUnkSceneConfig12;
+                        Config12 = new UnkSceneConfig12(br);
+
+                        br.Position = start + offsetUnkSceneConfig13;
+                        Config13 = new UnkSceneConfig13(br);
+
+                        br.Position = start + offsetUnkSceneConfig14;
+                        Config14 = new UnkSceneConfig14(br);
                     }
 
                     internal void Write(BinaryWriterEx bw)
@@ -706,7 +561,11 @@ namespace SoulsFormats
                         bw.ReserveInt32("OffsetUnkSceneConfig8");
                         bw.ReserveInt32("OffsetUnkSceneConfig9");
                         bw.ReserveInt32("OffsetUnkSceneConfig10");
-                        bw.WritePattern(24, 0);
+                        bw.ReserveInt32("OffsetUnkSceneConfig11");
+                        bw.ReserveInt32("OffsetUnkSceneConfig12");
+                        bw.ReserveInt32("OffsetUnkSceneConfig13");
+                        bw.ReserveInt32("OffsetUnkSceneConfig14");
+                        bw.WritePattern(456, 0);
 
                         bw.FillInt32("OffsetUnkSceneConfig1", (int)(bw.Position - start));
                         Config1.Write(bw);
@@ -735,15 +594,20 @@ namespace SoulsFormats
                         bw.FillInt32("OffsetUnkSceneConfig9", (int)(bw.Position - start));
                         Config9.Write(bw);
 
-                        if (Config10 != null)
-                        {
-                            bw.FillInt32("OffsetUnkSceneConfig10", (int)(bw.Position - start));
-                            Config10.Write(bw);
-                        }
-                        else
-                        {
-                            bw.FillInt32("OffsetUnkSceneConfig10", 0);
-                        }
+                        bw.FillInt32("OffsetUnkSceneConfig10", (int)(bw.Position - start));
+                        bw.WritePattern(128, 0); // Always null
+
+                        bw.FillInt32("OffsetUnkSceneConfig11", (int)(bw.Position - start));
+                        bw.WritePattern(512, 0); // Always null
+
+                        bw.FillInt32("OffsetUnkSceneConfig12", (int)(bw.Position - start));
+                        Config12.Write(bw);
+
+                        bw.FillInt32("OffsetUnkSceneConfig13", (int)(bw.Position - start));
+                        Config13.Write(bw);
+
+                        bw.FillInt32("OffsetUnkSceneConfig14", (int)(bw.Position - start));
+                        Config14.Write(bw);
                     }
 
                     #region Sub Structs
@@ -785,8 +649,13 @@ namespace SoulsFormats
                         public short Unk52 { get; set; }
                         public short Unk54 { get; set; }
                         public short Unk56 { get; set; }
-                        public float Unk58 { get; set; }
-                        public float Unk5C { get; set; }
+                        public short Unk58 { get; set; }
+                        public short Unk5A { get; set; }
+                        public short Unk5C { get; set; }
+                        public short Unk5E { get; set; }
+                        public short Unk60 { get; set; }
+                        public short Unk62 { get; set; }
+                        public short Unk64 { get; set; }
 
                         public UnkSceneConfig1()
                         {
@@ -825,8 +694,13 @@ namespace SoulsFormats
                             Unk52 = 0;
                             Unk54 = 0;
                             Unk56 = 0;
-                            Unk58 = 6f;
+                            Unk58 = 0;
+                            Unk5A = 0;
                             Unk5C = 0;
+                            Unk5E = 0;
+                            Unk60 = 0;
+                            Unk62 = 0;
+                            Unk64 = 0;
                         }
 
                         /// <summary>
@@ -874,9 +748,14 @@ namespace SoulsFormats
                             Unk52 = br.ReadInt16();
                             Unk54 = br.ReadInt16();
                             Unk56 = br.ReadInt16();
-                            Unk58 = br.ReadSingle();
-                            Unk5C = br.ReadSingle();
-                            br.AssertPattern(416, 0);
+                            Unk58 = br.ReadInt16();
+                            Unk5A = br.ReadInt16();
+                            Unk5C = br.ReadInt16();
+                            Unk5E = br.ReadInt16();
+                            Unk60 = br.ReadInt16();
+                            Unk62 = br.ReadInt16();
+                            Unk64 = br.ReadInt16();
+                            br.AssertPattern(410, 0);
                         }
 
                         internal void Write(BinaryWriterEx bw)
@@ -916,9 +795,14 @@ namespace SoulsFormats
                             bw.WriteInt16(Unk52);
                             bw.WriteInt16(Unk54);
                             bw.WriteInt16(Unk56);
-                            bw.WriteSingle(Unk58);
-                            bw.WriteSingle(Unk5C);
-                            bw.WritePattern(416, 0);
+                            bw.WriteInt16(Unk58);
+                            bw.WriteInt16(Unk5A);
+                            bw.WriteInt16(Unk5C);
+                            bw.WriteInt16(Unk5E);
+                            bw.WriteInt16(Unk60);
+                            bw.WriteInt16(Unk62);
+                            bw.WriteInt16(Unk64);
+                            bw.WritePattern(410, 0);
                         }
                     }
 
@@ -936,10 +820,9 @@ namespace SoulsFormats
                         public float Unk18 { get; set; }
                         public float Unk1C { get; set; }
                         public float Unk20 { get; set; }
-                        public float Unk24 { get; set; }
-                        public float Unk28 { get; set; }
-                        public short Unk2C { get; set; }
-                        public short Unk2E { get; set; }
+                        public int Unk24 { get; set; }
+
+                        public UnkStruct1 Struct1 { get; set; }
 
                         public UnkSceneConfig2()
                         {
@@ -955,10 +838,8 @@ namespace SoulsFormats
                             Unk18 = 1f;
                             Unk1C = 60f;
                             Unk20 = 5.6f;
-                            Unk24 = 1f;
-                            Unk28 = 0.024f;
-                            Unk2C = 1;
-                            Unk2E = 0;
+                            Unk24 = 2;
+                            Struct1 = new UnkStruct1();
                         }
 
                         /// <summary>
@@ -966,11 +847,15 @@ namespace SoulsFormats
                         /// </summary>
                         public UnkSceneConfig2 DeepCopy()
                         {
-                            return (UnkSceneConfig2)MemberwiseClone();
+                            var unkSceneConfig2 = (UnkSceneConfig2)MemberwiseClone();
+                            unkSceneConfig2.Struct1 = Struct1.DeepCopy();
+                            return unkSceneConfig2;
                         }
 
                         internal UnkSceneConfig2(BinaryReaderEx br)
                         {
+                            long start = br.Position;
+
                             Unk00 = br.ReadByte();
                             Unk01 = br.ReadByte();
                             Unk02 = br.ReadByte();
@@ -983,15 +868,18 @@ namespace SoulsFormats
                             Unk18 = br.ReadSingle();
                             Unk1C = br.ReadSingle();
                             Unk20 = br.ReadSingle();
-                            Unk24 = br.ReadSingle();
-                            Unk28 = br.ReadSingle();
-                            Unk2C = br.ReadInt16();
-                            Unk2E = br.ReadInt16();
-                            br.AssertPattern(80, 0);
+                            Unk24 = br.ReadInt32();
+                            int offset28 = br.ReadInt32();
+                            br.AssertPattern(468, 0);
+
+                            br.Position = start + offset28;
+                            Struct1 = new UnkStruct1(br);
                         }
 
                         internal void Write(BinaryWriterEx bw)
                         {
+                            long start = bw.Position;
+
                             bw.WriteByte(Unk00);
                             bw.WriteByte(Unk01);
                             bw.WriteByte(Unk02);
@@ -1004,12 +892,91 @@ namespace SoulsFormats
                             bw.WriteSingle(Unk18);
                             bw.WriteSingle(Unk1C);
                             bw.WriteSingle(Unk20);
-                            bw.WriteSingle(Unk24);
-                            bw.WriteSingle(Unk28);
-                            bw.WriteInt16(Unk2C);
-                            bw.WriteInt16(Unk2E);
-                            bw.WritePattern(80, 0);
+                            bw.WriteInt32(Unk24);
+                            bw.ReserveInt32("Offset28");
+                            bw.WritePattern(468, 0);
+
+                            bw.FillInt32("Offset28", (int)(bw.Position - start));
+                            Struct1.Write(bw);
                         }
+
+                        #region Sub Structs
+
+                        public class UnkStruct1
+                        {
+                            public int Unk00 { get; set; }
+                            public float Unk04 { get; set; }
+                            public float Unk08 { get; set; }
+                            public float Unk0C { get; set; }
+                            public float Unk10 { get; set; }
+                            public float Unk14 { get; set; }
+                            public float Unk18 { get; set; }
+                            public float Unk1C { get; set; }
+                            public float Unk20 { get; set; }
+                            public float Unk24 { get; set; }
+                            public float Unk28 { get; set; }
+                            public float Unk2C { get; set; }
+
+                            public UnkStruct1()
+                            {
+                                Unk00 = 0;
+                                Unk04 = 1;
+                                Unk08 = 1;
+                                Unk0C = 0;
+                                Unk10 = 0;
+                                Unk14 = 0;
+                                Unk18 = 0;
+                                Unk1C = 1;
+                                Unk20 = 1;
+                                Unk24 = 1;
+                                Unk28 = 100;
+                                Unk2C = 200;
+                            }
+
+                            /// <summary>
+                            /// Creates a deep copy of the struct.
+                            /// </summary>
+                            public UnkStruct1 DeepCopy()
+                            {
+                                return (UnkStruct1)MemberwiseClone();
+                            }
+
+                            internal UnkStruct1(BinaryReaderEx br)
+                            {
+                                Unk00 = br.ReadInt32();
+                                Unk04 = br.ReadSingle();
+                                Unk08 = br.ReadSingle();
+                                Unk0C = br.ReadSingle();
+                                Unk10 = br.ReadSingle();
+                                Unk14 = br.ReadSingle();
+                                Unk18 = br.ReadSingle();
+                                Unk1C = br.ReadSingle();
+                                Unk20 = br.ReadSingle();
+                                Unk24 = br.ReadSingle();
+                                Unk28 = br.ReadSingle();
+                                Unk2C = br.ReadSingle();
+                                br.AssertPattern(80, 0);
+                            }
+
+                            internal void Write(BinaryWriterEx bw)
+                            {
+                                bw.WriteInt32(Unk00);
+                                bw.WriteSingle(Unk04);
+                                bw.WriteSingle(Unk08);
+                                bw.WriteSingle(Unk0C);
+                                bw.WriteSingle(Unk10);
+                                bw.WriteSingle(Unk14);
+                                bw.WriteSingle(Unk18);
+                                bw.WriteSingle(Unk1C);
+                                bw.WriteSingle(Unk20);
+                                bw.WriteSingle(Unk24);
+                                bw.WriteSingle(Unk28);
+                                bw.WriteSingle(Unk2C);
+                                bw.WritePattern(80, 0);
+                            }
+                        }
+
+                        #endregion
                     }
 
                     public class UnkSceneConfig3
@@ -1107,7 +1074,7 @@ namespace SoulsFormats
                             Unk58 = br.ReadSingle();
                             Unk5C = br.ReadSingle();
                             Unk60 = br.ReadSingle();
-                            br.AssertPattern(28, 0);
+                            br.AssertPattern(412, 0);
                         }
 
                         internal void Write(BinaryWriterEx bw)
@@ -1138,11 +1105,117 @@ namespace SoulsFormats
                             bw.WriteSingle(Unk58);
                             bw.WriteSingle(Unk5C);
                             bw.WriteSingle(Unk60);
-                            bw.WritePattern(28, 0);
+                            bw.WritePattern(412, 0);
                         }
                     }
 
                     public class UnkSceneConfig4
+                    {
+                        public int Unk00 { get; set; }
+                        public float Unk04 { get; set; }
+                        public float Unk08 { get; set; }
+                        public float Unk0C { get; set; }
+                        public float Unk10 { get; set; }
+                        public float Unk14 { get; set; }
+                        public float Unk18 { get; set; }
+                        public float Unk1C { get; set; }
+                        public float Unk20 { get; set; }
+
+                        public UnkSceneConfig4()
+                        {
+                            Unk00 = 1;
+                            Unk04 = 90;
+                            Unk08 = 10;
+                            Unk0C = 255;
+                            Unk10 = 255;
+                            Unk14 = 255;
+                            Unk18 = 0.1f;
+                            Unk1C = 1;
+                            Unk20 = 1;
+                        }
+
+                        public UnkSceneConfig4 DeepCopy()
+                        {
+                            return (UnkSceneConfig4)MemberwiseClone();
+                        }
+
+                        internal UnkSceneConfig4(BinaryReaderEx br)
+                        {
+                            Unk00 = br.ReadInt32();
+                            Unk04 = br.ReadSingle();
+                            Unk08 = br.ReadSingle();
+                            Unk0C = br.ReadSingle();
+                            Unk10 = br.ReadSingle();
+                            Unk14 = br.ReadSingle();
+                            Unk18 = br.ReadSingle();
+                            Unk1C = br.ReadSingle();
+                            Unk20 = br.ReadSingle();
+                            br.AssertPattern(476, 0);
+                        }
+
+                        internal void Write(BinaryWriterEx bw)
+                        {
+                            bw.WriteInt32(Unk00);
+                            bw.WriteSingle(Unk04);
+                            bw.WriteSingle(Unk08);
+                            bw.WriteSingle(Unk0C);
+                            bw.WriteSingle(Unk10);
+                            bw.WriteSingle(Unk14);
+                            bw.WriteSingle(Unk18);
+                            bw.WriteSingle(Unk1C);
+                            bw.WriteSingle(Unk20);
+                            bw.WritePattern(476, 0);
+                        }
+                    }
+
+                    public class UnkSceneConfig5
+                    {
+                        public int Unk00 { get; set; }
+                        public float Unk04 { get; set; }
+                        public float Unk08 { get; set; }
+                        public float Unk0C { get; set; }
+                        public float Unk10 { get; set; }
+                        public int Unk14 { get; set; }
+
+                        public UnkSceneConfig5()
+                        {
+                            Unk00 = 1;
+                            Unk04 = 135;
+                            Unk08 = 134;
+                            Unk0C = 138;
+                            Unk10 = 0.3f;
+                            Unk14 = 3;
+                        }
+
+                        public UnkSceneConfig5 DeepCopy()
+                        {
+                            return (UnkSceneConfig5)MemberwiseClone();
+                        }
+
+                        internal UnkSceneConfig5(BinaryReaderEx br)
+                        {
+                            Unk00 = br.ReadInt32();
+                            Unk04 = br.ReadSingle();
+                            Unk08 = br.ReadSingle();
+                            Unk0C = br.ReadSingle();
+                            Unk10 = br.ReadSingle();
+                            Unk14 = br.ReadInt32();
+                            br.AssertPattern(488, 0);
+                        }
+
+                        internal void Write(BinaryWriterEx bw)
+                        {
+                            bw.WriteInt32(Unk00);
+                            bw.WriteSingle(Unk04);
+                            bw.WriteSingle(Unk08);
+                            bw.WriteSingle(Unk0C);
+                            bw.WriteSingle(Unk10);
+                            bw.WriteInt32(Unk14);
+                            bw.WritePattern(488, 0);
+                        }
+                    }
+
+                    public class UnkSceneConfig6
                     {
                         public int Unk00 { get; set; }
                         public float Unk04 { get; set; }
@@ -1161,9 +1234,9 @@ namespace SoulsFormats
                         public UnkStruct2 Struct2 { get; set; }
                         public UnkStruct3 Struct3 { get; set; }
 
-                        public UnkSceneConfig4()
+                        public UnkSceneConfig6()
                         {
-                            Unk00 = 1;
+                            Unk00 = 0;
                             Unk04 = 0;
                             Unk08 = 0;
                             Unk0C = 255f;
@@ -1184,9 +1257,9 @@ namespace SoulsFormats
                         /// <summary>
                         /// Creates a deep copy of the struct.
                         /// </summary>
-                        public UnkSceneConfig4 DeepCopy()
+                        public UnkSceneConfig6 DeepCopy()
                         {
-                            var unkSceneConfig4 = (UnkSceneConfig4)MemberwiseClone();
+                            var unkSceneConfig4 = (UnkSceneConfig6)MemberwiseClone();
 
                             for (int i = 0; i < 22; i++)
                             {
@@ -1198,7 +1271,7 @@ namespace SoulsFormats
                             return unkSceneConfig4;
                         }
 
-                        internal UnkSceneConfig4(BinaryReaderEx br)
+                        internal UnkSceneConfig6(BinaryReaderEx br)
                         {
                             long start = br.Position;
 
@@ -1216,10 +1289,11 @@ namespace SoulsFormats
                             Unk2C = br.ReadSingle();
                             Unk30 = br.ReadSingle();
 
+                            br.AssertInt32(4); // Always 4
                             int[] offsetsUnkStruct1 = br.ReadInt32s(22);
                             int offsetUnkStruct2 = br.ReadInt32();
                             int offsetUnkStruct3 = br.ReadInt32();
-                            br.AssertPattern(108, 0);
+                            br.AssertPattern(360, 0);
 
                             Struct1s = new List<UnkStruct1>();
                             if (offsetsUnkStruct1[0] > 0)
@@ -1264,13 +1338,15 @@ namespace SoulsFormats
                             bw.WriteSingle(Unk28);
                             bw.WriteSingle(Unk2C);
                             bw.WriteSingle(Unk30);
+
+                            bw.WriteInt32(4); // Always 4
                             for (int i = 0; i < 22; i++)
                             {
                                 bw.ReserveInt32($"OffsetUnkStruct1_{i}");
                             }
                             bw.ReserveInt32("OffsetUnkStruct2");
                             bw.ReserveInt32("OffsetUnkStruct3");
-                            bw.WritePattern(108, 0);
+                            bw.WritePattern(360, 0);
 
                             int struct1Count = Math.Min(22, Struct1s.Count);
                             for (int i = 0; i < 22; i++)
@@ -1341,7 +1417,7 @@ namespace SoulsFormats
                                 Unk08 = br.ReadSingle();
                                 Unk0C = br.ReadBytes(4);
                                 Unk10 = br.ReadBytes(4);
-                                br.AssertPattern(12, 0);
+                                br.AssertPattern(108, 0);
                             }
 
                             internal void Write(BinaryWriterEx bw)
@@ -1351,7 +1427,7 @@ namespace SoulsFormats
                                 bw.WriteSingle(Unk08);
                                 bw.WriteBytes(Unk0C);
                                 bw.WriteBytes(Unk10);
-                                bw.WritePattern(12, 0);
+                                bw.WritePattern(108, 0);
                             }
                         }
 
@@ -1359,9 +1435,8 @@ namespace SoulsFormats
                         {
                             public int Unk00 { get; set; }
                             public float Unk04 { get; set; }
-                            public int Unk08 { get; set; }
-                            public short Unk0C { get; set; }
-                            public short Unk0E { get; set; }
+                            public float Unk08 { get; set; }
+                            public int Unk0C { get; set; }
                             public float Unk10 { get; set; }
                             public float Unk14 { get; set; }
                             public float Unk18 { get; set; }
@@ -1371,23 +1446,32 @@ namespace SoulsFormats
                             public short Unk26 { get; set; }
                             public short Unk28 { get; set; }
                             public short Unk2A { get; set; }
+                            public float Unk2C { get; set; }
+                            public float Unk30 { get; set; }
+                            public float Unk34 { get; set; }
+                            public float Unk38 { get; set; }
+                            public float Unk3C { get; set; }
 
                             public UnkStruct2()
                             {
                                 Unk00 = -1;
-                                Unk04 = 1f;
+                                Unk04 = 1;
                                 Unk08 = 0;
                                 Unk0C = -1;
-                                Unk0E = -1;
                                 Unk10 = 0.3f;
                                 Unk14 = 0.98f;
                                 Unk18 = 0.98f;
-                                Unk1C = 1f;
-                                Unk20 = 1f;
+                                Unk1C = 1;
+                                Unk20 = 1;
                                 Unk24 = -1;
                                 Unk26 = -1;
                                 Unk28 = -1;
                                 Unk2A = -1;
+                                Unk2C = 0;
+                                Unk30 = 0;
+                                Unk34 = 0;
+                                Unk38 = 0;
+                                Unk3C = 0;
                             }
 
                             /// <summary>
@@ -1402,9 +1486,8 @@ namespace SoulsFormats
                             {
                                 Unk00 = br.ReadInt32();
                                 Unk04 = br.ReadSingle();
-                                Unk08 = br.ReadInt32();
-                                Unk0C = br.ReadInt16();
-                                Unk0E = br.ReadInt16();
+                                Unk08 = br.ReadSingle();
+                                Unk0C = br.ReadInt32();
                                 Unk10 = br.ReadSingle();
                                 Unk14 = br.ReadSingle();
                                 Unk18 = br.ReadSingle();
@@ -1414,16 +1497,19 @@ namespace SoulsFormats
                                 Unk26 = br.ReadInt16();
                                 Unk28 = br.ReadInt16();
                                 Unk2A = br.ReadInt16();
-                                br.AssertPattern(20, 0);
+                                Unk2C = br.ReadSingle();
+                                Unk30 = br.ReadSingle();
+                                Unk34 = br.ReadSingle();
+                                Unk38 = br.ReadSingle();
+                                Unk3C = br.ReadSingle();
                             }
 
                             internal void Write(BinaryWriterEx bw)
                             {
                                 bw.WriteInt32(Unk00);
                                 bw.WriteSingle(Unk04);
-                                bw.WriteInt32(Unk08);
-                                bw.WriteInt16(Unk0C);
-                                bw.WriteInt16(Unk0E);
+                                bw.WriteSingle(Unk08);
+                                bw.WriteInt32(Unk0C);
                                 bw.WriteSingle(Unk10);
                                 bw.WriteSingle(Unk14);
                                 bw.WriteSingle(Unk18);
@@ -1433,7 +1519,11 @@ namespace SoulsFormats
                                 bw.WriteInt16(Unk26);
                                 bw.WriteInt16(Unk28);
                                 bw.WriteInt16(Unk2A);
-                                bw.WritePattern(20, 0);
+                                bw.WriteSingle(Unk2C);
+                                bw.WriteSingle(Unk30);
+                                bw.WriteSingle(Unk34);
+                                bw.WriteSingle(Unk38);
+                                bw.WriteSingle(Unk3C);
                             }
                         }
 
@@ -1451,12 +1541,12 @@ namespace SoulsFormats
                             public UnkStruct3()
                             {
                                 Unk00 = -80f;
-                                Unk04 = 98f;
-                                Unk08 = 752f;
-                                Unk0C = 672f;
+                                Unk04 = 70f;
+                                Unk08 = 750f;
+                                Unk0C = 750f;
                                 Unk10 = -1;
                                 Unk11 = -1;
-                                Unk12 = -101;
+                                Unk12 = -1;
                                 Unk13 = -1;
                             }
 
@@ -1498,272 +1588,45 @@ namespace SoulsFormats
                         #endregion
                     }
 
-                    public class UnkSceneConfig5
-                    {
-                        public int Unk00 { get; set; }
-                        public float Unk04 { get; set; }
-                        public float Unk08 { get; set; }
-                        public float Unk0C { get; set; }
-                        public float Unk10 { get; set; }
-                        public float Unk14 { get; set; }
-                        public float Unk18 { get; set; }
-                        public float Unk1C { get; set; }
-                        public float Unk20 { get; set; }
-                        public float Unk24 { get; set; }
-                        public byte Unk28 { get; set; }
-                        public byte Unk29 { get; set; }
-                        public byte Unk2A { get; set; }
-                        public byte Unk2B { get; set; }
-                        public float Unk2C { get; set; }
-                        public float Unk30 { get; set; }
-                        public float Unk34 { get; set; }
-                        public float Unk38 { get; set; }
-                        public float Unk3C { get; set; }
-                        public float Unk40 { get; set; }
-                        public float Unk44 { get; set; }
-                        public float Unk48 { get; set; }
-                        public float Unk4C { get; set; }
-                        public float Unk50 { get; set; }
-                        public float Unk54 { get; set; }
-                        public float Unk58 { get; set; }
-                        public float Unk5C { get; set; }
-                        public float Unk60 { get; set; }
-                        public float Unk64 { get; set; }
-                        public float Unk68 { get; set; }
-                        public float Unk6C { get; set; }
-                        public float Unk70 { get; set; }
-                        public float Unk74 { get; set; }
-                        public float Unk78 { get; set; }
-                        public float Unk7C { get; set; }
-
-                        public UnkSceneConfig5()
-                        {
-                            Unk00 = 0;
-                            Unk04 = 60f;
-                            Unk08 = 300f;
-                            Unk0C = 0;
-                            Unk10 = 0.84f;
-                            Unk14 = 100f;
-                            Unk18 = 300f;
-                            Unk1C = -0.1f;
-                            Unk20 = 0.0009f;
-                            Unk24 = 0;
-                            Unk28 = 1;
-                            Unk29 = 0;
-                            Unk2A = 0;
-                            Unk2B = 0;
-                            Unk2C = 0;
-                            Unk30 = 0;
-                            Unk34 = 0;
-                            Unk38 = 150f;
-                            Unk3C = 200f;
-                            Unk40 = 300f;
-                            Unk44 = -0.1f;
-                            Unk48 = 0;
-                            Unk4C = 0;
-                            Unk50 = 0;
-                            Unk54 = 0;
-                            Unk58 = 0;
-                            Unk5C = 0;
-                            Unk60 = 0;
-                            Unk64 = 0;
-                            Unk68 = 0;
-                            Unk6C = 0;
-                            Unk70 = 0;
-                            Unk74 = 0;
-                            Unk78 = 0;
-                            Unk7C = 0;
-                        }
-
-                        /// <summary>
-                        /// Creates a deep copy of the struct.
-                        /// </summary>
-                        public UnkSceneConfig5 DeepCopy()
-                        {
-                            return (UnkSceneConfig5)MemberwiseClone();
-                        }
-
-                        internal UnkSceneConfig5(BinaryReaderEx br)
-                        {
-                            Unk00 = br.ReadInt32();
-                            Unk04 = br.ReadSingle();
-                            Unk08 = br.ReadSingle();
-                            Unk0C = br.ReadSingle();
-                            Unk10 = br.ReadSingle();
-                            Unk14 = br.ReadSingle();
-                            Unk18 = br.ReadSingle();
-                            Unk1C = br.ReadSingle();
-                            Unk20 = br.ReadSingle();
-                            Unk24 = br.ReadSingle();
-                            Unk28 = br.ReadByte();
-                            Unk29 = br.ReadByte();
-                            Unk2A = br.ReadByte();
-                            Unk2B = br.ReadByte();
-                            Unk2C = br.ReadSingle();
-                            Unk30 = br.ReadSingle();
-                            Unk34 = br.ReadSingle();
-                            Unk38 = br.ReadSingle();
-                            Unk3C = br.ReadSingle();
-                            Unk40 = br.ReadSingle();
-                            Unk44 = br.ReadSingle();
-                            Unk48 = br.ReadSingle();
-                            Unk4C = br.ReadSingle();
-                            Unk50 = br.ReadSingle();
-                            Unk54 = br.ReadSingle();
-                            Unk58 = br.ReadSingle();
-                            Unk5C = br.ReadSingle();
-                            Unk60 = br.ReadSingle();
-                            Unk64 = br.ReadSingle();
-                            Unk68 = br.ReadSingle();
-                            Unk6C = br.ReadSingle();
-                            Unk70 = br.ReadSingle();
-                            Unk74 = br.ReadSingle();
-                            Unk78 = br.ReadSingle();
-                            Unk7C = br.ReadSingle();
-                        }
-
-                        internal void Write(BinaryWriterEx bw)
-                        {
-                            bw.WriteInt32(Unk00);
-                            bw.WriteSingle(Unk04);
-                            bw.WriteSingle(Unk08);
-                            bw.WriteSingle(Unk0C);
-                            bw.WriteSingle(Unk10);
-                            bw.WriteSingle(Unk14);
-                            bw.WriteSingle(Unk18);
-                            bw.WriteSingle(Unk1C);
-                            bw.WriteSingle(Unk20);
-                            bw.WriteSingle(Unk24);
-                            bw.WriteByte(Unk28);
-                            bw.WriteByte(Unk29);
-                            bw.WriteByte(Unk2A);
-                            bw.WriteByte(Unk2B);
-                            bw.WriteSingle(Unk2C);
-                            bw.WriteSingle(Unk30);
-                            bw.WriteSingle(Unk34);
-                            bw.WriteSingle(Unk38);
-                            bw.WriteSingle(Unk3C);
-                            bw.WriteSingle(Unk40);
-                            bw.WriteSingle(Unk44);
-                            bw.WriteSingle(Unk48);
-                            bw.WriteSingle(Unk4C);
-                            bw.WriteSingle(Unk50);
-                            bw.WriteSingle(Unk54);
-                            bw.WriteSingle(Unk58);
-                            bw.WriteSingle(Unk5C);
-                            bw.WriteSingle(Unk60);
-                            bw.WriteSingle(Unk64);
-                            bw.WriteSingle(Unk68);
-                            bw.WriteSingle(Unk6C);
-                            bw.WriteSingle(Unk70);
-                            bw.WriteSingle(Unk74);
-                            bw.WriteSingle(Unk78);
-                            bw.WriteSingle(Unk7C);
-                        }
-                    }
-
-                    public class UnkSceneConfig6
-                    {
-                        public int Unk00 { get; set; }
-                        public float Unk04 { get; set; }
-                        public float Unk08 { get; set; }
-                        public float Unk0C { get; set; }
-                        public float Unk10 { get; set; }
-                        public float Unk14 { get; set; }
-                        public float Unk18 { get; set; }
-                        public float Unk1C { get; set; }
-                        public float Unk20 { get; set; }
-                        public float Unk24 { get; set; }
-                        public float Unk28 { get; set; }
-                        public float Unk2C { get; set; }
-                        public float Unk30 { get; set; }
-                        public float Unk34 { get; set; }
-                        public float Unk38 { get; set; }
-                        public float Unk3C { get; set; }
-
-                        public UnkSceneConfig6()
-                        {
-                            Unk00 = 0;
-                            Unk04 = 3.8f;
-                            Unk08 = 4000f;
-                            Unk0C = 0.09f;
-                            Unk10 = 0.06f;
-                            Unk14 = 0;
-                            Unk18 = 1f;
-                            Unk1C = 4f;
-                            Unk20 = 1.4f;
-                            Unk24 = 1.1f;
-                            Unk28 = 0;
-                            Unk2C = 2f;
-                            Unk30 = 1.2f;
-                            Unk34 = 0;
-                            Unk38 = 0.1f;
-                            Unk3C = 0;
-                        }
-
-                        /// <summary>
-                        /// Creates a deep copy of the struct.
-                        /// </summary>
-                        public UnkSceneConfig6 DeepCopy()
-                        {
-                            return (UnkSceneConfig6)MemberwiseClone();
-                        }
-
-                        internal UnkSceneConfig6(BinaryReaderEx br)
-                        {
-                            Unk00 = br.ReadInt32();
-                            Unk04 = br.ReadSingle();
-                            Unk08 = br.ReadSingle();
-                            Unk0C = br.ReadSingle();
-                            Unk10 = br.ReadSingle();
-                            Unk14 = br.ReadSingle();
-                            Unk18 = br.ReadSingle();
-                            Unk1C = br.ReadSingle();
-                            Unk20 = br.ReadSingle();
-                            Unk24 = br.ReadSingle();
-                            Unk28 = br.ReadSingle();
-                            Unk2C = br.ReadSingle();
-                            Unk30 = br.ReadSingle();
-                            Unk34 = br.ReadSingle();
-                            Unk38 = br.ReadSingle();
-                            Unk3C = br.ReadSingle();
-                            br.AssertPattern(64, 0);
-                        }
-
-                        internal void Write(BinaryWriterEx bw)
-                        {
-                            bw.WriteInt32(Unk00);
-                            bw.WriteSingle(Unk04);
-                            bw.WriteSingle(Unk08);
-                            bw.WriteSingle(Unk0C);
-                            bw.WriteSingle(Unk10);
-                            bw.WriteSingle(Unk14);
-                            bw.WriteSingle(Unk18);
-                            bw.WriteSingle(Unk1C);
-                            bw.WriteSingle(Unk20);
-                            bw.WriteSingle(Unk24);
-                            bw.WriteSingle(Unk28);
-                            bw.WriteSingle(Unk2C);
-                            bw.WriteSingle(Unk30);
-                            bw.WriteSingle(Unk34);
-                            bw.WriteSingle(Unk38);
-                            bw.WriteSingle(Unk3C);
-                            bw.WritePattern(64, 0);
-                        }
-                    }
-
                     public class UnkSceneConfig7
                     {
-                        public byte Unk00 { get; set; }
+                        public short Unk00 { get; set; }
+                        public short Unk02 { get; set; }
+                        public float Unk04 { get; set; }
+                        public float Unk08 { get; set; }
+                        public float Unk0C { get; set; }
+                        public float Unk10 { get; set; }
+                        public float Unk14 { get; set; }
+                        public float Unk18 { get; set; }
+                        public short Unk1C { get; set; }
+                        public short Unk1E { get; set; }
+                        public byte Unk20 { get; set; }
+                        public byte Unk21 { get; set; }
+                        public byte Unk22 { get; set; }
+                        public byte Unk23 { get; set; }
+                        public int Unk24 { get; set; }
+                        public float Unk28 { get; set; }
 
                         public UnkSceneConfig7()
                         {
-                            Unk00 = 0;
+                            Unk00 = 511;
+                            Unk02 = -15341;
+                            Unk04 = 1.2f;
+                            Unk08 = 0.7f;
+                            Unk0C = 0.7f;
+                            Unk10 = 0.14f;
+                            Unk14 = -0.01f;
+                            Unk18 = -0.01f;
+                            Unk1C = 1;
+                            Unk1E = 7715;
+                            Unk20 = 3;
+                            Unk21 = 0;
+                            Unk22 = 0;
+                            Unk23 = 0;
+                            Unk24 = 3;
+                            Unk28 = 1;
                         }
 
-                        /// <summary>
-                        /// Creates a deep copy of the struct.
-                        /// </summary>
                         public UnkSceneConfig7 DeepCopy()
                         {
                             return (UnkSceneConfig7)MemberwiseClone();
@@ -1771,14 +1634,44 @@ namespace SoulsFormats
 
                         internal UnkSceneConfig7(BinaryReaderEx br)
                         {
-                            Unk00 = br.ReadByte();
-                            br.AssertPattern(63, 0);
+                            Unk00 = br.ReadInt16();
+                            Unk02 = br.ReadInt16();
+                            Unk04 = br.ReadSingle();
+                            Unk08 = br.ReadSingle();
+                            Unk0C = br.ReadSingle();
+                            Unk10 = br.ReadSingle();
+                            Unk14 = br.ReadSingle();
+                            Unk18 = br.ReadSingle();
+                            Unk1C = br.ReadInt16();
+                            Unk1E = br.ReadInt16();
+                            Unk20 = br.ReadByte();
+                            Unk21 = br.ReadByte();
+                            Unk22 = br.ReadByte();
+                            Unk23 = br.ReadByte();
+                            Unk24 = br.ReadInt32();
+                            Unk28 = br.ReadSingle();
+                            br.AssertPattern(468, 0);
                         }
 
                         internal void Write(BinaryWriterEx bw)
                         {
-                            bw.WriteByte(Unk00);
-                            bw.WritePattern(63, 0);
+                            bw.WriteInt16(Unk00);
+                            bw.WriteInt16(Unk02);
+                            bw.WriteSingle(Unk04);
+                            bw.WriteSingle(Unk08);
+                            bw.WriteSingle(Unk0C);
+                            bw.WriteSingle(Unk10);
+                            bw.WriteSingle(Unk14);
+                            bw.WriteSingle(Unk18);
+                            bw.WriteInt16(Unk1C);
+                            bw.WriteInt16(Unk1E);
+                            bw.WriteByte(Unk20);
+                            bw.WriteByte(Unk21);
+                            bw.WriteByte(Unk22);
+                            bw.WriteByte(Unk23);
+                            bw.WriteInt32(Unk24);
+                            bw.WriteSingle(Unk28);
+                            bw.WritePattern(468, 0);
                         }
                     }
 
@@ -1792,8 +1685,7 @@ namespace SoulsFormats
                         public float Unk10 { get; set; }
                         public float Unk14 { get; set; }
                         public float Unk18 { get; set; }
-                        public short Unk1C { get; set; }
-                        public short Unk1E { get; set; }
+                        public float Unk1C { get; set; }
                         public float Unk20 { get; set; }
                         public float Unk24 { get; set; }
                         public byte Unk28 { get; set; }
@@ -1810,34 +1702,30 @@ namespace SoulsFormats
 
                         public UnkSceneConfig8()
                         {
-                            Unk00 = 511;
-                            Unk02 = 23090;
-                            Unk04 = 0.5f;
-                            Unk08 = 0.35f;
-                            Unk0C = 0.4f;
-                            Unk10 = -0.1f;
-                            Unk14 = -0.04f;
-                            Unk18 = 0.03f;
-                            Unk1C = 1799;
-                            Unk1E = 256;
-                            Unk20 = 1f;
-                            Unk24 = 1f;
-                            Unk28 = 63;
-                            Unk29 = 128;
+                            Unk00 = 0;
+                            Unk02 = 0;
+                            Unk04 = 10;
+                            Unk08 = 260;
+                            Unk0C = 0;
+                            Unk10 = 0.8f;
+                            Unk14 = 120;
+                            Unk18 = 200;
+                            Unk1C = -0.1f;
+                            Unk20 = -0.0001f;
+                            Unk24 = 0;
+                            Unk28 = 1;
+                            Unk29 = 0;
                             Unk2A = 0;
                             Unk2B = 0;
-                            Unk2C = 0.1f;
-                            Unk30 = 0.1f;
-                            Unk34 = 0;
-                            Unk38 = 0;
-                            Unk3C = 0;
-                            Unk40 = 0;
-                            Unk44 = 0;
+                            Unk2C = 0.2f;
+                            Unk30 = 0.2f;
+                            Unk34 = 0.2f;
+                            Unk38 = 600;
+                            Unk3C = 100;
+                            Unk40 = 250;
+                            Unk44 = -0.1f;
                         }
 
-                        /// <summary>
-                        /// Creates a deep copy of the struct.
-                        /// </summary>
                         public UnkSceneConfig8 DeepCopy()
                         {
                             return (UnkSceneConfig8)MemberwiseClone();
@@ -1853,8 +1741,7 @@ namespace SoulsFormats
                             Unk10 = br.ReadSingle();
                             Unk14 = br.ReadSingle();
                             Unk18 = br.ReadSingle();
-                            Unk1C = br.ReadInt16();
-                            Unk1E = br.ReadInt16();
+                            Unk1C = br.ReadSingle();
                             Unk20 = br.ReadSingle();
                             Unk24 = br.ReadSingle();
                             Unk28 = br.ReadByte();
@@ -1868,7 +1755,201 @@ namespace SoulsFormats
                             Unk3C = br.ReadSingle();
                             Unk40 = br.ReadSingle();
                             Unk44 = br.ReadSingle();
-                            br.AssertPattern(56, 0);
+                            br.AssertPattern(440, 0);
+                        }
+
+                        internal void Write(BinaryWriterEx bw)
+                        {
+                            bw.WriteInt16(Unk00);
+                            bw.WriteInt16(Unk02);
+                            bw.WriteSingle(Unk04);
+                            bw.WriteSingle(Unk08);
+                            bw.WriteSingle(Unk0C);
+                            bw.WriteSingle(Unk10);
+                            bw.WriteSingle(Unk14);
+                            bw.WriteSingle(Unk18);
+                            bw.WriteSingle(Unk1C);
+                            bw.WriteSingle(Unk20);
+                            bw.WriteSingle(Unk24);
+                            bw.WriteByte(Unk28);
+                            bw.WriteByte(Unk29);
+                            bw.WriteByte(Unk2A);
+                            bw.WriteByte(Unk2B);
+                            bw.WriteSingle(Unk2C);
+                            bw.WriteSingle(Unk30);
+                            bw.WriteSingle(Unk34);
+                            bw.WriteSingle(Unk38);
+                            bw.WriteSingle(Unk3C);
+                            bw.WriteSingle(Unk40);
+                            bw.WriteSingle(Unk44);
+                            bw.WritePattern(440, 0);
+                        }
+                    }
+
+                    public class UnkSceneConfig9
+                    {
+                        public float Unk00 { get; set; }
+                        public float Unk04 { get; set; }
+                        public float Unk08 { get; set; }
+                        public float Unk0C { get; set; }
+                        public float Unk10 { get; set; }
+                        public float Unk14 { get; set; }
+                        public float Unk18 { get; set; }
+
+                        public UnkSceneConfig9()
+                        {
+                            Unk00 = 0;
+                            Unk04 = 0.36f;
+                            Unk08 = 1;
+                            Unk0C = 0.36f;
+                            Unk10 = 0.36f;
+                            Unk14 = 1;
+                            Unk18 = 1;
+                        }
+
+                        public UnkSceneConfig9 DeepCopy()
+                        {
+                            return (UnkSceneConfig9)MemberwiseClone();
+                        }
+
+                        internal UnkSceneConfig9(BinaryReaderEx br)
+                        {
+                            Unk00 = br.ReadSingle();
+                            Unk04 = br.ReadSingle();
+                            Unk08 = br.ReadSingle();
+                            Unk0C = br.ReadSingle();
+                            Unk10 = br.ReadSingle();
+                            Unk14 = br.ReadSingle();
+                            Unk18 = br.ReadSingle();
+                            br.AssertPattern(484, 0);
+                        }
+
+                        internal void Write(BinaryWriterEx bw)
+                        {
+                            bw.WriteSingle(Unk00);
+                            bw.WriteSingle(Unk04);
+                            bw.WriteSingle(Unk08);
+                            bw.WriteSingle(Unk0C);
+                            bw.WriteSingle(Unk10);
+                            bw.WriteSingle(Unk14);
+                            bw.WriteSingle(Unk18);
+                            bw.WritePattern(484, 0);
+                        }
+                    }
+
+                    public class UnkSceneConfig12
+                    {
+                        public int Unk48 { get; set; }
+                        public float Unk4C { get; set; }
+                        public float Unk50 { get; set; }
+                        public float Unk54 { get; set; }
+                        public float Unk58 { get; set; }
+                        public float Unk5C { get; set; }
+                        public float Unk60 { get; set; }
+
+                        public UnkSceneConfig12()
+                        {
+                            Unk48 = 1;
+                            Unk4C = 0.6f;
+                            Unk50 = 0.6f;
+                            Unk54 = 0.6f;
+                            Unk58 = 0.6f;
+                            Unk5C = 0.6f;
+                            Unk60 = 0.6f;
+                        }
+
+                        public UnkSceneConfig12 DeepCopy()
+                        {
+                            return (UnkSceneConfig12)MemberwiseClone();
+                        }
+
+                        internal UnkSceneConfig12(BinaryReaderEx br)
+                        {
+                            br.AssertPattern(72, 0);
+                            Unk48 = br.ReadInt32();
+                            Unk4C = br.ReadSingle();
+                            Unk50 = br.ReadSingle();
+                            Unk54 = br.ReadSingle();
+                            Unk58 = br.ReadSingle();
+                            Unk5C = br.ReadSingle();
+                            Unk60 = br.ReadSingle();
+                            br.AssertPattern(412, 0);
+                        }
+
+                        internal void Write(BinaryWriterEx bw)
+                        {
+                            bw.WritePattern(72, 0);
+                            bw.WriteInt32(Unk48);
+                            bw.WriteSingle(Unk4C);
+                            bw.WriteSingle(Unk50);
+                            bw.WriteSingle(Unk54);
+                            bw.WriteSingle(Unk58);
+                            bw.WriteSingle(Unk5C);
+                            bw.WriteSingle(Unk60);
+                            bw.WritePattern(412, 0);
+                        }
+                    }
+
+                    public class UnkSceneConfig13
+                    {
+                        public short Unk00 { get; set; }
+                        public short Unk02 { get; set; }
+                        public float Unk04 { get; set; }
+                        public float Unk08 { get; set; }
+                        public float Unk0C { get; set; }
+                        public float Unk10 { get; set; }
+                        public float Unk14 { get; set; }
+                        public float Unk18 { get; set; }
+                        public short Unk1C { get; set; }
+                        public short Unk1E { get; set; }
+                        public float Unk20 { get; set; }
+                        public float Unk24 { get; set; }
+                        public float Unk28 { get; set; }
+                        public float Unk2C { get; set; }
+                        public float Unk30 { get; set; }
+
+                        public UnkSceneConfig13()
+                        {
+                            Unk00 = 511;
+                            Unk02 = 15400;
+                            Unk04 = 0.5f;
+                            Unk08 = 0.35f;
+                            Unk0C = 0.35f;
+                            Unk10 = -0.03f;
+                            Unk14 = -0.01f;
+                            Unk18 = -0.006f;
+                            Unk1C = 1287;
+                            Unk1E = 0;
+                            Unk20 = 0;
+                            Unk24 = 0;
+                            Unk28 = 0;
+                            Unk2C = 0;
+                            Unk30 = 0;
+                        }
+
+                        public UnkSceneConfig13 DeepCopy()
+                        {
+                            return (UnkSceneConfig13)MemberwiseClone();
+                        }
+
+                        internal UnkSceneConfig13(BinaryReaderEx br)
+                        {
+                            Unk00 = br.ReadInt16();
+                            Unk02 = br.ReadInt16();
+                            Unk04 = br.ReadSingle();
+                            Unk08 = br.ReadSingle();
+                            Unk0C = br.ReadSingle();
+                            Unk10 = br.ReadSingle();
+                            Unk14 = br.ReadSingle();
+                            Unk18 = br.ReadSingle();
+                            Unk1C = br.ReadInt16();
+                            Unk1E = br.ReadInt16();
+                            Unk20 = br.ReadSingle();
+                            Unk24 = br.ReadSingle();
+                            Unk28 = br.ReadSingle();
+                            Unk2C = br.ReadSingle();
+                            Unk30 = br.ReadSingle();
+                            br.AssertPattern(460, 0);
                         }
 
                         internal void Write(BinaryWriterEx bw)
@@ -1885,86 +1966,67 @@ namespace SoulsFormats
                             bw.WriteInt16(Unk1E);
                             bw.WriteSingle(Unk20);
                             bw.WriteSingle(Unk24);
-                            bw.WriteByte(Unk28);
-                            bw.WriteByte(Unk29);
-                            bw.WriteByte(Unk2A);
-                            bw.WriteByte(Unk2B);
+                            bw.WriteSingle(Unk28);
                             bw.WriteSingle(Unk2C);
                             bw.WriteSingle(Unk30);
-                            bw.WriteSingle(Unk34);
-                            bw.WriteSingle(Unk38);
-                            bw.WriteSingle(Unk3C);
-                            bw.WriteSingle(Unk40);
-                            bw.WriteSingle(Unk44);
-                            bw.WritePattern(56, 0);
+                            bw.WritePattern(460, 0);
                         }
                     }
 
-                    public class UnkSceneConfig9
+                    public class UnkSceneConfig14
                     {
                         public float Unk00 { get; set; }
                         public float Unk04 { get; set; }
                         public float Unk08 { get; set; }
                         public float Unk0C { get; set; }
                         public float Unk10 { get; set; }
-                        public float Unk12 { get; set; }
                         public float Unk14 { get; set; }
                         public float Unk18 { get; set; }
+                        public float Unk1C { get; set; }
                         public float Unk20 { get; set; }
-                        public float Unk22 { get; set; }
                         public float Unk24 { get; set; }
                         public float Unk28 { get; set; }
+                        public float Unk2C { get; set; }
                         public float Unk30 { get; set; }
-                        public float Unk32 { get; set; }
-                        public float Unk34 { get; set; }
-                        public float Unk38 { get; set; }
 
-                        public UnkSceneConfig9()
+                        public UnkSceneConfig14()
                         {
                             Unk00 = 0;
                             Unk04 = 0;
                             Unk08 = 0;
                             Unk0C = 0;
                             Unk10 = 0;
-                            Unk12 = 0;
                             Unk14 = 0;
                             Unk18 = 0;
+                            Unk1C = 0;
                             Unk20 = 0;
-                            Unk22 = 0;
                             Unk24 = 0;
                             Unk28 = 0;
-                            Unk30 = 0;
-                            Unk32 = 0;
-                            Unk34 = 0;
-                            Unk38 = 0;
+                            Unk2C = 0;
+                            Unk30 = 1;
                         }
 
-                        /// <summary>
-                        /// Creates a deep copy of the struct.
-                        /// </summary>
-                        public UnkSceneConfig9 DeepCopy()
+                        public UnkSceneConfig14 DeepCopy()
                         {
-                            return (UnkSceneConfig9)MemberwiseClone();
+                            return (UnkSceneConfig14)MemberwiseClone();
                         }
 
-                        internal UnkSceneConfig9(BinaryReaderEx br)
+                        internal UnkSceneConfig14(BinaryReaderEx br)
                         {
                             Unk00 = br.ReadSingle();
                             Unk04 = br.ReadSingle();
                             Unk08 = br.ReadSingle();
                             Unk0C = br.ReadSingle();
                             Unk10 = br.ReadSingle();
-                            Unk12 = br.ReadSingle();
                             Unk14 = br.ReadSingle();
                             Unk18 = br.ReadSingle();
+                            Unk1C = br.ReadSingle();
                             Unk20 = br.ReadSingle();
-                            Unk22 = br.ReadSingle();
                             Unk24 = br.ReadSingle();
                             Unk28 = br.ReadSingle();
+                            Unk2C = br.ReadSingle();
                             Unk30 = br.ReadSingle();
-                            Unk32 = br.ReadSingle();
-                            Unk34 = br.ReadSingle();
-                            Unk38 = br.ReadSingle();
+                            br.AssertPattern(12, 0);
                         }
 
                         internal void Write(BinaryWriterEx bw)
@@ -1974,105 +2036,15 @@ namespace SoulsFormats
                             bw.WriteSingle(Unk08);
                             bw.WriteSingle(Unk0C);
                             bw.WriteSingle(Unk10);
-                            bw.WriteSingle(Unk12);
                             bw.WriteSingle(Unk14);
                             bw.WriteSingle(Unk18);
+                            bw.WriteSingle(Unk1C);
                             bw.WriteSingle(Unk20);
-                            bw.WriteSingle(Unk22);
                             bw.WriteSingle(Unk24);
                             bw.WriteSingle(Unk28);
+                            bw.WriteSingle(Unk2C);
                             bw.WriteSingle(Unk30);
-                            bw.WriteSingle(Unk32);
-                            bw.WriteSingle(Unk34);
-                            bw.WriteSingle(Unk38);
-                        }
-                    }
-
-                    public class UnkSceneConfig10
-                    {
-                        public int Unk00 { get; set; }
-                        public float Unk04 { get; set; }
-                        public float Unk08 { get; set; }
-                        public float Unk0C { get; set; }
-                        public float Unk10 { get; set; }
-                        public float Unk12 { get; set; }
-                        public float Unk14 { get; set; }
-                        public float Unk18 { get; set; }
-                        public float Unk20 { get; set; }
-                        public float Unk22 { get; set; }
-                        public float Unk24 { get; set; }
-                        public float Unk28 { get; set; }
-                        public float Unk30 { get; set; }
-                        public float Unk32 { get; set; }
-                        public float Unk34 { get; set; }
-                        public float Unk38 { get; set; }
-
-                        public UnkSceneConfig10()
-                        {
-                            Unk00 = 1;
-                            Unk04 = 0;
-                            Unk08 = 0;
-                            Unk0C = 0;
-                            Unk10 = 0;
-                            Unk12 = 2000f;
-                            Unk14 = 0.5f;
-                            Unk18 = 10f;
-                            Unk20 = 10f;
-                            Unk22 = 1f;
-                            Unk24 = 0;
-                            Unk28 = 0;
-                            Unk30 = 0;
-                            Unk32 = 0;
-                            Unk34 = 0;
-                            Unk38 = 0;
-                        }
-
-                        /// <summary>
-                        /// Creates a deep copy of the struct.
-                        /// </summary>
-                        public UnkSceneConfig10 DeepCopy()
-                        {
-                            return (UnkSceneConfig10)MemberwiseClone();
-                        }
-
-                        internal UnkSceneConfig10(BinaryReaderEx br)
-                        {
-                            Unk00 = br.ReadInt32();
-                            Unk04 = br.ReadSingle();
-                            Unk08 = br.ReadSingle();
-                            Unk0C = br.ReadSingle();
-                            Unk10 = br.ReadSingle();
-                            Unk12 = br.ReadSingle();
-                            Unk14 = br.ReadSingle();
-                            Unk18 = br.ReadSingle();
-                            Unk20 = br.ReadSingle();
-                            Unk22 = br.ReadSingle();
-                            Unk24 = br.ReadSingle();
-                            Unk28 = br.ReadSingle();
-                            Unk30 = br.ReadSingle();
-                            Unk32 = br.ReadSingle();
-                            Unk34 = br.ReadSingle();
-                            Unk38 = br.ReadSingle();
-                        }
-
-                        internal void Write(BinaryWriterEx bw)
-                        {
-                            bw.WriteInt32(Unk00);
-                            bw.WriteSingle(Unk04);
-                            bw.WriteSingle(Unk08);
-                            bw.WriteSingle(Unk0C);
-                            bw.WriteSingle(Unk10);
-                            bw.WriteSingle(Unk12);
-                            bw.WriteSingle(Unk14);
-                            bw.WriteSingle(Unk18);
-                            bw.WriteSingle(Unk20);
-                            bw.WriteSingle(Unk22);
-                            bw.WriteSingle(Unk24);
-                            bw.WriteSingle(Unk28);
-                            bw.WriteSingle(Unk30);
-                            bw.WriteSingle(Unk32);
-                            bw.WriteSingle(Unk34);
-                            bw.WriteSingle(Unk38);
+                            bw.WritePattern(12, 0);
                         }
                     }
 
