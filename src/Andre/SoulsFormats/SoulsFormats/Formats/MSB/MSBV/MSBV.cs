@@ -5,7 +5,7 @@ using System.IO;
 namespace SoulsFormats
 {
     /// <summary>
-    /// A map layout file used in Armored Core Verdict Day.<br/>
+    /// A map layout file used in Armored Core V.<br/>
     /// Extension: .msb
     /// </summary>
     public partial class MSBV : SoulsFile<MSBV>, IMsbBound<MSBV.MapStudioTree>
