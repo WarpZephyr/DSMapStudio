@@ -573,9 +573,27 @@ public static partial class FMGBank
         return info;
     }
 
+    private static void SetFMGInfoACV(string file, string root)
+    {
+        FMG fmg = FMG.Read(file);
+        var name = Path.GetFileNameWithoutExtension(file);
+        FMGInfo info = new()
+        {
+            FileName = file.Split("\\").Last(),
+            Name = name,
+            RootPath = file[root.Length..],
+            FmgID = FmgIDType.None,
+            Fmg = fmg,
+            EntryType = FmgEntryTextType.TextBody,
+            EntryCategory = FmgEntryCategory.None,
+            UICategory = FmgUICategory.Text
+        };
+        ActiveUITypes[info.UICategory] = true;
+        FmgInfoBank.Add(info);
+    }
+
     private static void SetFMGInfoACVD(string file, string root)
     {
-        // TODO: DS2 FMG grouping & UI sorting (copy SetFMGInfo)
         FMG fmg = FMG.Read(file);
         var name = Path.GetFileNameWithoutExtension(file);
         FMGInfo info = new()
@@ -733,6 +751,17 @@ public static partial class FMGBank
                     return;
                 }
 
+                if (AssetLocator.Type == GameType.ArmoredCoreV)
+                {
+                    if (ReloadACVFMGs())
+                    {
+                        IsLoading = false;
+                        IsLoaded = true;
+                    }
+
+                    return;
+                }
+
                 if (AssetLocator.Type == GameType.ArmoredCoreVD)
                 {
                     if (ReloadACVDFMGs())
@@ -761,6 +790,33 @@ public static partial class FMGBank
                 IsLoaded = true;
                 IsLoading = false;
             }));
+    }
+
+    private static bool ReloadACVFMGs()
+    {
+        if (LanguageFolder == "")
+        {
+            LanguageFolder = "en";
+        }
+
+        var files = Directory.EnumerateFiles($@"{AssetLocator.GameRootDirectory}\lang\{LanguageFolder}", "*.fmg", SearchOption.AllDirectories);
+        FmgInfoBank = new List<FMGInfo>();
+        foreach (var file in files)
+        {
+            var modfile = $@"{AssetLocator.GameRootDirectory}\lang\{LanguageFolder}\{Path.GetFileName(file)}";
+            if (AssetLocator.GameModDirectory != null && File.Exists(modfile))
+            {
+                SetFMGInfoACVD(modfile, AssetLocator.GameModDirectory);
+            }
+            else
+            {
+                SetFMGInfoACVD(file, AssetLocator.GameRootDirectory);
+            }
+        }
+
+        FmgInfoBank = [.. FmgInfoBank.OrderBy(e => e.Name)];
+        HandleDuplicateEntries();
+        return true;
     }
 
     private static bool ReloadACVDFMGs()
@@ -1215,6 +1271,14 @@ public static partial class FMGBank
         }
     }
 
+    private static void SaveFMGsACV()
+    {
+        foreach (FMGInfo info in FmgInfoBank)
+        {
+            Utils.WriteWithBackup(AssetLocator.GameRootDirectory, AssetLocator.GameModDirectory, info.RootPath, info.Fmg);
+        }
+    }
+
     private static void SaveFMGsACVD()
     {
         foreach (FMGInfo info in FmgInfoBank)
@@ -1240,6 +1304,14 @@ public static partial class FMGBank
             if (AssetLocator.Type == GameType.DarkSoulsIISOTFS)
             {
                 SaveFMGsDS2();
+                TaskLogs.AddLog("Saved FMG text");
+                return;
+            }
+
+            // TODO ACV
+            if (AssetLocator.Type == GameType.ArmoredCoreV)
+            {
+                SaveFMGsACV();
                 TaskLogs.AddLog("Saved FMG text");
                 return;
             }

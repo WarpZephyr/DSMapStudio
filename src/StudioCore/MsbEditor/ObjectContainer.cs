@@ -535,6 +535,36 @@ public class Map : ObjectContainer
         m.Models.Add(model);
     }
 
+    //TODO ACV
+    private void AddModelACV(IMsb m, MSBV.Model model, string name)
+    {
+        if (LoadedModels[name] != null)
+        {
+            m.Models.Add(LoadedModels[name]);
+            return;
+        }
+
+        model.Name = name;
+        if (model is MSBV.Model.MapPiece)
+        {
+            model.ResourcePath = $@"N:\ACV\data\model\map\{name}\model_sib\{name}.sib";
+        }
+        else if (model is MSBV.Model.Object)
+        {
+            model.ResourcePath = $@"N:\ACV\data\model\obj\{name}\model_sib\{name}.sib";
+        }
+        else if (model is MSBV.Model.Enemy)
+        {
+            model.ResourcePath = $@"N:\ACV\data\model\ene\{name}\model_sib\{name}.sib";
+        }
+        else if (model is MSBV.Model.Dummy)
+        {
+            model.ResourcePath = $@"N:\ACV\data\model\dummy\dummy_ac\{name}.ap2";
+        }
+
+        m.Models.Add(model);
+    }
+
     //TODO ACVD
     private void AddModelACVD(IMsb m, MSBVD.Model model, string name)
     {
@@ -813,31 +843,63 @@ public class Map : ObjectContainer
         }
     }
 
+    //TODO ACV
+    private void AddModelsACV(IMsb msb)
+    {
+        foreach (KeyValuePair<string, IMsbModel> mk in LoadedModels.OrderBy(q => q.Key))
+        {
+            var m = mk.Key;
+            if (m.StartsWith("m", StringComparison.CurrentCultureIgnoreCase))
+            {
+                AddModelACV(msb, new MSBV.Model.MapPiece { Name = m }, m);
+                continue;
+            }
+
+            if (m.StartsWith("o", StringComparison.CurrentCultureIgnoreCase))
+            {
+                AddModelACV(msb, new MSBV.Model.Object { Name = m }, m);
+                continue;
+            }
+
+            if (m.StartsWith("e", StringComparison.CurrentCultureIgnoreCase))
+            {
+                AddModelACV(msb, new MSBV.Model.Enemy { Name = m }, m);
+                continue;
+            }
+
+            if (m.StartsWith("a", StringComparison.CurrentCultureIgnoreCase))
+            {
+                AddModelACV(msb, new MSBV.Model.Dummy { Name = m }, m);
+                continue;
+            }
+        }
+    }
+
     //TODO ACVD
     private void AddModelsACVD(IMsb msb)
     {
         foreach (KeyValuePair<string, IMsbModel> mk in LoadedModels.OrderBy(q => q.Key))
         {
             var m = mk.Key;
-            if (m.ToLower().StartsWith("m"))
+            if (m.StartsWith("m", StringComparison.CurrentCultureIgnoreCase))
             {
                 AddModelACVD(msb, new MSBVD.Model.MapPiece { Name = m }, m);
                 continue;
             }
 
-            if (m.ToLower().StartsWith("o"))
+            if (m.StartsWith("o", StringComparison.CurrentCultureIgnoreCase))
             {
                 AddModelACVD(msb, new MSBVD.Model.Object { Name = m }, m);
                 continue;
             }
 
-            if (m.ToLower().StartsWith("e"))
+            if (m.StartsWith("e", StringComparison.CurrentCultureIgnoreCase))
             {
                 AddModelACVD(msb, new MSBVD.Model.Enemy { Name = m }, m);
                 continue;
             }
 
-            if (m.ToLower().StartsWith("a"))
+            if (m.StartsWith("a", StringComparison.CurrentCultureIgnoreCase))
             {
                 AddModelACVD(msb, new MSBVD.Model.Dummy { Name = m }, m);
                 continue;
@@ -942,6 +1004,16 @@ public class Map : ObjectContainer
         else if (game == GameType.EldenRing)
         {
             AddModelsER(msb);
+        }
+        else if (game == GameType.ArmoredCoreV)
+        {
+            AddModelsACV(msb);
+
+            // TODO ACV
+            if (msb is MSBV msbv && msbv.DrawingTree != null && msbv.CollisionTree != null)
+            {
+                CalculateMapStudioTree(msb, game);
+            }
         }
         else if (game == GameType.ArmoredCoreVD)
         {
@@ -1165,6 +1237,7 @@ public class Map : ObjectContainer
         return ((MapEntity)RootObject).Serialize(idmap);
     }
 
+    // TODO ACV
     // TODO ACVD
     public void CalculateMapStudioTree(IMsb msb, GameType game)
     {
@@ -1173,7 +1246,38 @@ public class Map : ObjectContainer
             throw new NotImplementedException("Demon's Souls MapStudioTree calculation is not yet implemented.");
         }
 
-        if (game == GameType.ArmoredCoreVD)
+        if (game == GameType.ArmoredCoreV)
+        {
+            if (msb is MSBV msbv)
+            {
+                msbv.DrawingTree = new MSBV.MapStudioTreeParam();
+                msbv.CollisionTree = new MSBV.MapStudioTreeParam();
+
+                var boundingList = GetMsbTreePartInfo(msbv).OrderBy(x => x.Radius);
+                MapStudioTree tree = null;
+                foreach (var node in boundingList)
+                {
+                    if (tree == null)
+                    {
+                        tree = new MapStudioTree(node.Bounds, [node.Index]);
+                        continue;
+                    }
+
+                    tree.AddSimple(node.Bounds, node.Index);
+                }
+                tree.EnlargeBounds(200);
+
+                var ntree = tree.ToMsbTree<MSBV.MapStudioTree>();
+                msbv.DrawingTree.Tree = ntree;
+                msbv.CollisionTree.Tree = ntree;
+                return;
+            }
+            else
+            {
+                throw new InvalidDataException($"{nameof(GameType)} was {game} but {nameof(msb)} was of type: {msb.GetType().Name}");
+            }
+        }
+        else if (game == GameType.ArmoredCoreVD)
         {
             if (msb is MSBVD msbvd)
             {
@@ -1248,6 +1352,8 @@ public class Map : ObjectContainer
         {
             case GameType.DemonsSouls:
                 return ["Tree"];
+            case GameType.ArmoredCoreV:
+                return ["DrawingTree", "CollisionTree"];
             case GameType.ArmoredCoreVD:
                 return ["DrawingTree", "CollisionTree"];
             default:

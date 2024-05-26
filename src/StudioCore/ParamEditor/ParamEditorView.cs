@@ -128,6 +128,68 @@ public class ParamEditorView
 
             ImGui.Separator();
         }
+        else if (ParamBank.PrimaryBank.AssetLocator.Type is GameType.ArmoredCoreV)
+        {
+            if (ImGui.Checkbox("Edit Draw General Params", ref _mapParamView))
+            {
+                _filterParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Filter Params", ref _filterParamView))
+            {
+                _mapParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Bullet Params", ref _bulletParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Submission Params", ref _submissionParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _bulletParamView = false;
+                _langParamView = false;
+                _emtmParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Lang Params", ref _langParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _emtmParamView = false;
+                UICache.ClearCaches();
+            }
+
+            if (ImGui.Checkbox("Edit Event Message Text Map Params", ref _emtmParamView))
+            {
+                _mapParamView = false;
+                _filterParamView = false;
+                _bulletParamView = false;
+                _submissionParamView = false;
+                _langParamView = false;
+                UICache.ClearCaches();
+            }
+        }
         else if (ParamBank.PrimaryBank.AssetLocator.Type is GameType.ArmoredCoreVD)
         {
             if (ImGui.Checkbox("Edit Draw General Params", ref _mapParamView))
@@ -309,6 +371,63 @@ public class ParamEditorView
                 else
                 {
                     keyList = keyList.FindAll(p => !p.StartsWith("Gconfig"));
+                }
+            }
+            else if (ParamBank.PrimaryBank.AssetLocator.Type is GameType.ArmoredCoreV)
+            {
+                if (_mapParamView)
+                {
+                    keyList = ParamBank.FilterParamKeysUsingResourceList("drawgeneralparamlist", keyList, false);
+                }
+                else
+                {
+                    keyList = ParamBank.FilterParamKeysUsingResourceList("drawgeneralparamlist", keyList, true);
+                }
+
+                if (_filterParamView)
+                {
+                    keyList = ParamBank.FilterParamKeysUsingResourceList("filterparamlist", keyList, false);
+                }
+                else
+                {
+                    keyList = ParamBank.FilterParamKeysUsingResourceList("filterparamlist", keyList, true);
+                }
+
+                // Could use the resource list but this is probably more stable
+                if (_bulletParamView)
+                {
+                    keyList = keyList.FindAll(p => p.Contains("\\bullet\\"));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !p.Contains("\\bullet\\"));
+                }
+
+                if (_submissionParamView)
+                {
+                    keyList = keyList.FindAll(p => p.Contains("submission"));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !p.Contains("submission"));
+                }
+
+                if (_langParamView)
+                {
+                    keyList = keyList.FindAll(p => p.Contains($@"lang\{ParamBank.LanguageFolder}") && !p.EndsWith(".emtm") && !p.EndsWith(".tsmap"));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !(p.Contains("lang") && !p.EndsWith(".emtm") && !p.EndsWith(".tsmap")));
+                }
+
+                if (_emtmParamView)
+                {
+                    keyList = keyList.FindAll(p => p.EndsWith(".emtm") && p.Contains(ParamBank.LanguageFolder));
+                }
+                else
+                {
+                    keyList = keyList.FindAll(p => !p.EndsWith(".emtm"));
                 }
             }
             else if (ParamBank.PrimaryBank.AssetLocator.Type is GameType.ArmoredCoreVD)

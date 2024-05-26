@@ -406,7 +406,7 @@ public class MapStudioNew
         _settingsMenu.ProjSettings = _projectSettings;
 
         // System variables from game for pathing
-        if (_assetLocator.Type == GameType.ArmoredCoreVD)
+        if (_assetLocator.Type == GameType.ArmoredCoreV || _assetLocator.Type == GameType.ArmoredCoreVD)
         {
             if (GameVariables.HasVariables(_assetLocator.GameModDirectory, _assetLocator.Type))
             {
@@ -947,6 +947,11 @@ public class MapStudioNew
                     {
                         var badArray = new int[2];
                         var crash = badArray[5];
+                    }
+
+                    if (ImGui.MenuItem("MSBV read/write test"))
+                    {
+                        MSBReadWrite.RunACV(_assetLocator);
                     }
 
                     if (ImGui.MenuItem("MSBVD read/write test"))

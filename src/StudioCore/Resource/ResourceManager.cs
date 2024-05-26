@@ -246,7 +246,7 @@ public static partial class ResourceManager
             return null;
         }
 
-        if (type == GameType.DemonsSouls || type == GameType.DarkSoulsPTDE || type == GameType.DarkSoulsRemastered || type == GameType.ArmoredCoreVD)
+        if (type == GameType.DemonsSouls || type == GameType.DarkSoulsPTDE || type == GameType.DarkSoulsRemastered || type == GameType.ArmoredCoreV || type == GameType.ArmoredCoreVD)
         {
             if (filePath.ToUpper().EndsWith("BHD"))
             {

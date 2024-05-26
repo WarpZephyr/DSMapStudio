@@ -737,6 +737,7 @@ public class Universe
                 case GameType.DarkSoulsPTDE:
                 case GameType.DarkSoulsRemastered:
                 case GameType.DarkSoulsIISOTFS:
+                case GameType.ArmoredCoreV: //TODO ACV Not sure if this is correct
                 case GameType.ArmoredCoreVD: //TODO ACVD Not sure if this is correct
                     _dispGroupCount = 4;
                     break;
@@ -772,6 +773,10 @@ public class Universe
             else if (_assetLocator.Type == GameType.EldenRing)
             {
                 msb = MSBE.Read(ad.AssetPath);
+            }
+            else if (_assetLocator.Type == GameType.ArmoredCoreV)
+            {
+                msb = MSBV.Read(ad.AssetPath);
             }
             else if (_assetLocator.Type == GameType.ArmoredCoreVD)
             {
@@ -1473,6 +1478,20 @@ public class Universe
                 MSBE n = new();
                 n.Layers = prev.Layers;
                 n.Routes = prev.Routes;
+                msb = n;
+            }
+            //TODO ACV
+            else if (_assetLocator.Type == GameType.ArmoredCoreV)
+            {
+                MSBV prev = MSBV.Read(ad.AssetPath);
+                MSBV n = new();
+                n.Models.Version = prev.Models.Version;
+                n.Events.Version = prev.Events.Version;
+                n.Parts.Version = prev.Parts.Version;
+                n.Layers = prev.Layers;
+                n.Routes = prev.Routes;
+                n.DrawingTree = prev.DrawingTree;
+                n.CollisionTree = prev.CollisionTree;
                 msb = n;
             }
             //TODO ACVD

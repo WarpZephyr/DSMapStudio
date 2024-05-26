@@ -9,6 +9,7 @@ using StudioCore.TextEditor;
 using StudioCore.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -189,7 +190,7 @@ public class ParamBank
                 $"Cannot locate param files for {type}.\nThis game must be unpacked before modding, please use UXM Selective Unpacker.");
         }
 
-        if (type is GameType.ArmoredCoreVD)
+        if (type is GameType.ArmoredCoreV or GameType.ArmoredCoreVD)
         {
             return new FileNotFoundException(
                 $"Cannot locate param files for {type}.\nThis game must be unpacked before modding, please use DVDUnbinder.");
@@ -1060,6 +1061,17 @@ public class ParamBank
         }
     }
 
+    private void LoadParamsACV()
+    {
+        LoadParamsIntoBankACV(AssetLocator.GameModDirectory, _params);
+        LoadParamsIntoBankACV(AssetLocator.GameRootDirectory, _params);
+    }
+
+    private void LoadVParamsACV()
+    {
+        LoadParamsIntoBankACV(AssetLocator.GameRootDirectory, _params);
+    }
+
     private void LoadParamsACVD()
     {
         LoadParamsIntoBankACVD(AssetLocator.GameModDirectory, _params);
@@ -1069,6 +1081,48 @@ public class ParamBank
     private void LoadVParamsACVD()
     {
         LoadParamsIntoBankACVD(AssetLocator.GameRootDirectory, _params);
+    }
+
+    private static void LoadParamsIntoBankACV(string dir, Dictionary<string, Param> paramBank)
+    {
+        if (_resourceListParams != null)
+        {
+            foreach (var list in _resourceListParams.Values)
+            {
+                foreach (var path in list)
+                {
+                    if (!paramBank.ContainsKey(path))
+                    {
+                        string fullPath = $@"{dir}\{path}";
+                        if (File.Exists(fullPath))
+                        {
+                            Param param = Param.ReadIgnoreCompression(fullPath);
+                            if (_paramdefs.TryGetValue(param.ParamType, out PARAMDEF def))
+                            {
+                                param.ApplyParamdef(def);
+                                paramBank.Add(path, param);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        string submissionParamDir = $@"{dir}\mission\submission";
+        LoadLooseParams(dir, submissionParamDir, "*.bin", true, paramBank);
+
+        var langs = PrimaryBank.AssetLocator.GetMsgLanguages();
+        foreach (var lang in langs.Keys)
+        {
+            string langDir = $@"{dir}\lang\{lang}";
+            string langParamDir = $@"{langDir}\param";
+            string langTextDir = $@"{langDir}\text";
+            string langMissionParamDir = $@"{langTextDir}\mission";
+
+            LoadLooseParams(dir, langParamDir, "hometowninfo*", true, paramBank);
+            LoadLooseParams(dir, langMissionParamDir, "*.bin", true, paramBank);
+            LoadLooseParams(dir, langMissionParamDir, "*.emtm", true, paramBank);
+        }
     }
 
     private static void LoadParamsIntoBankACVD(string dir, Dictionary<string, Param> paramBank)
@@ -1141,11 +1195,14 @@ public class ParamBank
         var key = useRelativePath ? file[root.Length..] : Path.GetFileNameWithoutExtension(file);
         if (!paramBank.ContainsKey(key))
         {
-            Param param = Param.ReadIgnoreCompression(file);
-            if (_paramdefs.TryGetValue(param.ParamType, out PARAMDEF def))
+            if (new FileInfo(file).Length > 0)
             {
-                param.ApplyParamdef(def);
-                paramBank.Add(key, param);
+                Param param = Param.ReadIgnoreCompression(file);
+                if (_paramdefs.TryGetValue(param.ParamType, out PARAMDEF def))
+                {
+                    param.ApplyParamdef(def);
+                    paramBank.Add(key, param);
+                }
             }
         }
     }
@@ -1153,7 +1210,7 @@ public class ParamBank
     private static void LoadResourceLists(string root, GameType type)
     {
         _resourceListParams = new Dictionary<string, HashSet<string>>();
-        if (type == GameType.ArmoredCoreVD)
+        if (type == GameType.ArmoredCoreV || type == GameType.ArmoredCoreVD)
         {
             string systemPath = $@"{root}\system";
             if (Directory.Exists(systemPath))
@@ -1333,7 +1390,13 @@ public class ParamBank
 
                 if (locator.Type == GameType.ArmoredCoreV)
                 {
-                    // TODO ACV
+                    if (_resourceListParams == null)
+                    {
+                        LoadResourceLists(locator.GameModDirectory, GameType.ArmoredCoreV);
+                        LoadResourceLists(locator.GameRootDirectory, GameType.ArmoredCoreV);
+                    }
+
+                    PrimaryBank.LoadParamsACV();
                 }
 
                 if (locator.Type == GameType.ArmoredCoreVD)
@@ -1407,7 +1470,7 @@ public class ParamBank
 
                         if (locator.Type == GameType.ArmoredCoreV)
                         {
-                            // TODO ACV
+                            VanillaBank.LoadVParamsACV();
                         }
 
                         if (locator.Type == GameType.ArmoredCoreVD)

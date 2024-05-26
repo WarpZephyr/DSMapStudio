@@ -583,7 +583,7 @@ namespace SoulsFormats
                     if (Type != RegionType.Landing)
                         throw new InvalidDataException($"{nameof(offsetLanding)} must be 0 for type {GetType()}");
 
-                    br.Position = start + offsetSound;
+                    br.Position = start + offsetLanding;
                     ReadTypeData(br);
                 }
             }

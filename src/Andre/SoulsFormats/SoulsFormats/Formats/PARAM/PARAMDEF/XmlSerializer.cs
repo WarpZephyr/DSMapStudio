@@ -9,10 +9,14 @@ namespace SoulsFormats
 {
     public partial class PARAMDEF
     {
-        private static class XmlSerializer
+        private static partial class XmlSerializer
         {
             public const int CURRENT_XML_VERSION = 3;
-            private static Regex FIELD_NAME_VALIDATOR = new Regex("^\\w+$");
+
+            [GeneratedRegex("^\\w+$")]
+            private static partial Regex FieldNameValidatorGenerated();
+
+            private static readonly Regex _fieldNameValidator = FieldNameValidatorGenerated();
 
             public static PARAMDEF Deserialize(XmlDocument xml, bool versionAware)
             {
@@ -67,9 +71,18 @@ namespace SoulsFormats
             }
 
 
-            private static readonly Regex defOuterRx = new Regex($@"^(?<type>\S+)\s+(?<name>.+?)(?:\s*=\s*(?<default>\S+))?$");
-            private static readonly Regex defBitRx = new Regex($@"^(?<name>.+?)\s*:\s*(?<size>\d+)$");
-            private static readonly Regex defArrayRx = new Regex($@"^(?<name>.+?)\s*\[\s*(?<length>\d+)\]$");
+            [GeneratedRegex(@"^(?<type>\S+)\s+(?<name>.+?)(?:\s*=\s*(?<default>\S+))?$")]
+            private static partial Regex DefOuterRxGenerated();
+
+            [GeneratedRegex(@"^(?<name>.+?)\s*:\s*(?<size>\d+)$")]
+            private static partial Regex DefBitRxGenerated();
+
+            [GeneratedRegex(@"^(?<name>.+?)\s*\[\s*(?<length>\d+)\]$")]
+            private static partial Regex DefArrayRxGenerated();
+
+            private static readonly Regex _defOuterRx = DefOuterRxGenerated();
+            private static readonly Regex _defBitRx = DefBitRxGenerated();
+            private static readonly Regex _defArrayRx = DefArrayRxGenerated();
 
             private static Field DeserializeField(PARAMDEF def, XmlNode node, bool versionAware)
             {
@@ -90,7 +103,7 @@ namespace SoulsFormats
                 
                 var field = new Field();
                 string fieldDef = node.Attributes["Def"].InnerText;
-                Match outerMatch = defOuterRx.Match(fieldDef);
+                Match outerMatch = _defOuterRx.Match(fieldDef);
                 field.DisplayType = (DefType)Enum.Parse(typeof(DefType), outerMatch.Groups["type"].Value.Trim());
                 if (outerMatch.Groups["default"].Success)
                     field.Default = float.Parse(outerMatch.Groups["default"].Value, CultureInfo.InvariantCulture);
@@ -98,8 +111,8 @@ namespace SoulsFormats
                     field.Default = ParamUtil.GetDefaultDefault(def, field.DisplayType);
 
                 string internalName = outerMatch.Groups["name"].Value.Trim();
-                Match bitMatch = defBitRx.Match(internalName);
-                Match arrayMatch = defArrayRx.Match(internalName);
+                Match bitMatch = _defBitRx.Match(internalName);
+                Match arrayMatch = _defArrayRx.Match(internalName);
                 field.BitSize = -1;
                 field.ArrayLength = 1;
                 if (ParamUtil.IsBitType(field.DisplayType) && bitMatch.Success)
@@ -135,7 +148,7 @@ namespace SoulsFormats
                     field.RemovedRegulationVersion = removedVersion;
                 }
 
-                if (!FIELD_NAME_VALIDATOR.IsMatch(internalName))
+                if (!_fieldNameValidator.IsMatch(internalName))
                     throw new Exception("Disallowed field name found in paramdef: " + def.ParamType + ", name: " + field.InternalName);
                 // Check same name, and if version aware, check they aren't replacing eachother
                 bool matchingFieldTest(Field ifield) => string.Equals(field.InternalName, ifield.InternalName)

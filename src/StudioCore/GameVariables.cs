@@ -12,7 +12,15 @@ public static class GameVariables
     public static void LoadVariables(string rootDir, GameType game)
     {
         Variables = new Dictionary<string, List<string>>();
-        if (game == GameType.ArmoredCoreVD)
+        if (game == GameType.ArmoredCoreV)
+        {
+            var path = $@"{rootDir}\system\acv.ini";
+            if (File.Exists(path))
+            {
+                DeserializeINI(File.ReadAllLines(path, DSMSEncoding.ShiftJIS));
+            }
+        }
+        else if (game == GameType.ArmoredCoreVD)
         {
             var path = $@"{rootDir}\system\acv2.ini";
             if (File.Exists(path))
@@ -25,7 +33,12 @@ public static class GameVariables
 
     public static bool HasVariables(string rootDir, GameType game)
     {
-        if (game == GameType.ArmoredCoreVD)
+        if (game == GameType.ArmoredCoreV)
+        {
+            var path = $@"{rootDir}\system\acv.ini";
+            return File.Exists(path);
+        }
+        else if (game == GameType.ArmoredCoreVD)
         {
             var path = $@"{rootDir}\system\acv2.ini";
             return File.Exists(path);
