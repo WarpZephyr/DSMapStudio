@@ -2317,6 +2317,14 @@ public class ParamBank
         _pendingUpgrade = false;
     }
 
+    private void SaveParamsACV()
+    {
+        foreach (var param in _params)
+        {
+            Utils.WriteWithBackup(AssetLocator.GameRootDirectory, AssetLocator.GameModDirectory, param.Key, param.Value);
+        }
+    }
+
     private void SaveParamsACVD()
     {
         foreach (var param in _params)
@@ -2384,7 +2392,7 @@ public class ParamBank
 
         if (AssetLocator.Type == GameType.ArmoredCoreV)
         {
-            // TODO ACV
+            SaveParamsACV();
         }
 
         if (AssetLocator.Type == GameType.ArmoredCoreVD)
