@@ -398,9 +398,9 @@ namespace SoulsFormats
             public UnkConfig2 Config2 { get; set; }
 
             /// <summary>
-            /// Unknown.
+            /// Has a value for what layer the point is on.
             /// </summary>
-            public UnkConfig3 Config3 { get; set; }
+            public LayerConfig Layer { get; set; }
 
             /// <summary>
             /// Unknown.
@@ -415,7 +415,7 @@ namespace SoulsFormats
                 PointID = -1;
                 Config1 = new UnkConfig1();
                 Config2 = new UnkConfig2();
-                Config3 = new UnkConfig3();
+                Layer = new LayerConfig();
                 Config4 = new UnkConfig4();
             }
 
@@ -428,7 +428,7 @@ namespace SoulsFormats
                 region.Shape = Shape.DeepCopy();
                 region.Config1 = Config1.DeepCopy();
                 region.Config2 = Config2.DeepCopy();
-                region.Config3 = Config3.DeepCopy();
+                region.Layer = Layer.DeepCopy();
                 region.Config4 = Config4.DeepCopy();
                 DeepCopyTo(region);
                 return region;
@@ -537,7 +537,7 @@ namespace SoulsFormats
                 }
 
                 br.Position = start + offsetUnkConfig3;
-                Config3 = new UnkConfig3(br);
+                Layer = new LayerConfig(br);
 
                 if (offsetGen > 0)
                 {
@@ -653,7 +653,7 @@ namespace SoulsFormats
                 // Probably unknown type
                 // Probably unknown type
                 bw.FillInt32("OffsetUnkConfig3", (int)(bw.Position - start));
-                Config3.Write(bw);
+                Layer.Write(bw);
 
                 FillTypeDataOffset(bw, start, "OffsetGen", Type == RegionType.Gen);
                 FillTypeDataOffset(bw, start, "OffsetReverb", Type == RegionType.Reverb);
@@ -771,9 +771,9 @@ namespace SoulsFormats
             }
 
             /// <summary>
-            /// Unknown.
+            /// Has a value for what layer the point is on.
             /// </summary>
-            public class UnkConfig3
+            public class LayerConfig
             {
                 /// <summary>
                 /// Unknown.
@@ -791,32 +791,32 @@ namespace SoulsFormats
                 public sbyte Unk02 { get; set; }
 
                 /// <summary>
-                /// Unknown.
+                /// The layer this point appears on, set to -1 for all layers.
                 /// </summary>
-                public sbyte Unk03 { get; set; }
+                public sbyte LayerID { get; set; }
 
-                public UnkConfig3()
+                public LayerConfig()
                 {
                     Unk00 = -1;
                     Unk01 = -1;
                     Unk02 = 0;
-                    Unk03 = -1;
+                    LayerID = -1;
                 }
 
                 /// <summary>
                 /// Creates a deep copy of the struct.
                 /// </summary>
-                public UnkConfig3 DeepCopy()
+                public LayerConfig DeepCopy()
                 {
-                    return (UnkConfig3)MemberwiseClone();
+                    return (LayerConfig)MemberwiseClone();
                 }
 
-                internal UnkConfig3(BinaryReaderEx br)
+                internal LayerConfig(BinaryReaderEx br)
                 {
                     Unk00 = br.ReadSByte();
                     Unk01 = br.ReadSByte();
                     Unk02 = br.ReadSByte();
-                    Unk03 = br.ReadSByte();
+                    LayerID = br.ReadSByte();
                 }
 
                 internal void Write(BinaryWriterEx bw)
@@ -824,7 +824,7 @@ namespace SoulsFormats
                     bw.WriteSByte(Unk00);
                     bw.WriteSByte(Unk01);
                     bw.WriteSByte(Unk02);
-                    bw.WriteSByte(Unk03);
+                    bw.WriteSByte(LayerID);
                 }
             }
 

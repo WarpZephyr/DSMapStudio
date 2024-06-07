@@ -10,6 +10,7 @@ using System.Reflection;
 using Veldrid;
 using Octokit;
 using System.IO;
+using System.Text;
 
 namespace StudioCore.ParamEditor;
 
@@ -1038,6 +1039,49 @@ public class ParamEditorView
             if (ImGui.Selectable("Copy ID to clipboard"))
             {
                 PlatformUtils.Instance.SetClipboardText($"{r.ID}");
+            }
+
+            if (ImGui.Selectable("Copy Name to clipboard"))
+            {
+                PlatformUtils.Instance.SetClipboardText(r.Name);
+            }
+
+            if (ImGui.Selectable("Copy ID and Name to clipboard"))
+            {
+                PlatformUtils.Instance.SetClipboardText($"{r.ID} {r.Name}");
+            }
+
+            if (ImGui.Selectable("Copy selected IDs to clipboard"))
+            {
+                var selection = _selection.GetSelectedRows();
+                StringBuilder sb = new StringBuilder();
+                foreach (var row in selection)
+                {
+                    sb.AppendLine(row.ID.ToString());
+                }
+                PlatformUtils.Instance.SetClipboardText(sb.ToString());
+            }
+
+            if (ImGui.Selectable("Copy selected Names to clipboard"))
+            {
+                var selection = _selection.GetSelectedRows();
+                StringBuilder sb = new StringBuilder();
+                foreach (var row in selection)
+                {
+                    sb.AppendLine(row.Name);
+                }
+                PlatformUtils.Instance.SetClipboardText(sb.ToString());
+            }
+
+            if (ImGui.Selectable("Copy selected IDs and Names to clipboard"))
+            {
+                var selection = _selection.GetSelectedRows();
+                StringBuilder sb = new StringBuilder();
+                foreach (var row in selection)
+                {
+                    sb.AppendLine($"{row.ID} {row.Name}");
+                }
+                PlatformUtils.Instance.SetClipboardText(sb.ToString());
             }
 
             ImGui.EndPopup();

@@ -274,10 +274,24 @@ public class Map : ObjectContainer
             RootObject.AddChild(n);
         }
 
-        // TODO ACVD
-        if (msb is IMsbBound<MSBVD.MapStudioTree> msbBound)
+        // TODO ACV
+        if (msb is IMsbBound<MSBV.MapStudioTree> msbvBound)
         {
-            var trees = msbBound.Trees;
+            var trees = msbvBound.Trees;
+            for (int i = 0; i < trees.Count; i++)
+            {
+                var tree = trees[i];
+                if (tree != null && tree.Tree != null)
+                {
+                    AddTreeNodes(RootObject, tree.Tree);
+                }
+            }
+        }
+
+        // TODO ACVD
+        if (msb is IMsbBound<MSBVD.MapStudioTree> msbvdBound)
+        {
+            var trees = msbvdBound.Trees;
             for (int i = 0; i < trees.Count; i++)
             {
                 var tree = trees[i];
@@ -1312,6 +1326,7 @@ public class Map : ObjectContainer
         throw new NotSupportedException($"{nameof(GameType)} {game} is not supported for MapStudioTree calculation.");
     }
 
+    // TODO ACV
     // TODO ACVD
     private List<MsbTreePartInfo> GetMsbTreePartInfo(IMsb msb)
     {
@@ -1322,7 +1337,7 @@ public class Map : ObjectContainer
         var boundingDict = new Dictionary<string, BoundingBox>();
         foreach (Entity obj in Objects)
         {
-            if (obj.WrappedObject is IMsbPart msbpart)
+            if (obj.WrappedObject is IMsbPart msbpart && obj.RenderSceneMesh != null)
             {
                 // TODO ACVD: Handle AC bounds somehow
                 boundingDict.Add(msbpart.Name, obj.GetBounds());
@@ -1333,6 +1348,12 @@ public class Map : ObjectContainer
         short index = 0;
         foreach (var part in parts)
         {
+            // Skip unused parts
+            if (part.ModelName == "-1")
+            {
+                continue;
+            }
+
             if (!boundingDict.TryGetValue(part.Name, out BoundingBox bounds))
             {
                 throw new KeyNotFoundException($"Could not find bounds for {part.Name}");
